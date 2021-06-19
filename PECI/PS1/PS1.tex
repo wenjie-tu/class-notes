@@ -1,0 +1,275 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{setspace}
+\usepackage{booktabs}
+\usepackage[top=2.5cm, left=2.0cm, right=2.0cm, bottom=3.0cm]{geometry}
+
+
+\title{\textbf{Problem Set 1} \\ Group 6}
+\author{Christian Birchler \\ Fenqi Guo \\ Mingrui Zhang \\ Wenjie Tu \\ Zunhan Zhang}
+\date{}
+
+\onehalfspacing
+\setlength\parindent{0pt}
+\begin{document}
+\maketitle
+
+\newpage 
+
+\textbf{Basic statistical concepts}
+
+\textbf{1(a).}
+\begin{equation*}
+    \mathbb{E}(Y)=\sum_{y}y \cdot p(y)
+\end{equation*}
+
+\begin{align*}
+    \mathbb{V}(Y)&=\mathbb{E}(Y-\mathbb{E}(Y))^2 \\
+    &=\mathbb{E}(Y^2)-[\mathbb{E}(Y)]^2 \\
+    &=\sum_yy^2 \cdot p(y) - \left[\sum_yy \cdot p(y)\right]^2
+\end{align*}
+
+\textbf{1(b).}
+\begin{itemize}
+    \item $\mathbb{E}(Y)$ tells us the average value of the probability distribution of $Y$.
+    \item $\mathbb{V}(Y)$ tells us the spread around the average value.
+\end{itemize}
+
+\textbf{2(a).}
+\begin{align*}
+    \mathbb{E}(Y) &= \sum_{y}y \cdot p(y) \\
+    &= \sum_yy\sum_xp(x,y) \\
+    &= \sum_x \sum_y y \cdot p(y|x) \cdot p(x) \\
+    &= \sum_x \left[\sum_y y \cdot p(y|x)\right] p(x) \\
+    &= \sum_x \mathbb{E}(Y|X=x) p(x) \\
+    &= \mathbb{E}_x[\mathbb{E}(Y|X=x)]
+\end{align*}
+\par 
+
+\textbf{2(b).}
+
+\textit{The Law of Iterated Expectations} is useful when the probability distribution of $X$ 
+and a conditional random variable $Y|X$ are known, and the probability distribution of $Y$ is 
+desired.
+
+Example:
+
+\begin{center}
+    \begin{tabular}{c|c|l}
+        \specialrule{.1em}{.05em}{.05em}
+        $Y$ & WAGE & Wage per hour \\
+        $X$ & EDUC & Years of education \\
+        $Y|X$ & WAGE$|$EDUC & Wage per hour given specific years of education \\ 
+        \specialrule{.1em}{.05em}{.05em}
+    \end{tabular}
+\end{center}
+
+In practical data analysis, we have easier access to the data of \textit{years of education} and 
+we are interested in the unconditional \textit{wage per hour}. We can run a simple regression on 
+\textit{years of education} to get the \textit{wage per hour} conditional on \textit{years of education}. 
+Then the unconditional \textit{wage per hour} can be easily calculated by applying the \textit{Law of Iterated Expectations}.
+
+\begin{align*}
+    \mathbb{E}(EDUC)&=11.5 \\
+    \mathbb{E}(WAGE|EDUC)&=4 + 0.6 EDUC \\
+    \\
+    \mathbb{E}(WAGE)&=\mathbb{E}(\mathbb{E}(WAGE|EDUC)) \\
+    &=\mathbb{E}(4 + 0.6 EDUC) \\
+    &=4+0.6\mathbb{E}(EDUC) \\
+    &=4+0.6 \times 11.5 \\
+    &=10.9
+\end{align*}
+\par 
+
+\textbf{3(a).}
+\begin{align*}
+    Cov(y,x)&=\mathbb{E}[(y-\mathbb{E}(y))(x-\mathbb{E}(x))] \\
+    &=\mathbb{E}[y \cdot x-y\mathbb{E}(x)-x\mathbb{E}(y)+\mathbb{E}(y)\mathbb{E}(x)] \\
+    &=\mathbb{E}(y \cdot x)-\mathbb{E}(y)\mathbb{E}(x)-\mathbb{E}(y)\mathbb{E}(x)+\mathbb{E}(y)\mathbb{E}(x) \\
+    &=\mathbb{E}(y \cdot x)-\mathbb{E}(y)\mathbb{E}(x)
+\end{align*}
+
+\textbf{3(b).}
+\begin{align*}
+    Cov(y,x)&=\mathbb{E}[(y-\mathbb{E}(y))(x-\mathbb{E}(x))] \\
+    &=\mathbb{E}[(y-\mathbb{E}(y))x]-\mathbb{E}[(y-\mathbb{E}(y))\mathbb{E}(x)] \\
+    &=\mathbb{E}[(y-\mathbb{E}(y))x]-\mathbb{E}[y\mathbb{E}(x)-\mathbb{E}(y)\mathbb{E}(x)] \\
+    &=\mathbb{E}[(y-\mathbb{E}(y))x]
+\end{align*}
+
+Similarly, we can get
+\[Cov(y,x)=\mathbb{E}[(x-\mathbb{E}(x))y] \]
+\par 
+
+\textbf{4.}
+
+It is true that $Corr(x,y)=Corr(y,x)$. The correlation measures the degree to which two random variables 
+are linearly related and it is normalized between -1 and 1. Therefore, it has nothing to do with the order 
+of how two random variables enter into the formula since $Cov(x,y)=Cov(y,x)$.
+
+\newpage
+
+\textbf{The linear regression model}
+\par 
+
+\textbf{5(a).}
+
+\textbf{Linearity} assumption is already built into the structural model.
+
+\textbf{5(b).}
+\begin{align*}
+    \mathbb{E}(y_i|x_i)&=\mathbb{E}(\beta_0+\beta_1x_i+u_i|x_i) \\
+    &=\mathbb{E}(\beta_0|x_i)+\mathbb{E}(\beta_1x_i|x_i)+\mathbb{E}(u_i|x_i) \\
+    &=\beta_0+\beta_1x_i+\mathbb{E}(u_i|x_i)
+\end{align*}
+
+We still need to assume $\mathbb{E}(u_i|x_i)=0$ in order to identify $\beta_0$ and $\beta_1$ 
+in the model. With the conditional mean-zero-error assumption, we can derive:
+
+\begin{align*}
+    \mathbb{E}(u_i)&=\mathbb{E}_{x_i}\mathbb{E}(u_i|x_i) \\
+    &=\mathbb{E}_{x_i} \cdot 0 \\
+    &=0
+\end{align*}
+
+\begin{align*}
+    Cov(x_i,u_i)&=\mathbb{E}(x_iu_i)-\mathbb{E}(x_i)\mathbb{E}(u_i) \\
+    &=\mathbb{E}_{x_i}\mathbb{E}(x_iu_i|x_i)-0 \\
+    &=\mathbb{E}_{x_i}[x_i\mathbb{E}(u_i|x_i)] \\
+    &=0
+\end{align*}
+\par 
+
+\textbf{5(c).}
+
+In 5(b), we derived $Cov(x_i,u_i)=0$
+
+\begin{align*}
+    Cov(y_i,x_i)&=Cov(\beta_0+\beta_1x_i+u_i,x_i) \\
+    &=Cov(\beta_0,x_i)+Cov(\beta_1x_i,x_i)+\underbrace{Cov(u_i,x_i)}_{\text{zero}} \\
+    &=\beta_1Var(x_i) \\
+    &\Downarrow \\
+    \hat{\beta}_1&=\frac{Cov(y_i,x_i)}{Var(x_i)}
+\end{align*}
+
+In matrix notation:
+
+\[\hat{\beta} =
+\begin{bmatrix}
+    \hat{\beta}_0 \\
+    \hat{\beta}_1
+\end{bmatrix}
+= (X'X)^{-1}X'y \]
+\par 
+
+\textbf{5(d).}
+
+\begin{align*}
+    \hat{\beta} &= (X'X)^{-1}X'y \\
+    &=(X'X)^{-1}X'(X\beta+\epsilon) \\
+    &=\beta+(X'X)^{-1}X'\epsilon
+\end{align*}
+
+\begin{align*}
+    \mathbb{V}(\hat{\beta})&=\mathbb{E}[\mathbb{V}(\hat{\beta}|X)]+
+    \mathbb{V}[\mathbb{E}(\hat{\beta}|X)] \\
+    &=\mathbb{E}[\mathbb{V}(\beta+(X'X)^{-1}X'\epsilon|X)]+
+    \mathbb{V}[\mathbb{E}(\beta+(X'X)^{-1}X'\epsilon|X)]\\
+    &=\mathbb{E}[(X'X)^{-1}X'\mathbb{V}(\epsilon|X)X(X'X)^{-1}]+
+    \mathbb{V}(\beta) \\
+    &=\mathbb{E}[\sigma^2(X'X)^{-1}]\\
+    &=\sigma^2(X'X)^{-1} \\
+    &\Downarrow \\
+    \mathbb{V}\left(
+    \begin{bmatrix}
+        \hat{\beta_0} \\
+        \hat{\beta_1}
+    \end{bmatrix}\right)
+    &=\sigma^2(X'X)^{-1}
+\end{align*}
+\par 
+
+\textbf{5(e).}
+
+\begin{align*}
+    \mathbb{V}(\hat{\beta})&=\sigma^2(X'X)^{-1} \\
+    &=\frac{1}{N-1}\sigma^2(\frac{1}{N-1}X'X)^{-1}
+\end{align*}
+
+$\frac{1}{N-1}X'X$ is the ``sample variance-covariance matrix'' of $X$.
+
+\textbf{5(f).}
+
+Two conditions for consistency:
+\begin{itemize}
+    \item \[\lim_{N \to \infty}\mathbb{E}(\tilde{\beta})=\beta \] 
+    \item \[\lim_{N \to \infty}\mathbb{V}(\tilde{\beta})=0 \]  
+\end{itemize}
+
+Let us focus on the second condition,
+
+\begin{align*}
+    \mathbb{V}(\hat{\beta})&=\sigma^2(X'X)^{-1} \\
+    &=\frac{1}{N}\sigma^2(\frac{1}{N}X'X)^{-1}
+\end{align*}
+
+In order to get a consistent estimator, we need to make $\mathbb{V}(\hat{\beta})$ closer to zero 
+as sample size $N$ goes larger. We therefore have to assume that 
+$\frac{1}{N}X'X$ will converge to a constant as sample size goes larger.\newline
+Assumption: \textbf{Regular X's}
+\[\lim_{N \to \infty}\frac{1}{N}X'X=\mathbb{E}(X'X)\equiv \Sigma_{XX} \] 
+\par 
+
+\textbf{5(g).}
+
+In order to test the hypothesis that $\beta_1=0$, we need to construct a \textit{t-statistic},
+\[\textit{t-statistic}=\frac{\hat{\beta}_1}{\sqrt{\mathbb{V}(\hat{\beta_1})}} \] 
+This is a two-side t test. If the absolute value of \textit{t-statistic} 
+is larger than 1.96, we can safely reject the null hypothesis that $\beta_1=0$. 
+In other words, $\beta_1$ is statistically different from zero.
+\par 
+
+\textbf{6(a).}
+\begin{align*}
+    \mathbb{E}(\hat{\alpha})&=\frac{Cov(x_i, y_i)}{\mathbb{V}(x_i)} \\
+    &=\frac{Cov(x_i, \beta_0+\beta_1x_i+\beta_2z_i+u_i)}{\mathbb{V}(x_i)} \\
+    &=\beta_1+\beta_2\underbrace{\frac{Cov(x_i,z_i)}{\mathbb{V}(x_i)}}_\text{non-zero} \\
+    &\neq \beta_1
+\end{align*}
+Therefore, $\hat{\alpha}_1$ is a biased estimator for the target parameter $\beta_1$.
+\par 
+
+\textbf{6(b).}
+
+From 6(a), we get $\mathbb{E}(\hat{\alpha})=\beta_1+\beta_2\frac{Cov(x_i,z_i)}{\mathbb{V}(x_i)}$. 
+When $Cov(x_i,z_i)=0$, $\hat{\alpha_1}$ is an unbiased estimator for $\beta_1$.
+\par 
+
+\textbf{6(c).}
+
+\begin{center}
+    \begin{tabular}{c|l}
+        \specialrule{.1em}{.05em}{.05em}
+        $y_i$ & the GPA of the $i^{th}$ student \\
+        $x_i$ & how many hours spent on study per week \\
+        $z_i$ & innate ability \\
+        \specialrule{.1em}{.05em}{.05em}
+    \end{tabular}
+\end{center}
+
+In this case, $\hat{\alpha}_1$ would be a biased estimator for $\beta_1$ since 
+$Cov(x_i,z_i) \neq 0$. One's innate ability is an unobservable and those with higher innate 
+ability probabily would spend less on study but still get a higher GPA.
+\par 
+
+\textbf{6(d).}
+
+Bias term: $\beta_2\frac{Cov(x_i,z_i)}{\mathbb{V}(x_i)}$
+As discussed in previous question, $\mathbb{V}(x_i)$ will converge to 
+its true value (population variance) in large sample. It also applies to $Cov(x_i,z_i)$. 
+As $n \rightarrow \infty$, $Cov(x_i,z_i)$ will become more stable and converge to a fixed value. 
+In conclusion, the bias term will converge to a fixed value as sample size becomes larger.
+
+\end{document}

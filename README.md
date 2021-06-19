@@ -1,2 +1,4 @@
-# lecture-notes
-Lecture notes at UZH/ETH
+# Class Notes
+
+This directory is made for class notes and exercise solutions.
+
