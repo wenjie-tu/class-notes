@@ -1,4 +1,4 @@
 # Class Notes
 
-This directory is made for class notes and exercise solutions.
+This repository is made for my class notes and exercise solutions.
 
