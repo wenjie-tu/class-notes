@@ -1,0 +1,564 @@
+---
+title: "Problem Set 2"
+author: 
+  - Fenqi Guo
+  - Wenjie Tu
+subtitle: "MOEC0021 Empirical Methods"
+date: "Fall Semester 2020"
+output: pdf_document
+---
+
+# R-Squared and Hypothesis Testing
+
+## 1. Theory - Playing around with R-Squared
+
+$$
+y=\beta X+\epsilon,\quad 
+\epsilon\sim i.i.d(0,\sigma^2I)
+$$
+
+where $X$ includes a constant term.
+
+### 1(a)
+
+$$
+\begin{aligned}
+TSS&=\sum\tilde{y}_i^2 \\
+&=\sum(y_i-\bar{y})^2 \\
+&=\sum(y_i-\hat{y}_i+\hat{y}_i-\bar{y})^2 \\
+&=\sum\left((y_i-\hat{y}_i)^2+(\hat{y}_i-\bar{y})^2+
+2(y_i-\hat{y}_i)(\hat{y}_i-\bar{y})
+\right) \\
+&=\underbrace{\sum(y_i-\hat{y}_i)^2}_{RSS}+
+\underbrace{\sum(\hat{y}_i-\bar{y})^2}_{ESS}+
+2\sum(y_i-\hat{y}_i)(\hat{y}_i-\bar{y}) \\
+&=RSS+ESS+
+2\sum(y_i-\hat{y}_i)(\hat{y}_i-\bar{y})
+\end{aligned}
+$$
+
+Recall that $\hat{\beta}_{OLS}$ is the estimator that minimizes the RSS (assuming $K$ regressors),
+
+$$
+\hat{\beta}_{OLS}\in\arg\min\sum(y_i-\hat{y}_i)^2=
+\sum(y_i-\beta_0-\beta_1x_{i1}-\cdots-\beta_Kx_{iK})^2
+$$
+
+FOC w.r.t. $\beta_0$,
+
+$$
+2\sum(y_i-\hat{y}_i)(-1)=0\iff
+\sum(y_i-\hat{y}_i)=0
+$$
+
+FOC w.r.t. $\beta_j$, $j\in[1,K]$,
+
+$$
+2\sum(y_i-\hat{y}_i)(-x_{ij})=0 \iff
+\sum(y_i-\hat{y}_i)x_{ij}\quad\forall j\in[1,K]
+$$
+
+$$
+\begin{aligned}
+\sum(y_i-\hat{y}_i)(\hat{y}_i-\bar{y})&=
+\sum(y_i-\hat{y}_i)\hat{y}_i-\bar{y}
+\underbrace{\sum(y_i-\hat{y}_i)}_{0} \\
+&=\sum(y_i-\hat{y}_i)(\beta_0+\beta_1x_{i1}+\cdots+\beta_Kx_{iK}) \\
+&=\beta_0\underbrace{\sum(y_i-\hat{y}_i)}_{0}+
+\beta_1\underbrace{\sum(y_i-\hat{y}_i)x_{i1}}_{0}+
+\cdots+
+\beta_K\underbrace{\sum(y_i-\hat{y}_i)x_{iK}}_{0} \\
+&=0
+\end{aligned}
+$$
+
+Notice that it is crucial to have a constant term in order to obtain this result.
+
+$$
+TSS=ESS+RSS \implies ESS=TSS-RSS
+$$
+
+$$
+R^2=\frac{ESS}{TSS}=\frac{TSS-RSS}{TSS}=1-\frac{RSS}{TSS}
+$$
+
+### 1(b)
+
+$$
+\begin{aligned}
+\mathrm{Cov}(y,\hat{y})&=\mathrm{Cov}(\hat{y}+e,\hat{y}) \\
+&=\mathrm{Cov}(\hat{y},\hat{y})+
+\underbrace{\mathrm{Cov}(e,\hat{y})}_{0} \\
+&=\mathrm{Var}(\hat{y})
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\mathrm{Corr}^2(y,\hat{y})&=\frac{\mathrm{Cov}^2(y,\hat{y})}
+{\mathrm{Var}(y)\mathrm{Var}(\hat{y})} \\
+&=\frac{\mathrm{Var}^2(\hat{y})}
+{\mathrm{Var}(y)\mathrm{Var}(\hat{y})} \\
+&=\frac{\mathrm{Var}(\hat{y})}{\mathrm{Var}(y)} \\
+&=\frac{\sum(\hat{y}_i-\bar{y})^2}{\sum(y_i-\bar{y})^2} \\
+&=\frac{ESS}{TSS} \\
+&=R^2
+\end{aligned}
+$$
+
+Intuition: you can see the $R^2$ as a measure of how well your estimates correlate with real data.
+
+### 1(c)
+
+Regressors are doubled while coefficients are halved, implying that the residuals from two models are the same, and so are the RSS and consequently the $R^2$.
+
+Denote the residuals from (M1) $y=X\beta+\epsilon$ by $e$ and the residuals from (M2) $y=\tilde{X}\beta+\nu$.
+
+$$
+e=y-X\hat{\beta}
+$$
+
+$$
+\begin{aligned}
+u&=y-\tilde{X}\tilde{\beta} \\
+&=y-2X\cdot\frac{1}{2}\beta \\
+&=y-X\beta
+\end{aligned}
+$$
+
+$$
+R_{M1}^2=1-\frac{e'e}{\tilde{y}'\tilde{y}}=
+1-\frac{u'u}{\tilde{y}'\tilde{y}}=R_{M2}^2
+$$
+
+### 1(d)
+
+The OLS minimizes the sum of squared residuals. When you add an extra explanatory variable, the minimum cannot be higher than before. When you have already minimized a multi-dimentional function, e.g., with respect to two dimension, minimizing it also with respect to a third one can only deliver a lower minimum. Therefore, the RSS will always be lower with an extra regressor, and as result, the $R^2$ will be higher.
+
+### 1(e)
+
+Consider the regression $y=X\beta+\varepsilon$ and add an additional explantory variable, so that we get $y=X\beta+\gamma z+\nu$.
+
+The estimated equations are $y=X\hat{\beta}+e$ and $y=X\tilde{\beta}+z\tilde{\gamma}+u$ respectively, so that:
+
+$$
+\begin{aligned}
+e&=y-X\beta \\
+&=y-X(X'X)^{-1}X'y \\
+&=(I-X(X'X)^{-1}X')y \\
+&=M_Xy
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+u&=y-X\tilde{\beta}-z\tilde{\gamma} \\
+&=y-X(X'X)^{-1}X'(y-z\tilde{\gamma})-z\tilde{\gamma} \\
+&=(I-X(X'X)^{-1}X')y-(I-X(X'X)^{-1}X')z\tilde{\gamma} \\
+&=M_Xy-M_Xz\tilde{\gamma} \\
+&=e-M_Xz\tilde{\gamma}
+\end{aligned}
+$$
+
+This implies that:
+
+$$
+\begin{aligned}
+u'u&=(e-M_Xz\tilde{\gamma})'(e-M_Xz\tilde{\gamma}) \\
+&=e'e-
+\underbrace{e'M_Xz}_\text{scalar}\tilde{\gamma}-
+\tilde{\gamma}\underbrace{z'M_X'e}_\text{scalar}+
+\tilde{\gamma}^2z'M_X'M_Xz \\
+&=e'e-2\tilde{\gamma}z'M_X'e+\tilde{\gamma}^2z'M_Xz \\
+&=e'e-2\tilde{\gamma}z'M_X'y+\tilde{\gamma}^2z'M_Xz
+\end{aligned}
+$$
+
+As we have seen in class $\tilde{\gamma}=(z'M_Xz)^{-1}z'M_Xy$. Plugging this into the previous expression,
+
+$$
+\begin{aligned}
+u'u&=e'e-2\tilde{\gamma}z'M_X'y+\tilde{\gamma}^2z'M_Xz \\
+&=e'e-2\frac{(z'M_X'y)^2}{z'M_X'z}+\frac{(z'M_X'y)^2}{z'M_X'z} \\
+&=e'e-\frac{(z'M_X'y)^2}{z'M_X'z}
+\end{aligned}
+$$
+
+$$
+u'u<e'e \implies R_{ii}^2>R_i^2
+$$
+
+### 1(f)
+
+The coefficient of determination, $R^2$, says that $R^2$% of the variation in the dependent variable can be "predicted" by variations in the independent variable. "Predicted" is not the same as "explained". Models can have excellent predictive power without necessarily having explanatory power (and sometimes one is all we need). The $R^2$ measure is not a measure of how "good" a model is because it cannot tell you whether:
+
+* the included variables are statistically significant;
+* the regressors are the true cause of movements in the dependent variable;
+* there are omitted variables.
+
+## 2. Empirical Question - Hypothesis Testing
+
+```{r echo=F}
+setwd("F:/University of Zurich/First Semester/EM")
+Sys.setenv(LANG="en")
+rm(list=ls())
+```
+
+```{r message=F, warning=F}
+library(stargazer) # print output
+library(car) # hypothesis
+```
+
+```{r}
+d.class <- read.csv("class_size_pset.csv")
+```
+
+### 2(a)
+
+```{r}
+# generate big_school dummy
+d.class$big_school <- ifelse(d.class$n_classes > 2, 1, 0)
+```
+
+```{r message=F, warning=F, results="asis"}
+model1.1 <- lm(mrkgrm ~ classize, data = d.class)
+model1.2 <- lm(mrkgrm ~ classize + factor(big_school), data = d.class)
+
+stargazer(model1.1, model1.2, header = F, 
+          title = "Regression results in 2(a)", 
+          keep.stat = c("n", "rsq"), omit = "Constant", 
+          dep.var.caption = "grammar scores", single.row = T, 
+          covariate.labels = c("class size", "big school"))
+```
+
+#### (i)
+
+An additional class member is associated with an increase in grammar test scores by 0.134 points.
+
+#### (ii)
+
+An increase in class size by one member is associated with an increase in grammar test scores by 0.102 points, controlling for whether a school has more than 2 classes.
+
+### 2(b)
+
+```{r message=F, warning=F, results="asis"}
+# drop big_school dummy
+d.class$big_school <- NULL
+
+# generate natural log of grammar scores
+d.class$ln_mrkgrm <- log(d.class$mrkgrm)
+
+model2.1 <- lm(mrkgrm ~ classize + pct_dis, data = d.class)
+model2.2 <- lm(ln_mrkgrm ~ classize + pct_dis, data = d.class)
+
+stargazer(model2.1, model2.2, header = F, keep.stat = c("n", "rsq"), no.space = F, 
+          title = "Regression results in 2(b)", single.row = T, digits = 4)
+```
+
+#### (i)
+
+In the level-level specification (column 1), the coefficient on class size means that an additional member would have a negative impact on grammar test scores by 0.06 points on average. In the log-level specification (column 2), the coefficient on class size implies that an additional member in class is associated with a decrease in grammar test score by 0.1%.
+
+To compare the two, the easiest way is to look at the effect around the mean value of grammar test score in log-level specification. 
+
+```{r}
+effect1 <- coef(model2.1)["classize"]
+effect2 <- mean(d.class$mrkgrm) * coef(model2.2)["classize"]
+
+cat(sprintf("Column 1: %.3f
+            \nColumn 2: %.3f", effect1, effect2))
+```
+
+#### (ii)
+
+Since *pct_dis* is in percentage points, we are in a level-log-specification setting. The coefficient reads: 1 percentage point increase in the share of disadvantaged kids is associated with a drop in average test scores by 0.34 points.
+
+### 2(c)
+
+$$
+mrkgrm_i=\beta_1+\beta_2small\underline{}size_i+
+\beta_3pct\underline{}dis_i+\varepsilon_i
+$$
+
+#### (i)
+
+```{r message=F, warning=F, results="asis"}
+# generate small_size dummy
+d.class$small_size <- ifelse(d.class$classize <= 10, 1, 0)
+
+model3.1 <- lm(mrkgrm ~ small_size + pct_dis, data = d.class)
+
+stargazer(model3.1, header = F, keep.stat = c("n", "rsq"),  
+          title = "Regression results in 2(c) i", single.row = T)
+```
+
+```{r}
+mean_score <- mean(d.class$mrkgrm, na.rm = T)
+effect <- coef(model3.1)["small_size"]
+relative_effect <- (effect / mean_score) * 100
+
+cat(sprintf("Effect relative to the mean is %.3f percent", relative_effect))
+```
+
+Holding the percentage of disadvantaged kids constant, test scores in classes with fewer than 10 students are on average 2.56 points higher than in classes with more than 10 students. This difference corresponds to 3.52% of the average score, which seems quite economically insignificant. In terms of statistical significance, we cannot reject the null hypothesis that $\beta_2=0$ against any alternative.
+
+```{r}
+# for one-sided test with alternative beta2>0, 
+# we can compute p-value using function pt
+p_value <- pt(coef(summary(model3.1))[2, 3], df.residual(model3.1), lower.tail = F)
+cat(sprintf("p-value for one-sided test is %.3f", p_value))
+```
+
+```{r}
+# calculate t statistic by hand
+t_stat <- coef(summary(model3.1))[2, 1] / coef(summary(model3.1))[2, 2]
+cat(sprintf("t-stat for coefficeint small_class is %.3f", t_stat))
+```
+
+*t-statistic* is smaller than critical values, we cannot reject the null hypothesis.
+
+#### (ii)
+
+$\hat{\beta}_2$ can be acquired through the following steps:
+
+1. Regress *mrkgrm* on *pct_dis*, obtain residual $\hat{e}_1$
+2. Regress *small_size* on *pct_dis*, obtain residual $\hat{e}_2$
+3. Regress $\hat{e}_1$ on $\hat{e}_2$, obtain $\hat{\beta}_2$
+
+```{r results="asis"}
+## partitioned regression
+# regress mrkgrm on pct_dis
+reg1 <- lm(mrkgrm ~ pct_dis, data = d.class)
+
+# regress small_size on pct_dis
+reg2 <- lm(small_size ~ pct_dis, data = d.class)
+
+# regress residuals from reg1 on residuals from reg2
+reg3 <- lm(reg1$residuals ~ reg2$residuals)
+
+# Comparing beta2 calculated by partitioned regression with beta2 calculated by model5
+print(paste("$\beta_2$ is", round(reg3$coefficients['reg2$residuals'], digits = 4)))
+```
+
+```{r message=F, warning=F, results="asis"}
+stargazer(
+  model3.1, reg3, header = F, keep.stat = c("n", "rsq"), omit = c("Constant", "pct_dis"), 
+  dep.var.labels.include = F, dep.var.caption = "grammar scores", single.row = T, 
+  column.labels = c("standard", "partitioned"), digits = 4, 
+  title = "Standard and partitioned regressions", 
+  covariate.labels = c("small class", "residuals")
+)
+```
+
+#### (iii)
+
+```{r results="asis"}
+# Calculate the mean value for each variable
+mrkgrm.bar <- mean(d.class$mrkgrm)
+small_size.bar <- mean(d.class$small_size)
+pct_dis.bar <- mean(d.class$pct_dis)
+
+# Get the coefficients from model5
+beta2 <- coef(model3.1)['small_size']
+beta3 <- coef(model3.1)['pct_dis']
+
+# intercept computed "by hand"
+beta1 <- mrkgrm.bar - (beta2 * small_size.bar + beta3 * pct_dis.bar)
+
+# intercept estimated by model3.1
+intercept <- coef(model3.1)['(Intercept)']
+
+cat(sprintf("$\\hat{\\beta}_1$ is %.4f
+            \nIntercept is %.4f", beta1, intercept))
+```
+
+#### iv
+
+```{r message=F, warning=F, results="asis"}
+model3.2 <- lm(ln_mrkgrm ~ small_size + pct_dis, data = d.class)
+
+stargazer(model3.2, header = F, keep.stat = c("n", "rsq"), single.row = T, 
+          title = "Regression result from model 3.2")
+```
+
+```{r}
+exp(coef(model3.2)["small_size"])-1
+```
+
+On average, classes with less than 10 students have 3.72% higher scores than classes with more than 10 students.
+
+### 2(d)
+
+#### i
+
+```{r message=F, warning=F, results="asis"}
+# generate many_dis dummy
+d.class$many_dis <- ifelse(d.class$pct_dis > 10, 1, 0)
+
+model4.1 <- lm(mrkgrm ~ classize*many_dis, data = d.class)
+
+stargazer(model4.1, header = F, single.row = T, 
+          keep.stat = c("n", "rsq"), omit = "Constant", 
+          title = "Regression result in 2(d)")
+```
+
+```{r}
+# test joint hypotheses on beta3 = 0 and beta4 = 0
+linearHypothesis(model4.1, c("many_dis = 0", "classize:many_dis = 0"), test = "F")
+```
+
+$$
+F=\frac{\frac{R_U^2-R_R^2}{q}}{\frac{1-R_U^2}{N-K}}
+$$
+
+* $q$ is the number of restricted coefficients.
+* $N$ is the number of observations.
+* $K$ is the number of unrestricted coefficients.
+* $N-K$ is the degrees of freedom.
+
+```{r}
+# compute F-statistic manually
+restricted <- lm(mrkgrm ~ classize, data = d.class)
+unrestricted <- lm(mrkgrm ~ classize*many_dis, data = d.class)
+r2_restricted <- summary(restricted)$r.squared
+r2_unrestricted <- summary(unrestricted)$r.squared
+df_unrestricted <- summary(unrestricted)$df[2]
+n_restrictions <- 2
+f_stat <- ((r2_unrestricted-r2_restricted)/n_restrictions) / 
+  ((1-r2_unrestricted)/df_unrestricted)
+print(paste("The F-stat is ", round(f_stat, digits = 4)))
+```
+
+Since *F-statistics* is way larger than 1, we can safely reject the null hypothesis ($H_0$: $\beta_3=0$ **AND** $\beta_4=0$). We therefore conclude that there exists a linear relationship between *mrkgrm* and *many_dis* **OR** there exists a linear relationship between *mrkgrm* and *many_dis*$\times$*classize*.
+
+#### ii
+
+10 additional students in a class with less than 10% disadvantaged pupils is associated with a decrease in $0.11\times10=1.1$ points in grammar score.
+
+### 2(e)
+
+```{r message=F, warning=F, results="asis"}
+model5.1 <- lm(mrkgrm ~ classize, data = subset(d.class, many_dis == 1))
+model5.2 <- lm(mrkgrm ~ classize, data = subset(d.class, many_dis == 0))
+
+stargazer(model4.1, model5.1, model5.2, header = F, 
+          keep.stat = c("n", "rsq"), omit = "Constant", single.row = T, 
+          title = "Comparison between 2(d) and 2(e)", no.space = F, 
+          column.labels = c("Interaction", "High", "Low"))
+```
+
+In the regression model from 2(d), 
+
+$$
+mrkgrm=\beta_0+\beta_1classize+\beta_2many\underline{}dis+
+\beta_3classize\times many\underline{}dis+\epsilon
+$$
+
+* $\beta_1$ equals the coefficient on *classize* with subsample (*many_dis*=0).
+* $\beta_1+\beta_3$ equals the coefficient on *classize* with subsample (*many_dis*=1).
+
+### 2(f)
+
+```{r}
+# Generate a dummy for each region
+dummy <- as.factor(d.class$regioncode)
+dummies <- model.matrix(~dummy)
+d.class <- cbind(d.class, dummies)
+```
+
+We cannot include all of them. Since there are six categories, we can include only five of them to avoid multicolinearity.   
+
+### 2(g)
+
+```{r message=F, warning=F, results="asis"}
+# regress grammar scores on classize and pct_dis for region1
+model7.1 <- lm(mrkgrm ~ classize + pct_dis,
+data = subset(d.class, regioncode == 'Reg1'))
+
+# regress grammar scores on classize and pct_dis for region2
+model7.2 <- lm(mrkgrm ~ classize + pct_dis,
+data = subset(d.class, regioncode == 'Reg2'))
+
+# regress grammar scores on classize and pct_dis for region3
+model7.3 <- lm(mrkgrm ~ classize + pct_dis,
+data = subset(d.class, regioncode == 'Reg3'))
+
+# regress grammar scores on classize and pct_dis for region4
+model7.4 <- lm(mrkgrm ~ classize + pct_dis,
+data = subset(d.class, regioncode == 'Reg4'))
+
+# regress grammar scores on classize and pct_dis for region5
+model7.5 <- lm(mrkgrm ~ classize + pct_dis,
+data = subset(d.class, regioncode == 'Reg5'))
+
+# regress grammar scores on classize and pct_dis for region6
+model7.6 <- lm(mrkgrm ~ classize + pct_dis,
+data = subset(d.class, regioncode == 'Reg6'))
+
+stargazer(
+  model7.1, model7.2, model7.3, model7.4, model7.5, model7.6, header = F, 
+  column.labels = c('Region1', 'Region2', 'Region3', 'Region4', 'Region5', 'Region6'), 
+  font.size = 'small', keep.stat = c('n', 'rsq'), no.space = T, omit = "Constant"
+)
+```
+
+While in region 1, it seems that adding a student to the class may have a negative and statistically significant effect on scores, in region 3, the opposite appears to be true. In other regions, coefficients are not statistically different from zero. In any case, since these are separate regressions, we cannot conclude anything about whether the effects of class size differ across regions. To do so, we should include *classize*$\times$*region* interaction term to the model
+
+```{r message=F, warning=F, results="asis"}
+model7.7 <- lm(mrkgrm ~ pct_dis + classize*factor(regioncode), data = d.class)
+
+stargazer(model7.7, header = F, keep.stat = c("n", "rsq"), 
+          title = "Regression result in 2(f)", single.row = T)
+```
+
+```{r}
+linearHypothesis(
+  model7.7, hypothesis.matrix = 
+    c("classize:factor(regioncode)Reg2 = 0", "classize:factor(regioncode)Reg3 = 0", 
+      "classize:factor(regioncode)Reg4 = 0", "classize:factor(regioncode)Reg5 = 0", 
+      "classize:factor(regioncode)Reg6 = 0"), test = "F"
+)
+```
+
+*F-statistic* is 1.932. We cannot reject the null hypothesis with much confidence.
+
+### 2(h)
+
+```{r message=F, warning=F, results="asis"}
+model8.1 <- lm(mrkgrm ~ classize + sc_boys, data = subset(d.class, n_classes == 1))
+model8.2 <- lm(mrkgrm ~ classize, data = subset(d.class, n_classes == 1))
+model8.3 <- lm(mrkgrm ~ sc_girls + sc_boys, data = subset(d.class, n_classes == 1))
+
+stargazer(model8.1, model8.2, model8.3, header = F, keep.stat = c("n", "rsq"), 
+          omit = "Constant", single.row = T)
+```
+
+#### i
+
+Here we only consider the subsample of *n_classes = 1*, we thus have this equation *classize = sc_boys + sc_girls*. *classize* is dependent on *sc_boys*. Class size will increase simultaneously as the number of boys increases.  One more boy in school will decrease the average mark in grammar test by 206 point.
+However, an marginal increase in class size might result from an marginal increase in the number of boys or girls. Here we assume the marginal effect results from an additional girl. One more girl in the class will decrease the average mark in grammar test by 0.096 points.
+
+#### ii
+
+Since *sc_girls* and *sc_boys* are independent, we can say that one more boy in school will decrease the average mark in grammar test by 0.206 point. 
+
+#### iii
+
+```{r}
+lh <- linearHypothesis(model8.3, c("sc_boys=sc_girls"))
+t.stat <- round(sqrt(lh$F[2]), digits = 4)
+print(paste("The t-stat is ", t.stat))
+```
+
+Since the coefficient on *sc_boys* in model8.3 can be read as the effect of having an additional boy while holding the number of girls constant, this is equivalent to the effect of increasing the overall class size by one person, or by one boy, to be more precise. The coefficient on *sc_girl* instead would tell us the effect of increasing the overall class size by one girl. To test whether one effect is larger than the other, we can perform a simple t-test under the null hypothesis $\beta_{sc\underline{}boys}-\beta_{sc\underline{}girls}=0$. The *t-statistic* would be:
+
+$$
+t=\frac{\hat{\beta}_{sc\underline{}boys}-\hat{\beta}_{sc\underline{}girls}}
+{\sqrt{Var(\hat{\beta}_{sc\underline{}boys}-\hat{\beta}_{sc\underline{}girls})}}
+$$
+
+Since *t-statistic* is 1.977, we can reject the null hypothesis at 95% confidence level.
+
+### 2(i)
+
+It is easy to think about that class size may be endogenous in this context. One can think of omitted variable problems and assume that class sizes vary depending on whether schools are located in cities or rural areas, which in turn may affect directly school performance for several reasons.

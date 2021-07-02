@@ -4,7 +4,7 @@ This directory is made for the course *Program Evaluation and Causal Inference*.
 
 ## Problem Sets
 
-Problem set and corresponding topic
+Problem set and corresponding topic:
 
 * **PS1:** Review Exercise
 * **PS2:** Treatment Effects
