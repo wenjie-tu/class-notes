@@ -1,11 +1,13 @@
 ---
 title: "Problem Set 2"
-author: 
-  - Fenqi Guo
-  - Wenjie Tu
-subtitle: "MOEC0021 Empirical Methods"
+author:
+- Fenqi Guo
+- Wenjie Tu
 date: "Fall Semester 2020"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
+subtitle: MOEC0021 Empirical Methods
 ---
 
 # R-Squared and Hypothesis Testing
@@ -224,7 +226,7 @@ d.class$big_school <- ifelse(d.class$n_classes > 2, 1, 0)
 model1.1 <- lm(mrkgrm ~ classize, data = d.class)
 model1.2 <- lm(mrkgrm ~ classize + factor(big_school), data = d.class)
 
-stargazer(model1.1, model1.2, header = F, 
+stargazer(model1.1, model1.2, header = F, type = "html", 
           title = "Regression results in 2(a)", 
           keep.stat = c("n", "rsq"), omit = "Constant", 
           dep.var.caption = "grammar scores", single.row = T, 
@@ -252,7 +254,7 @@ model2.1 <- lm(mrkgrm ~ classize + pct_dis, data = d.class)
 model2.2 <- lm(ln_mrkgrm ~ classize + pct_dis, data = d.class)
 
 stargazer(model2.1, model2.2, header = F, keep.stat = c("n", "rsq"), no.space = F, 
-          title = "Regression results in 2(b)", single.row = T, digits = 4)
+          title = "Regression results in 2(b)", single.row = T, digits = 4, type = "html")
 ```
 
 #### (i)
@@ -288,7 +290,7 @@ d.class$small_size <- ifelse(d.class$classize <= 10, 1, 0)
 
 model3.1 <- lm(mrkgrm ~ small_size + pct_dis, data = d.class)
 
-stargazer(model3.1, header = F, keep.stat = c("n", "rsq"),  
+stargazer(model3.1, header = F, keep.stat = c("n", "rsq"), type = "html",  
           title = "Regression results in 2(c) i", single.row = T)
 ```
 
@@ -344,7 +346,7 @@ print(paste("$\beta_2$ is", round(reg3$coefficients['reg2$residuals'], digits = 
 stargazer(
   model3.1, reg3, header = F, keep.stat = c("n", "rsq"), omit = c("Constant", "pct_dis"), 
   dep.var.labels.include = F, dep.var.caption = "grammar scores", single.row = T, 
-  column.labels = c("standard", "partitioned"), digits = 4, 
+  column.labels = c("standard", "partitioned"), digits = 4, type = "html", 
   title = "Standard and partitioned regressions", 
   covariate.labels = c("small class", "residuals")
 )
@@ -378,7 +380,7 @@ cat(sprintf("$\\hat{\\beta}_1$ is %.4f
 model3.2 <- lm(ln_mrkgrm ~ small_size + pct_dis, data = d.class)
 
 stargazer(model3.2, header = F, keep.stat = c("n", "rsq"), single.row = T, 
-          title = "Regression result from model 3.2")
+          title = "Regression result from model 3.2", type = "html")
 ```
 
 ```{r}
@@ -397,7 +399,7 @@ d.class$many_dis <- ifelse(d.class$pct_dis > 10, 1, 0)
 
 model4.1 <- lm(mrkgrm ~ classize*many_dis, data = d.class)
 
-stargazer(model4.1, header = F, single.row = T, 
+stargazer(model4.1, header = F, single.row = T, type = "html", 
           keep.stat = c("n", "rsq"), omit = "Constant", 
           title = "Regression result in 2(d)")
 ```
@@ -441,7 +443,7 @@ Since *F-statistics* is way larger than 1, we can safely reject the null hypothe
 model5.1 <- lm(mrkgrm ~ classize, data = subset(d.class, many_dis == 1))
 model5.2 <- lm(mrkgrm ~ classize, data = subset(d.class, many_dis == 0))
 
-stargazer(model4.1, model5.1, model5.2, header = F, 
+stargazer(model4.1, model5.1, model5.2, header = F, type = "html", 
           keep.stat = c("n", "rsq"), omit = "Constant", single.row = T, 
           title = "Comparison between 2(d) and 2(e)", no.space = F, 
           column.labels = c("Interaction", "High", "Low"))
@@ -496,7 +498,7 @@ model7.6 <- lm(mrkgrm ~ classize + pct_dis,
 data = subset(d.class, regioncode == 'Reg6'))
 
 stargazer(
-  model7.1, model7.2, model7.3, model7.4, model7.5, model7.6, header = F, 
+  model7.1, model7.2, model7.3, model7.4, model7.5, model7.6, header = F, type = "html", 
   column.labels = c('Region1', 'Region2', 'Region3', 'Region4', 'Region5', 'Region6'), 
   font.size = 'small', keep.stat = c('n', 'rsq'), no.space = T, omit = "Constant"
 )
@@ -507,7 +509,7 @@ While in region 1, it seems that adding a student to the class may have a negati
 ```{r message=F, warning=F, results="asis"}
 model7.7 <- lm(mrkgrm ~ pct_dis + classize*factor(regioncode), data = d.class)
 
-stargazer(model7.7, header = F, keep.stat = c("n", "rsq"), 
+stargazer(model7.7, header = F, keep.stat = c("n", "rsq"), type = "html", 
           title = "Regression result in 2(f)", single.row = T)
 ```
 
@@ -530,7 +532,7 @@ model8.2 <- lm(mrkgrm ~ classize, data = subset(d.class, n_classes == 1))
 model8.3 <- lm(mrkgrm ~ sc_girls + sc_boys, data = subset(d.class, n_classes == 1))
 
 stargazer(model8.1, model8.2, model8.3, header = F, keep.stat = c("n", "rsq"), 
-          omit = "Constant", single.row = T)
+          omit = "Constant", single.row = T, type = "html")
 ```
 
 #### i

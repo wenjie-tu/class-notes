@@ -1,11 +1,13 @@
 ---
 title: "Problem Set 1"
-author: 
-  - Fenqi Guo
-  - Wenjie Tu
-subtitle: "MOEC0021 Empirical Methods"
+author:
+- Fenqi Guo
+- Wenjie Tu
 date: "Fall Semester 2020"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
+subtitle: MOEC0021 Empirical Methods
 ---
 
 ```{r echo=F}
@@ -214,7 +216,7 @@ subdata <- as.data.frame(
                   "rand_age"))
 )
 
-stargazer(subdata, header = F, title = "Summary statistics")
+stargazer(subdata, header = F, title = "Summary statistics", type = "html")
 ```
 
 ```{r}
@@ -280,7 +282,7 @@ cat(sprintf("The intercept is %.3f\nThe coefficient is %.3f", beta_0, beta_1))
 # compute coefficient by running regression
 model1 <- lm(cooking_temp ~ riskaverse, data = steakeaters)
 
-stargazer(model1, header = F, title = "Model (1)", 
+stargazer(model1, header = F, title = "Model (1)", type = "html", 
           keep.stat = c("n", "rsq", "ser"), single.row = T)
 ```
 
@@ -308,7 +310,7 @@ model3 <- lm(cooking_temp ~ riskaverse + log_ed + rand_age +
 model2 <- lm(cooking_temp ~ 1 + riskaverse + log(yrs_ed) + rand_age + 
                I(rand_age^2) + cheat, data = steakeaters)
 
-stargazer(model1, model2, header = F, single.row = T, 
+stargazer(model1, model2, header = F, single.row = T, type = "html", 
           title = "Comparison between Model (1) and Model (2)", 
           keep.stat = c("n", "rsq", "ser"))
 ```
@@ -376,10 +378,8 @@ steakeaters$pred_residuals <- predict(model2, steakeaters) - steakeaters$cooking
 ```
 
 ```{r}
-ggplot(
-  steakeaters, 
-  aes(x=rand_age, y=pred_residuals)
-) + geom_point(color="blue", alpha=0.5) + 
+ggplot(steakeaters, aes(x=rand_age, y=pred_residuals)) + 
+  geom_point(color="blue", alpha=0.5) + 
   geom_hline(yintercept=0, color="red") + 
   xlab("Age") + ylab("Residuals") + 
   theme_minimal() + ggtitle("Scatter plot of residuals against age")

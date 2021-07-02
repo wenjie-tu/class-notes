@@ -1,0 +1,833 @@
+---
+title: "Problem Set 6"
+author:
+- Christian Birchler
+- Fenqi Guo
+- Mingrui Zhang
+- Wenjie Tu
+- Zunhan Zhang
+date: "Spring Semester 2021"
+output:
+  html_document:
+    df_print: paged
+subtitle: Program Evaluation and Causal Inference
+---
+
+\begin{center}
+Names are listed in alphabetical order
+\end{center}
+
+# Analysis of a Regression Discontinuity
+
+## 1. Identification in the RDD with constant treatment effect
+
+### 1(a)
+
+The cut-off might not be strictly implemented. The probability of treatment assignment changes discontinuously by less than 100% at the cut-off point $c$ and there would be both treated and untreated observations on either side of the cut-off point. Namely, $D\neq Z=\pmb{1}[X\geq c]$. We therefore have a fuzzy design.
+
+$$
+\begin{aligned}
+Y&=\beta_0+\beta_1D+\delta_1X+U \\
+Z&=\pmb{1}[X\geq c]
+\end{aligned}
+$$
+
+$$
+\begin{cases}
+D & \text{treatment status} \\
+Z & \text{treatment assignment}
+\end{cases}
+$$
+
+$$
+\begin{cases}
+D=Z=\pmb{1}[X\geq c] & \text{sharp RDD} \\
+D\neq Z=\pmb{1}[X\geq c] & \text{fuzzy RDD}
+\end{cases}
+$$
+
+Assumptions:
+
+* Constant treatment effects assumption (i.e., $\beta_i=\beta\quad\forall \space i$). This assumption implies that if we instrument $D$ with $Z$, we will be able to capture the treatment effect using the given model. Namely, $\mathbb{E}(U|Z)=0$ or $\mathrm{Cov}(U,Z)=0$
+
+$$
+\begin{aligned}
+Y&=\beta_0+\beta_1D+\delta_1X+U \\
+\mathrm{Cov}(Y,Z)&=\mathrm{Cov}(\beta_0+\beta_1D+\delta_1X+U, Z) \\
+\mathrm{Cov}(Y,Z)&=\beta_1\mathrm{Cov}(D,Z) \\
+\beta_1&=\frac{\mathrm{Cov}(Y,Z)}{\mathrm{Cov}(D,Z)} \\
+\beta_1&=\frac{\mathbb{E}(Y|Z=1)-\mathbb{E}(Y|Z=0)}{\mathbb{E}(D|Z=1)-\mathbb{E}(D|Z=0)}
+\end{aligned}
+$$
+
+* $\mathbb{E}(Y|X=x)$ is continuous in $x$. This assumption implies 
+
+$$
+\begin{cases}
+\mathbb{E}(Y|X<c)=\lim_{x\uparrow c}\mathbb{E}(Y|X=x) \\
+\mathbb{E}(D|X<c)=\lim_{x\uparrow c}\mathbb{E}(D|X=x)
+\end{cases}
+$$
+
+Put these two assumptions together, we can obtain
+
+$$
+\begin{aligned}
+\beta_1&=\frac{\mathbb{E}(Y|Z=1)-\mathbb{E}(Y|Z=0)}{\mathbb{E}(D|Z=1)-\mathbb{E}(D|Z=0)} \\
+&=\frac{\mathbb{E}(Y|X=c)-\mathbb{E}(Y|X<c)}{\mathbb{E}(D|X=c)-\mathbb{E}(D|X<c)} \\
+&=\frac{\mathbb{E}(Y|X=c)-\lim_{x\uparrow c}\mathbb{E}(Y|X=x)}
+{\mathbb{E}(D|X=c)-\lim_{x\uparrow c}\mathbb{E}(D|X=x)}
+\end{aligned}
+$$
+
+### 1(b)
+
+In a sharp design, treatment probability changes from 0 to 100% at the cut-off point. All units in the sample are compliers. Namely, $D=Z=\pmb{1}[X\geq c]$
+
+$$
+\begin{cases}
+\lim_{x\uparrow c}\mathbb{E}(D|X=x)=Pr(D|X<c)=0 \\
+\mathbb{E}(D|X=c)=Pr(D|X=c)=1
+\end{cases}
+$$
+
+$$
+\begin{aligned}
+\mathbb{E}(Y|X=c)&=\mathbb{E}(\beta_0+\beta_{1}D+\delta_1X+U|X=c) \\
+&=\beta_0+\beta_1+\delta_1\cdot c
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\lim_{x\uparrow c}\mathbb{E}(Y|X=x)&=
+\lim_{x\uparrow c}\mathbb{E}(\beta_0+\beta_{1}D+\delta_1X+U|X=x) \\
+&=\beta_0+\delta_1\cdot c
+\end{aligned}
+$$
+
+
+$$
+\begin{aligned}
+\Delta^{SRD}&=\frac{\mathbb{E}(Y|X=c)-\lim_{x\uparrow c}\mathbb{E}(Y|X=x)}
+{\mathbb{E}(D|X=c)-\lim_{x\uparrow c}\mathbb{E}(D|X=x)} \\
+&=\frac{\beta_0+\beta_1+\delta_1\cdot c-(\beta_0+\delta_1\cdot c)}{1-0} \\
+&=\beta_1=\beta
+\end{aligned}
+$$
+
+## 2. Fuzzy RDD is IV
+
+### 2(a) 
+
+$$
+Pr(D_i=1|X_i)=
+\begin{cases}
+g_1(X_i) & \text{if}\quad X_i\geq c \\
+g_0(X_i) & \text{if}\quad X_i<c
+\end{cases}
+$$
+
+In a fuzzy RDD, $0<g_0(X_i)<g_1(X_i)<1$. This implies that there are always some units below the threshold $X_i<c$ in the observed treatment group $Pr(D_i=1|X_i)$. Therefore, the observed treatment indicator $D_i$ is not "clean" and we need to use IV to solve this endogeneity issue.
+
+$$
+\textbf{Structural equation:}\quad Y_i=\beta_0+\beta_1 D_i+\beta_2X_i+\nu_i
+$$
+
+### 2(b)
+
+$$
+Z_i=\pmb{1}[X_i\geq c]
+$$
+$Z_i$ is a binary encouragement indicator that captures whether units are above threshold or below the threshold $c$.
+
+In the first stage, we instrument $D_i$ with a dummy $\pmb{1}[X_i\geq c]$,
+
+$$
+\textbf{First stage:}\quad D_i=\alpha_0+\alpha_1\pmb{1}[X_i\geq c]+\alpha_2X_i+\eta_i
+$$
+Plug first-stage equation into the structural equation,
+
+$$
+\begin{aligned}
+Y_i&=\beta_0+\beta_1 D_i+\delta_1X_i+\nu_i \\
+&=\beta_0+\beta_1(\alpha_0+\alpha_1\pmb{1}[X_i\geq c]+\alpha_2X_i+\eta_i)
++\beta_2X_i+\nu_i \\
+&=\beta_0+\alpha_0\beta_1+\alpha_1\beta_1\pmb{1}[X_i\geq c]+
+(\alpha_2\beta_1+\beta_2)X_i+\beta_1\eta_i+\nu_i
+\end{aligned}
+$$
+
+$$
+Y_i=\underbrace{\beta_0+\alpha_0\beta_1}_{\gamma_0}+
+\underbrace{\alpha_1\beta_1}_{\gamma_1}\pmb{1}[X_i\geq c]+
+\underbrace{(\alpha_2\beta_1+\beta_2)}_{\gamma_2}X_i+
+\underbrace{\beta_1\eta_i+\nu_i}_{\varepsilon_i}
+$$
+
+$$
+\textbf{Reduced-form equation:}\quad 
+Y_i=\gamma_0+\gamma_1\pmb{1}[X_i\geq c]+\gamma_2X_i+\varepsilon_i
+$$
+
+$$
+\begin{aligned}
+\text{Structural equation:}\quad & Y_i=\beta_0+\beta_1 D_i+\beta_2X_i+\nu_i \\
+\text{First-stage equation:}\quad & 
+D_i=\alpha_0+\alpha_1\pmb{1}[X_i\geq c]+\alpha_2X_i+\eta_i \\
+\text{Second-stage equation:}\quad & Y_i=\beta_0+\beta_1 \hat{D}_i+\beta_2X_i+u_i \\
+\text{Reduced-form equation:}\quad & 
+Y_i=\gamma_0+\gamma_1\pmb{1}[X_i\geq c]+\gamma_2X_i+\varepsilon_i
+\end{aligned}
+$$
+
+$$
+\Delta^{FRD}=\Delta^{IV}=\frac{\gamma_1}{\alpha_1}=
+\frac{\alpha_1\beta_1}{\alpha_1}=\beta_1
+$$
+
+## 3. Replicate Ludwig and Miller (2007)
+
+### 3(b)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, fig.align = "center", tidy.opts = list(width.cutoff = 60))
+rm(list=ls())
+setwd('F:/University of Zurich/Second Semester/Program Evaluation and Causal Inference/PS6')
+```
+
+```{r message=F, warning=F}
+# import packages
+library(stargazer)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+# read data
+dd <- read.csv('rdd.csv')
+
+# remove missing values
+dd <- na.omit(dd)
+
+# figure 2
+
+# defined in the paper
+cutoff <- 59.1984
+
+# indicate if entry is below or above the cutoff
+dd$treatment <- ifelse(dd$povrate60>=cutoff, 1, 0)
+
+# use only entries with poverty rate >=40% and <=80%
+dd.sub <- subset(dd, povrate60>=40 & povrate60<=80)
+
+# define the bins in order to calculate the means and CIs
+dd.sub$bin <- 0
+dd.sub[dd.sub$povrate60>=40 & dd.sub$povrate60<44,]$bin <- 1
+dd.sub[dd.sub$povrate60>=44 & dd.sub$povrate60<48,]$bin <- 2
+dd.sub[dd.sub$povrate60>=48 & dd.sub$povrate60<52,]$bin <- 3
+dd.sub[dd.sub$povrate60>=52 & dd.sub$povrate60<56,]$bin <- 4
+dd.sub[dd.sub$povrate60>=56 & dd.sub$povrate60<60,]$bin <- 5
+dd.sub[dd.sub$povrate60>=60 & dd.sub$povrate60<64,]$bin <- 6
+dd.sub[dd.sub$povrate60>=64 & dd.sub$povrate60<68,]$bin <- 7
+dd.sub[dd.sub$povrate60>=68 & dd.sub$povrate60<72,]$bin <- 8
+dd.sub[dd.sub$povrate60>=72 & dd.sub$povrate60<76,]$bin <- 9
+dd.sub[dd.sub$povrate60>=76 & dd.sub$povrate60<80,]$bin <- 10
+
+# calculate mean, standard deviation, and number of entries inside a certain bin
+get_mean_sd_n <- function(dd.sub, bin_nr){
+  mean_ <- mean(dd.sub[dd.sub$bin==bin_nr,]$hsspend_per_kid_68)
+  sd_ <- sd(dd.sub[dd.sub$bin==bin_nr,]$hsspend_per_kid_68)
+  n_ <- nrow(dd.sub[dd.sub$bin==bin_nr,])
+  return(c(mean_,sd_,n_))
+}
+
+# create special data frame for calculating the CIs
+ci_data <- data.frame(bin=numeric(), mean=numeric(), sd=numeric(), n=numeric())
+for (i in seq(1,10)) {
+  ci_data <- rbind(ci_data, c(i, get_mean_sd_n(dd.sub, i)))
+}
+colnames(ci_data) <- c('bin','mean','sd','n')
+
+# define upper and lower bounds of CIs
+ci_data$ci_lower <- 0
+ci_data$ci_upper <- 0
+
+# function for calculating the CI
+calc_ci <- function(mean, sd, n, z){
+  lower <- mean-(z*sd/sqrt(n))
+  upper <- mean+(z*sd/sqrt(n))
+  return(c(lower, upper))
+}
+
+# define value for 95% CI
+z_95_percent <- 1.96
+
+# calculate the CI of each bin
+for (i in seq(1,10)) {
+  ci <- calc_ci(ci_data[i,]$mean, ci_data[i,]$sd, ci_data[i,]$n, z_95_percent)
+  ci_data[i,]$ci_lower <- ci[1]
+  ci_data[i,]$ci_upper <- ci[2]
+}
+
+# add central poverty of each bin
+ci_data$poverty <- 0
+for (i in seq(1,10)) {
+  ci_data[i,]$poverty <- 38+i*4
+}
+
+# use cubic as "non-parametric" and quadratic as parametric
+cubic <- lm(hsspend_per_kid_68 ~ poly(povrate60, 3) + treatment, data=dd.sub)
+quad <- lm(hsspend_per_kid_68 ~ poly(povrate60, 2) + treatment, data=dd.sub)
+
+# put everything in a plot
+ggplot() + geom_line(aes(x=dd.sub$povrate60, y=cubic$fitted.values)) +
+  geom_line(aes(x=dd.sub$povrate60, y=quad$fitted.values), linetype="dashed") +
+  geom_vline(xintercept=cutoff, col="blue") +
+  geom_pointrange(aes(x=ci_data$poverty, y=ci_data$mean, 
+                      ymin=ci_data$ci_lower, ymax=ci_data$ci_upper)) +
+  ggtitle("1968 Head Start funding per 4 year old") +
+  xlab("1960 Poverty rate") +
+  ylab("")
+
+################################################################################
+################################################################################
+################################################################################
+
+# setup second plot for figure II in the paper
+
+# calculate mean, standard deviation, and number of entries inside a certain bin
+get_mean_sd_n <- function(dd.sub, bin_nr){
+  mean_ <- mean(dd.sub[dd.sub$bin==bin_nr,]$hsspend_per_kid_72)
+  sd_ <- sd(dd.sub[dd.sub$bin==bin_nr,]$hsspend_per_kid_72)
+  n_ <- nrow(dd.sub[dd.sub$bin==bin_nr,])
+  return(c(mean_,sd_,n_))
+}
+
+# create special data frame for calculating the CIs
+ci_data <- data.frame(bin=numeric(), mean=numeric(), sd=numeric(), n=numeric())
+for (i in seq(1,10)) {
+  ci_data <- rbind(ci_data, c(i, get_mean_sd_n(dd.sub, i)))
+}
+colnames(ci_data) <- c('bin','mean','sd','n')
+
+# define upper and lower bounds of CIs
+ci_data$ci_lower <- 0
+ci_data$ci_upper <- 0
+
+# function for calculating the CI
+calc_ci <- function(mean, sd, n, z){
+  lower <- mean-(z*sd/sqrt(n))
+  upper <- mean+(z*sd/sqrt(n))
+  return(c(lower, upper))
+}
+
+# define value for 95% CI
+z_95_percent <- 1.96
+
+# calculate the CI of each bin
+for (i in seq(1,10)) {
+  ci <- calc_ci(ci_data[i,]$mean, ci_data[i,]$sd, ci_data[i,]$n, z_95_percent)
+  ci_data[i,]$ci_lower <- ci[1]
+  ci_data[i,]$ci_upper <- ci[2]
+}
+
+# add central poverty of each bin
+ci_data$poverty <- 0
+for (i in seq(1,10)) {
+  ci_data[i,]$poverty <- 38+i*4
+}
+
+# use cubic as "non-parametric" and quadratic as parametric
+cubic <- lm(hsspend_per_kid_72 ~ poly(povrate60, 3) + treatment, data=dd.sub)
+quad <- lm(hsspend_per_kid_72 ~ poly(povrate60, 2) + treatment, data=dd.sub)
+
+# put everything in a plot
+ggplot() + geom_line(aes(x=dd.sub$povrate60, y=cubic$fitted.values)) +
+  geom_line(aes(x=dd.sub$povrate60, y=quad$fitted.values), linetype="dashed") +
+  geom_vline(xintercept=cutoff, col="blue") +
+  geom_pointrange(aes(x=ci_data$poverty, y=ci_data$mean, 
+                      ymin=ci_data$ci_lower, ymax=ci_data$ci_upper)) +
+  ggtitle("1972 Head Start funding per 4 year old") +
+  xlab("1960 Poverty rate") +
+  ylab("")
+
+################################################################################
+################################################################################
+################################################################################
+
+# setup for figure III in the paper
+
+# calculate mean, standard deviation, and number of entries inside a certain bin
+get_mean_sd_n <- function(dd.sub, bin_nr){
+  mean_ <- mean(dd.sub[dd.sub$bin==bin_nr,]$socspend_per_cap72)
+  sd_ <- sd(dd.sub[dd.sub$bin==bin_nr,]$socspend_per_cap72)
+  n_ <- nrow(dd.sub[dd.sub$bin==bin_nr,])
+  return(c(mean_,sd_,n_))
+}
+
+# create special data frame for calculating the CIs
+ci_data <- data.frame(bin=numeric(), mean=numeric(), sd=numeric(), n=numeric())
+for (i in seq(1,10)) {
+  ci_data <- rbind(ci_data, c(i, get_mean_sd_n(dd.sub, i)))
+}
+colnames(ci_data) <- c('bin','mean','sd','n')
+
+# define upper and lower bounds of CIs
+ci_data$ci_lower <- 0
+ci_data$ci_upper <- 0
+
+# function for calculating the CI
+calc_ci <- function(mean, sd, n, z){
+  lower <- mean-(z*sd/sqrt(n))
+  upper <- mean+(z*sd/sqrt(n))
+  return(c(lower, upper))
+}
+
+# define value for 95% CI
+z_95_percent <- 1.96
+
+# calculate the CI of each bin
+for (i in seq(1,10)) {
+  ci <- calc_ci(ci_data[i,]$mean, ci_data[i,]$sd, ci_data[i,]$n, z_95_percent)
+  ci_data[i,]$ci_lower <- ci[1]
+  ci_data[i,]$ci_upper <- ci[2]
+}
+
+# add central poverty of each bin
+ci_data$poverty <- 0
+for (i in seq(1,10)) {
+  ci_data[i,]$poverty <- 38+i*4
+}
+
+# use cubic as "non-parametric" and quadratic as parametric
+cubic <- lm(socspend_per_cap72 ~ poly(povrate60, 3) + treatment, data=dd.sub)
+quad <- lm(socspend_per_cap72 ~ poly(povrate60, 2) + treatment, data=dd.sub)
+
+# put everything in a plot
+ggplot() + geom_line(aes(x=dd.sub$povrate60, y=cubic$fitted.values)) +
+  geom_line(aes(x=dd.sub$povrate60, y=quad$fitted.values), linetype="dashed") +
+  geom_vline(xintercept=cutoff, col="blue") +
+  geom_pointrange(aes(x=ci_data$poverty, y=ci_data$mean, 
+                      ymin=ci_data$ci_lower, ymax=ci_data$ci_upper)) +
+  xlab("1960 Poverty rate") +
+  ylab("") +
+  ylim(0,800)
+```
+
+### 3(c)
+```{r, message=FALSE, warning=FALSE, results='asis'}
+# create dummy variable
+dd$dummy <- ifelse(dd$povrate60 < 59.1984, 0,1)
+# create new rates
+dd$rate <- dd$povrate60 - 59.1984
+dd$ratesq <- dd$rate^2
+dd$ratecub <- dd$rate^3
+dd$ratedum <- dd$rate*dd$dummy
+dd$ratesqdum <- dd$ratesq*dd$dummy
+dd$ratecubdum <- dd$ratecub*dd$dummy
+
+# use bandwidth 18 as written in the paper
+dd$bandwidth <- ifelse(dd$povrate60>=41.1984 & dd$povrate60<=77.1984,1,0)
+
+# linear fit
+lin <- lm(rate~dummy+ratedum, data=subset(dd, bandwidth==1))
+# quadratic fit
+quad <- lm(rate~ratesq+ratesqdum+dummy+ratedum, data=subset(dd,bandwidth==1))
+# qubic fit
+cub <- lm(rate~ratecub+ratecubdum+ratesqdum+ratesq+dummy+ratedum, 
+          data=subset(dd,bandwidth==1))
+
+# create bins from 40% to 80%
+dd$bins <- floor(dd$rate/2)*2 + 1 + 59.1984
+sub <- subset(dd, bins>=40 & bins<= 80)
+sub <- subset(sub, povrate60>=40 & povrate60 <= 80)
+
+sub <-sub%>%
+    group_by(bins)%>%
+    mutate(mean=mean(bins), std=sd(bins))
+
+# bandwidth 16 and 8
+sub$bandwidth16 <- ifelse(sub$povrate60>=43.1984 & sub$povrate60<=75.1984,1,0)
+sub$bandwidth8 <- ifelse(sub$povrate60>=51.1984 & sub$povrate60<=67.1984,1,0)
+
+# bandwidth 12 and 19
+sub$bandwidth12 <- ifelse(sub$povrate60>=47.1984 & sub$povrate60<=71.1984,1,0)
+sub$bandwidth19 <- ifelse(sub$povrate60>=40.1984 & sub$povrate60<=79.1984,1,0)
+
+# create table for bandwidth 8
+stargazer(lm(hsspend_per_kid_68~dummy+rate+ratedum, 
+             data=subset(sub,bandwidth8==1)),
+          lm(hsspend_per_kid_72~dummy+rate+ratedum, 
+             data=subset(sub,bandwidth8==1)),
+          lm(socspend_per_cap72~dummy+rate+ratedum, 
+             data=subset(sub,bandwidth8==1)),
+          keep = "dummy",report="c*sp", p.auto = T, header=F, 
+          omit.stat = c("ser","ll","rsq","adj.rsq","f"), 
+          covariate.labels = "Assistance",
+          title= "Bandwidth 8", type="html")
+
+# create table for bandwidth 16
+stargazer(lm(hsspend_per_kid_68~dummy+rate+ratedum+ratesqdum+ratesq, 
+             data=subset(sub,bandwidth16==1)),
+          lm(hsspend_per_kid_72~dummy+rate+ratedum+ratesqdum+ratesq, 
+             data=subset(sub,bandwidth16==1)),
+          lm(socspend_per_cap72~dummy+rate+ratedum+ratesqdum+ratesq, 
+             data=subset(sub,bandwidth16==1)),
+          keep = "dummy",report="c*sp", p.auto = T, header=F, 
+          omit.stat = c("ser","ll","rsq","adj.rsq","f"), 
+          covariate.labels = "Assistance",
+          title= "Bandwidth 16", type="html")
+
+```
+
+### 3(d)
+```{r}
+# calculate mean, standard deviation, and number of entries inside a certain bin
+get_mean_sd_n <- function(dd.sub, bin_nr){
+  mean_ <- mean(dd.sub[dd.sub$bin==bin_nr,]$age5_9_sum2)
+  sd_ <- sd(dd.sub[dd.sub$bin==bin_nr,]$age5_9_sum2)
+  n_ <- nrow(dd.sub[dd.sub$bin==bin_nr,])
+  return(c(mean_,sd_,n_))
+}
+
+# create special data frame for calculating the CIs
+ci_data <- data.frame(bin=numeric(), mean=numeric(), sd=numeric(), n=numeric())
+for (i in seq(1,10)) {
+  ci_data <- rbind(ci_data, c(i, get_mean_sd_n(dd.sub, i)))
+}
+colnames(ci_data) <- c('bin','mean','sd','n')
+
+# define upper and lower bounds of CIs
+ci_data$ci_lower <- 0
+ci_data$ci_upper <- 0
+
+# function for calculating the CI
+calc_ci <- function(mean, sd, n, z){
+  lower <- mean-(z*sd/sqrt(n))
+  upper <- mean+(z*sd/sqrt(n))
+  return(c(lower, upper))
+}
+
+# define value for 95% CI
+z_95_percent <- 1.96
+
+# calculate the CI of each bin
+for (i in seq(1,10)) {
+  ci <- calc_ci(ci_data[i,]$mean, ci_data[i,]$sd, ci_data[i,]$n, z_95_percent)
+  ci_data[i,]$ci_lower <- ci[1]
+  ci_data[i,]$ci_upper <- ci[2]
+}
+
+# add central poverty of each bin
+ci_data$poverty <- 0
+for (i in seq(1,10)) {
+  ci_data[i,]$poverty <- 38+i*4
+}
+
+# use cubic as "non-parametric" and quadratic as parametric
+cubic <- lm(age5_9_sum2 ~ poly(povrate60, 3) + treatment, data=dd.sub)
+quad <- lm(age5_9_sum2 ~ poly(povrate60, 2) + treatment, data=dd.sub)
+
+###############################################################################
+# Panel A
+###############################################################################
+
+# put everything in a plot
+ggplot() + geom_line(aes(x=dd.sub$povrate60, y=cubic$fitted.values)) +
+  geom_line(aes(x=dd.sub$povrate60, y=quad$fitted.values), linetype="dashed") +
+  geom_vline(xintercept=cutoff, col="blue") +
+  geom_pointrange(aes(x=ci_data$poverty, y=ci_data$mean, 
+                      ymin=ci_data$ci_lower, ymax=ci_data$ci_upper)) +
+  ggtitle("Children 5-9, Head Start susceptible causes, 1973-83") +
+  xlab("1960 Poverty rate") +
+  ylab("")
+
+################################################################################
+# Panel B
+################################################################################
+
+# calculate mean, standard deviation, and number of entries inside a certain bin
+get_mean_sd_n <- function(dd.sub, bin_nr){
+  mean_ <- mean(dd.sub[dd.sub$bin==bin_nr,]$age5_9_injury_rate)
+  sd_ <- sd(dd.sub[dd.sub$bin==bin_nr,]$age5_9_injury_rate)
+  n_ <- nrow(dd.sub[dd.sub$bin==bin_nr,])
+  return(c(mean_,sd_,n_))
+}
+
+# create special data frame for calculating the CIs
+ci_data <- data.frame(bin=numeric(), mean=numeric(), sd=numeric(), n=numeric())
+for (i in seq(1,10)) {
+  ci_data <- rbind(ci_data, c(i, get_mean_sd_n(dd.sub, i)))
+}
+colnames(ci_data) <- c('bin','mean','sd','n')
+
+# define upper and lower bounds of CIs
+ci_data$ci_lower <- 0
+ci_data$ci_upper <- 0
+
+# function for calculating the CI
+calc_ci <- function(mean, sd, n, z){
+  lower <- mean-(z*sd/sqrt(n))
+  upper <- mean+(z*sd/sqrt(n))
+  return(c(lower, upper))
+}
+
+# define value for 95% CI
+z_95_percent <- 1.96
+
+# calculate the CI of each bin
+for (i in seq(1,10)) {
+  ci <- calc_ci(ci_data[i,]$mean, ci_data[i,]$sd, ci_data[i,]$n, z_95_percent)
+  ci_data[i,]$ci_lower <- ci[1]
+  ci_data[i,]$ci_upper <- ci[2]
+}
+
+# add central poverty of each bin
+ci_data$poverty <- 0
+for (i in seq(1,10)) {
+  ci_data[i,]$poverty <- 38+i*4
+}
+
+# use cubic as "non-parametric" and quadratic as parametric
+cubic <- lm(age5_9_injury_rate ~ poly(povrate60, 3) + treatment, data=dd.sub)
+quad <- lm(age5_9_injury_rate ~ poly(povrate60, 2) + treatment, data=dd.sub)
+
+# put everything in a plot
+ggplot() + geom_line(aes(x=dd.sub$povrate60, y=cubic$fitted.values)) +
+  geom_line(aes(x=dd.sub$povrate60, y=quad$fitted.values), linetype="dashed") +
+  geom_vline(xintercept=cutoff, col="blue") +
+  geom_pointrange(aes(x=ci_data$poverty, y=ci_data$mean, 
+                      ymin=ci_data$ci_lower, ymax=ci_data$ci_upper)) +
+  ggtitle("Children 5-9, Injuries, 1973-83") +
+  xlab("1960 Poverty rate") +
+  ylab("")
+
+################################################################################
+# Panel C
+################################################################################
+
+# calculate mean, standard deviation, and number of entries inside a certain bin
+get_mean_sd_n <- function(dd.sub, bin_nr){
+  mean_ <- mean(dd.sub[dd.sub$bin==bin_nr,]$age25plus_sum2)
+  sd_ <- sd(dd.sub[dd.sub$bin==bin_nr,]$age25plus_sum2)
+  n_ <- nrow(dd.sub[dd.sub$bin==bin_nr,])
+  return(c(mean_,sd_,n_))
+}
+
+# create special data frame for calculating the CIs
+ci_data <- data.frame(bin=numeric(), mean=numeric(), sd=numeric(), n=numeric())
+for (i in seq(1,10)) {
+  ci_data <- rbind(ci_data, c(i, get_mean_sd_n(dd.sub, i)))
+}
+colnames(ci_data) <- c('bin','mean','sd','n')
+
+# define upper and lower bounds of CIs
+ci_data$ci_lower <- 0
+ci_data$ci_upper <- 0
+
+# function for calculating the CI
+calc_ci <- function(mean, sd, n, z){
+  lower <- mean-(z*sd/sqrt(n))
+  upper <- mean+(z*sd/sqrt(n))
+  return(c(lower, upper))
+}
+
+# define value for 95% CI
+z_95_percent <- 1.96
+
+# calculate the CI of each bin
+for (i in seq(1,10)) {
+  ci <- calc_ci(ci_data[i,]$mean, ci_data[i,]$sd, ci_data[i,]$n, z_95_percent)
+  ci_data[i,]$ci_lower <- ci[1]
+  ci_data[i,]$ci_upper <- ci[2]
+}
+
+# add central poverty of each bin
+ci_data$poverty <- 0
+for (i in seq(1,10)) {
+  ci_data[i,]$poverty <- 38+i*4
+}
+
+# use cubic as "non-parametric" and quadratic as parametric
+cubic <- lm(age25plus_sum2 ~ poly(povrate60, 3) + treatment, data=dd.sub)
+quad <- lm(age25plus_sum2 ~ poly(povrate60, 2) + treatment, data=dd.sub)
+
+# put everything in a plot
+ggplot() + geom_line(aes(x=dd.sub$povrate60, y=cubic$fitted.values)) +
+  geom_line(aes(x=dd.sub$povrate60, y=quad$fitted.values), linetype="dashed") +
+  geom_vline(xintercept=cutoff, col="blue") +
+  geom_pointrange(aes(x=ci_data$poverty, y=ci_data$mean, 
+                      ymin=ci_data$ci_lower, ymax=ci_data$ci_upper)) +
+  ggtitle("Adults 25+, Head Start susceptible causes, 1973-83") +
+  xlab("1960 Poverty rate") +
+  ylab("")
+
+################################################################################
+# Panel D
+################################################################################
+
+# calculate mean, standard deviation, and number of entries inside a certain bin
+get_mean_sd_n <- function(dd.sub, bin_nr){
+  mean_ <- mean(dd.sub[dd.sub$bin==bin_nr,]$rate_5964)
+  sd_ <- sd(dd.sub[dd.sub$bin==bin_nr,]$rate_5964)
+  n_ <- nrow(dd.sub[dd.sub$bin==bin_nr,])
+  return(c(mean_,sd_,n_))
+}
+
+# create special data frame for calculating the CIs
+ci_data <- data.frame(bin=numeric(), mean=numeric(), sd=numeric(), n=numeric())
+for (i in seq(1,10)) {
+  ci_data <- rbind(ci_data, c(i, get_mean_sd_n(dd.sub, i)))
+}
+colnames(ci_data) <- c('bin','mean','sd','n')
+
+# define upper and lower bounds of CIs
+ci_data$ci_lower <- 0
+ci_data$ci_upper <- 0
+
+# function for calculating the CI
+calc_ci <- function(mean, sd, n, z){
+  lower <- mean-(z*sd/sqrt(n))
+  upper <- mean+(z*sd/sqrt(n))
+  return(c(lower, upper))
+}
+
+# define value for 95% CI
+z_95_percent <- 1.96
+
+# calculate the CI of each bin
+for (i in seq(1,10)) {
+  ci <- calc_ci(ci_data[i,]$mean, ci_data[i,]$sd, ci_data[i,]$n, z_95_percent)
+  ci_data[i,]$ci_lower <- ci[1]
+  ci_data[i,]$ci_upper <- ci[2]
+}
+
+# add central poverty of each bin
+ci_data$poverty <- 0
+for (i in seq(1,10)) {
+  ci_data[i,]$poverty <- 38+i*4
+}
+
+# use cubic as "non-parametric" and quadratic as parametric
+cubic <- lm(rate_5964 ~ poly(povrate60, 3) + treatment, data=dd.sub)
+quad <- lm(rate_5964 ~ poly(povrate60, 2) + treatment, data=dd.sub)
+
+# put everything in a plot
+ggplot() + geom_line(aes(x=dd.sub$povrate60, y=cubic$fitted.values)) +
+  geom_line(aes(x=dd.sub$povrate60, y=quad$fitted.values), linetype="dashed") +
+  geom_vline(xintercept=cutoff, col="blue") +
+  geom_pointrange(aes(x=ci_data$poverty, y=ci_data$mean, 
+                      ymin=ci_data$ci_lower, ymax=ci_data$ci_upper)) +
+  ggtitle("Children 5-9, Head Start susceptible causes, 1973-83") +
+  xlab("1960 Poverty rate") +
+  ylab("")
+```
+
+### 3(e)
+```{r, message=FALSE, warning=FALSE, results='asis'}
+# bandwidth 16 and 8
+sub$bandwidth16 <- ifelse(sub$povrate60>=43.1984 & sub$povrate60<=75.1984,1,0)
+sub$bandwidth8 <- ifelse(sub$povrate60>=51.1984 & sub$povrate60<=67.1984,1,0)
+
+# bandwidth 12 and 19
+sub$bandwidth12 <- ifelse(sub$povrate60>=47.1984 & sub$povrate60<=71.1984,1,0)
+sub$bandwidth19 <- ifelse(sub$povrate60>=40.1984 & sub$povrate60<=79.1984,1,0)
+
+# create table for bandwidth 8
+stargazer(lm(age5_9_sum2~dummy+rate+ratedum, 
+             data=subset(sub,bandwidth8==1)),
+          lm(age5_9_injury_rate~dummy+rate+ratedum, 
+             data=subset(sub,bandwidth8==1)),
+          lm(age25plus_sum2~dummy+rate+ratedum, 
+             data=subset(sub,bandwidth8==1)),
+            lm(rate_5964~dummy+rate+ratedum, 
+             data=subset(sub,bandwidth8==1)),
+          keep = "dummy",report="c*sp", p.auto = T, header=F, 
+          omit.stat = c("ser","ll","rsq","adj.rsq","f"), 
+          covariate.labels = "Assistance",
+          title= "Bandwidth 8", type="html")
+
+# create table for bandwidth 16
+stargazer(lm(age5_9_sum2~dummy+rate+ratedum+ratesqdum+ratesq, 
+             data=subset(sub,bandwidth16==1)),
+          lm(age5_9_injury_rate~dummy+rate+ratedum+ratesqdum+ratesq, 
+             data=subset(sub,bandwidth16==1)),
+          lm(age25plus_sum2~dummy+rate+ratedum+ratesqdum+ratesq, 
+             data=subset(sub,bandwidth16==1)),
+            lm(rate_5964~dummy+rate+ratedum+ratesqdum+ratesq, 
+             data=subset(sub,bandwidth16==1)),
+          keep = "dummy",report="c*sp", p.auto = T, header=F, 
+          omit.stat = c("ser","ll","rsq","adj.rsq","f"), 
+          covariate.labels = "Assistance",
+          title= "Bandwidth 16", type="html")
+```
+
+### 3(f)
+```{r, message=FALSE, warning=FALSE, results='asis'}
+# bandwidth 16 and 8
+sub$bandwidth16 <- ifelse(sub$povrate60>=43.1984 & sub$povrate60<=75.1984,1,0)
+sub$bandwidth8 <- ifelse(sub$povrate60>=51.1984 & sub$povrate60<=67.1984,1,0)
+
+# bandwidth 12 and 19
+sub$bandwidth12 <- ifelse(sub$povrate60>=47.1984 & sub$povrate60<=71.1984,1,0)
+sub$bandwidth19 <- ifelse(sub$povrate60>=40.1984 & sub$povrate60<=79.1984,1,0)
+
+# TODO: adapt for mortality outcomes
+
+# create table for bandwidth 12
+stargazer(lm(age5_9_injury_rate~dummy+rate+ratedum, 
+             data=subset(sub,bandwidth12==1)),
+          lm(age5_9_sum2~dummy+rate+ratedum, 
+             data=subset(sub,bandwidth12==1)),
+          lm(age25plus_sum2~dummy+rate+ratedum, 
+             data=subset(sub,bandwidth12==1)),
+          lm(rate_5964~dummy+rate+ratedum, 
+             data=subset(sub,bandwidth12==1)),
+          keep = "dummy",report="c*sp", p.auto = T, header=F, 
+          omit.stat = c("ser","ll","rsq","adj.rsq","f"), 
+          covariate.labels = "Assistance",
+          title= "Linear with Bandwidth 12", type="html")
+
+# create table for bandwidth 19
+stargazer(lm(age5_9_injury_rate~dummy+rate+ratedum, 
+             data=subset(sub,bandwidth19==1)),
+          lm(age5_9_sum2~dummy+rate+ratedum, 
+             data=subset(sub,bandwidth19==1)),
+          lm(age25plus_sum2~dummy+rate+ratedum, 
+             data=subset(sub,bandwidth19==1)),
+          lm(rate_5964~dummy+rate+ratedum, 
+             data=subset(sub,bandwidth19==1)),
+          keep = "dummy",report="c*sp", p.auto = T, header=F, 
+          omit.stat = c("ser","ll","rsq","adj.rsq","f"), 
+          covariate.labels = "Assistance",
+          title= "Linear with Bandwidth 19", type="html")
+
+# create table for bandwidth 12
+stargazer(lm(age5_9_injury_rate~dummy+poly(rate,2)+poly(ratedum,2), 
+             data=subset(sub,bandwidth12==1)),
+          lm(age5_9_sum2~dummy+poly(rate,2)+poly(ratedum,2), 
+             data=subset(sub,bandwidth12==1)),
+          lm(age25plus_sum2~dummy+poly(rate,2)+poly(ratedum,2), 
+             data=subset(sub,bandwidth12==1)),
+          lm(rate_5964~dummy+poly(rate,2)+poly(ratedum,2), 
+             data=subset(sub,bandwidth12==1)),
+          keep = "dummy",report="c*sp", p.auto = T, header=F, 
+          omit.stat = c("ser","ll","rsq","adj.rsq","f"), 
+          covariate.labels = "Assistance",
+          title= "Quadratic with Bandwidth 12", type="html")
+
+# create table for bandwidth 19
+stargazer(lm(age5_9_injury_rate~dummy+poly(rate,2)+poly(ratedum,2), 
+             data=subset(sub,bandwidth19==1)),
+          lm(age5_9_sum2~dummy+poly(rate,2)+poly(ratedum,2), 
+             data=subset(sub,bandwidth19==1)),
+          lm(age25plus_sum2~dummy+poly(rate,2)+poly(ratedum,2), 
+             data=subset(sub,bandwidth19==1)),
+          lm(rate_5964~dummy+poly(rate,2)+poly(ratedum,2), 
+             data=subset(sub,bandwidth19==1)),
+          keep = "dummy",report="c*sp", p.auto = T, header=F, 
+          omit.stat = c("ser","ll","rsq","adj.rsq","f"), 
+          covariate.labels = "Assistance",
+          title= "Quadratic with Bandwidth 19", type="html")
+```
+

@@ -1,11 +1,13 @@
 ---
 title: "Problem Set 3"
-author: 
-  - Fenqi Guo
-  - Wenjie Tu
-subtitle: "MOEC0021 Empirical Methods"
+author:
+- Fenqi Guo
+- Wenjie Tu
 date: "Fall Semester 2020"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
+subtitle: MOEC0021 Empirical Methods
 ---
 
 # Instrumental Variables
@@ -115,7 +117,7 @@ twihigh + age + agesq, data = d.twins)
 
 stargazer(model1.ols, model1.iv.1, model1.iv.2, 
           title='Reproduction for Results', header = F, single.row = T, 
-          model.names = F, keep.stat=c('n', 'rsq'), 
+          model.names = F, keep.stat=c('n', 'rsq'), type = "html", 
           column.labels=c('OLS', 'IV (Paper 2003)', 'IV (Paper 2011)'))
 ```
 
@@ -174,7 +176,7 @@ model.2ndstage <- lm(lnearn ~ highqua + age + agesq + model.1ststage$residuals,
                      data = d.twins)
 stargazer(model.1ststage, model.2ndstage, model1.iv.2, keep.stat = c('n', 'rsq', 'f'), 
           title = 'Test relevance', header = F, single.row = T, model.names = F, 
-          column.labels = c("1st stage", "2nd stage", "IV"))
+          column.labels = c("1st stage", "2nd stage", "IV"), type = "html")
 ```
 
 ```{r}
@@ -224,7 +226,7 @@ model2.iv <- ivreg(dlnearn ~ 0 + dhigh | 0 + dtwihigh, data = d.twins.wide)
 
 stargazer(model2.ols, model2.iv, header = F, keep.stat = c("n", "rsq"), 
           title = "Regression results from 2(c)", single.row = T, 
-          model.names = F, column.labels = c("OLS", "IV"))
+          model.names = F, column.labels = c("OLS", "IV"), type = "html")
 ```
 
 #### i
@@ -240,7 +242,7 @@ model3.iv <- ivreg(dlnearn ~ 1 + dhigh | 1 + dtwihigh, data = d.twins.wide)
 stargazer(model2.ols, model2.iv, model3.ols, model3.iv, 
           header = F, keep.stat = c("n", "rsq"), model.names = F,  
           title = "Regression results from 2(c)", no.space = T,  
-          column.labels = c("OLS", "IV", "OLS", "IV"))
+          column.labels = c("OLS", "IV", "OLS", "IV"), type = "html")
 ```
 
 The constant is excluded in the regression because theoretically, after taking the difference, constants cancel each other out. We run the regressions with constant and see that the constant is not statistically different from zero as expected.
@@ -251,7 +253,7 @@ The constant is excluded in the regression because theoretically, after taking t
 stargazer(model1.ols, model2.ols, header = F, keep.stat = c("n", "rsq"), 
           model.names = F, column.labels = c("pooled", "within-family"), 
           title = "OLS regressions comparsion between (a) and (c)", no.space = T, 
-          keep = c("highqua", "dhigh"), single.row = T)
+          keep = c("highqua", "dhigh"), single.row = T, type = "html")
 ```
 
 In OLS regressions, within estimator is smaller than pooled estimator. The increase in the standard errors can be attributed to the decrease in the number of observations. By taking the difference, we try to mitigate the endogeneity problem caused by the omission of a variable to proxy for ability. Twins should have similar innate ability, so by taking the difference, any correlation between the regressors and the error term should be removed. The OVB for ability should be positive and we therefore expect a corrected coefficient to be smaller.
@@ -266,7 +268,7 @@ stargazer(model1.ols, model2.ols, model1.iv.2, model2.iv, header = F,
           column.labels = c("pooled (OLS)", "within (OLS)", 
                             "pooled (IV)", "within (IV)"), 
           title = "Pooled and within estimates in OLS and IV", 
-          keep = c("highqua", "dhigh"), single.row = T)
+          keep = c("highqua", "dhigh"), single.row = T, type = "html")
 ```
 
 In IV estimations, within estimator is smaller than pooled estimator. By instrumenting with the difference in twins' estimated years of schooling, we are trying to remove measurement error along with the ability (or parents' income) bias. The measurement error should bias the estimate downwards. We therefore expect $\hat{\beta}_{IV}>\hat{\beta}_{OLS}$.
@@ -289,7 +291,7 @@ d.twins.amin <- d.twins.wide[d.twins.wide$absearn <= 60, ]
 model4.ols <- lm(dlnearn ~ 0 + dhigh, data = d.twins.amin)
 model4.iv <- ivreg(dlnearn ~ 0 + dhigh | 0 + dtwihigh, data = d.twins.amin)
 
-stargazer(model2.ols, model2.iv, model4.ols, model4.iv, no.space = T,  
+stargazer(model2.ols, model2.iv, model4.ols, model4.iv, no.space = T, type = "html", 
           keep.stat = c('n', 'rsq'), header = F, model.names = F, single.row = T, 
           column.labels = c("OLS (outliers)", "IV (outliers)", 
                             "OLS (no outliers)", "IV (no outliers)"))

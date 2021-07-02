@@ -1,11 +1,13 @@
 ---
 title: "Problem Set 4"
-author: 
-  - Fenqi Guo
-  - Wenjie Tu
-subtitle: "MOEC0021 Empirical Methods"
+author:
+- Fenqi Guo
+- Wenjie Tu
 date: "Fall Semester 2020"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
+subtitle: MOEC0021 Empirical Methods
 ---
 
 # Endogeneity and Panel Data
@@ -219,7 +221,7 @@ pooled.ols <- lm(reg.ols, data = d.mort)
 pooled.ols.cluster <- felm(reg.ols.cluster, data = d.mort) 
 
 stargazer(pooled.ols, pooled.ols.cluster, header = F, 
-          title = "Pooled OLS regressions in 2(a)", 
+          title = "Pooled OLS regressions in 2(a)", type = "html", 
           keep.stat = c("n", "rsq"), digits = 4, single.row = T)
 ```
 
@@ -256,7 +258,7 @@ reg.fe1
 
 ```{r message=F, warning=F, results="asis"}
 fe.state.and.month <- felm(reg.fe1, data = d.mort)
-stargazer(fe.state.and.month, header = F, single.row = T, digits = 4,
+stargazer(fe.state.and.month, header = F, single.row = T, digits = 4, type = "html", 
           keep.stat = c("n", "rsq"), title = "Additive fixed effects regression")
 ```
 
@@ -275,7 +277,7 @@ reg.fe2
 ```{r message=F, warning=F, results="asis"}
 fe.state.by.month <- felm(reg.fe2, data = d.mort)
 stargazer(pooled.ols.cluster, fe.state.and.month, fe.state.by.month, 
-          header = F, single.row = T, digits = 4, 
+          header = F, single.row = T, digits = 4, type = "html", 
           keep.stat = c("n", "rsq"), keep = "bin_10", 
           column.labels = c("Pooled OLS", "Additive FE" ,"Multiplicative FE"), 
           title = "Rregressions results comparison")
@@ -357,7 +359,7 @@ reg.fe3
 ```{r message=F, warning=F, results="asis"}
 model.fe <- felm(reg.fe3, data = d.mort)
 stargazer(model.fe, title = "Regression resulst in 2(g)",
-          header = F, single.row = T, digits = 4, 
+          header = F, single.row = T, digits = 4, type = "html", 
           keep.stat = c("n", "rsq"), keep = "bin_10")
 ```
 
@@ -377,8 +379,9 @@ cvd.fe <- felm(reg.fe5, data = d.mort)
 
 ```{r message=F, warning=F, results="asis"}
 model.fe <- felm(reg.fe3, data = d.mort)
-stargazer(model.fe, mva.fe, cvd.fe, title = "Regression results in 2(h)", header = F,
-          single.row = T, digits = 4, keep.stat = c("n", "rsq"), keep = "bin_10")
+stargazer(model.fe, mva.fe, cvd.fe, title = "Regression results in 2(h)", 
+          header = F, single.row = T, digits = 4, keep.stat = c("n", "rsq"), 
+          keep = "bin_10", type = "html")
 ```
 
 We obtain $\hat{\theta}_{10}^{mva}=-0.006$ when using the log mortality rate due to motor-vehicle accidents as dependent variable and $\hat{\theta}_{10}^{cvd}=-0.0133$ when using cardiovascular diseases. These results make us more inclined to attribute a causal interpretation to our estimate in 2(d).
