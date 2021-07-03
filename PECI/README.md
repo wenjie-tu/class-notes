@@ -2,23 +2,18 @@
 
 This directory is made for the course *Program Evaluation and Causal Inference*.
 
-## Problem sets:
+| Topic                           | Problem Set                                    | Solutions                  |
+| ------------------------------- | ---------------------------------------------- | -------------------------- |
+| Review Exercise                 | [Problem set 1](PS1/review_exercises.pdf)      | [Solutions 1](PS1/PS1.pdf) |
+| Treatment Effects               | [Problem set 2](PS2/treatment_effects.pdf)     | [Solutions 2](PS2/PS2.pdf) |
+| Randomized Experiments          | [Problem set 3](PS3/randomized_experiment.pdf) | [Solutions 3](PS3/PS3.pdf) |
+| Instrumental Variables          | [Problem set 4](PS4/PS4_iv.pdf)                | [Solutions 4](PS4/PS4.pdf) |
+| Difference in Differences       | [Problem set 5](PS5/did_2021.pdf)              | [Solutions 5](PS5/PS5.pdf) |
+| Regression Discontinuity Design | [Problem set 6](PS6/rdd_2021.pdf)              | [Solutions 6](PS6/PS6.pdf) |
+| Matching                        | [Problem set 7](PS7/matching_2021.pdf)         | [Solutions 7](PS7/PS7.pdf) |
 
-* [Problem set 1](PS1/review exercises.pdf)
-* [Problem set 2](PS2/treatment_effects.pdf)
-* [Problem set 3](PS3/randomized_experiment.pdf)
-* [Problem set 4](PS4/PS4_iv.pdf)
-* [Problem set 5](PS5/did_2021.pdf)
-* [Problem set 6](PS6/rdd_2021.pdf)
-* [Problem set 7](PS7/matching_2021.pdf)
+**Note:**
 
-## Solutions and corresponding topic:
-
-* Solutions to PS1: [Review Exercise](PS1/PS1.pdf)
-* Solutions to PS2: [Treatment Effects](PS2/PS2.pdf)
-* Solutions to PS3: [Randomized Experiments](PS3/PS3.pdf)
-* Solutions to PS4: [Instrumental Variables](PS4/PS4.pdf)
-* Solutions to PS5: [Difference in Differences](PS5/PS5.pdf)
-* Solutions to PS6: [Regression Discontinuity Design](PS6/PS6.pdf)
-* Solutions to PS7: [Matching](PS7/PS7.pdf)
+* Check out for [course description](Syllabus2021.pdf).
+* Seven problem sets count toward 30% of the final grade.
 
