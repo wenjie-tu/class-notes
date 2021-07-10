@@ -33,6 +33,21 @@ $$
 
 $$
 \begin{aligned}
+Cov(y_i,z_i)&=Cov(\beta_0+\beta_1x_i+u_i,z_i) \\
+&=\beta_1Cov(x_i,z_i)+
+\underbrace{Cov(u_i,z_i)}_{0} \\
+&=\beta_1Cov(x_i,z_i)
+\end{aligned}
+$$
+
+$$
+\beta_1=\frac{Cov(y_i,z_i)}{Cov(x_i,z_i)}
+$$
+
+where $Cov(y_i,z_i)$ can be obtained from reduced-form equation and $Cov(x_i,z_i)$ can be obtained from first-stage regression.
+
+$$
+\begin{aligned}
 \hat{\beta}_{IV}&=\frac{\widehat{Cov(y_i,z_i)}}{\widehat{Cov(x_i,z_i)}} \\
 &=\frac{\sum_{i=1}^n(z_i-\overline{z})(y_i-\overline{y})}
 {\sum_{i=1}^n(z_i-\overline{z})(x_i-\overline{x})} \\
@@ -58,10 +73,24 @@ $$
 &=\frac{\beta_0\sum_{i=1}^n(z_i-\overline{z})+
 \beta_1\sum_{i=1}^n(z_i-\overline{z})x_i+\sum_{i=1}^n(z_i-\overline{z})u_i}
 {\sum_{i=1}^n(z_i-\overline{z})x_i} \\
-&=\beta_1+\frac{\sum_{i=1}^n(z_i-\overline{z})u_i}
-{\sum_{i=1}^n(z_i-\overline{z})x_i}
+&=\beta_1+
+\underbrace{\frac{\sum_{i=1}^n(z_i-\overline{z})u_i}
+{\sum_{i=1}^n(z_i-\overline{z})x_i}}_\text{bias}
 \end{aligned}
 $$
+
+$$
+\begin{aligned}
+\mathbb{E}\left[\hat{\beta}_{IV}\mid x_i,z_i\right]&=
+\beta_1+\mathbb{E}\left[\frac{\sum_{i=1}^n(z_i-\overline{z})u_i}
+{\sum_{i=1}^n(z_i-\overline{z})x_i}\middle\rvert x_i,z_i \right] \\
+&=\beta_1+\frac{\sum_{i=1}^n(z_i-\overline{z})}
+{\sum_{i=1}^n(z_i-\overline{z})x_i}
+\underbrace{\mathbb{E}\left[u_i\mid x_i,z_i\right]}_{\neq0}
+\end{aligned}
+$$
+
+$\mathbb{E}\left[u_i\mid x_i,z_i\right]\neq0$ since $u_i \not\perp x_i$.
 
 ### 1(c)
 
@@ -76,11 +105,12 @@ p\lim(\hat{\beta}_{IV}-\beta_1)&=\frac{p\lim\sum_{i=1}^n(z_i-\overline{z})u_i}
 &\approx\frac{Cov(z_i,u_i)}{Cov(z_i, x_i)}=0
 \end{aligned}
 $$
-$\hat{\beta}_{IV}$ is a consistent estimator of $\beta_1$.
+
+By *Exogeneity Assumption*, $Cov(z_i,u_i)=0$ and by *Relevance Assumption*, $Cov(z_i,x_i)\neq0$ Therefore, $\hat{\beta}_{IV}$ is a consistent estimator of $\beta_1$.
 
 ### 1(d)
 
-In a small sample, $\hat{\beta}_{IV}$ is biased. But as the sample increases, $\beta_{IV}$ will probability converge to the $\beta_1$. Therefore, in a large sample, IV estimator will never affect the consistency of the true estimator regardless of whether there exists an endogenous problem. 
+In a small sample, $\hat{\beta}_{IV}$ is biased. But as the sample increases, $\beta_{IV}$ will probability converge to the $\beta_1$. Therefore, in a large sample, IV estimator will be a consistent estimator of $\beta_1$ regardless of whether there exists an endogeneity problem. 
 
 ## 2. Derivation of the Wald estimator
 
@@ -91,19 +121,19 @@ From question 1, we know that
 $$
 \begin{aligned}
 \delta^{W}=\hat{\beta}_1&=\frac{Cov(y_i,z_i)}{Cov(d_i,z_i)} \\
-&=\frac{\mathbb{E}(y_i|z_i=1)-\mathbb{E}(y_i|z_i=1)}
-{\mathbb{E}(d_i|z_i=1)-\mathbb{E}(d_i|z_i=1)}
+&=\frac{\mathbb{E}[y_i|z_i=1]-\mathbb{E}[y_i|z_i=0]}
+{\mathbb{E}[d_i|z_i=1]-\mathbb{E}[d_i|z_i=0]}
 \\
-&=\frac{\mathbb{E}(\beta_1+\beta_1d_i+u_i|z_i=1)-\mathbb{E}(\beta_1+\beta_1d_i+u_i|z_i=0)}
-{\mathbb{E}(d_i|z_i=1)-\mathbb{E}(d_i|z_i=0)} \\
-&=\frac{\beta_1\mathbb{E}(d_i|z_i=1)+\mathbb{E}(u_i|z_i=1)-
-\beta_1\mathbb{E}(d_i|z_i=0)-\mathbb{E}(u_i|z_i=0)}
-{\mathbb{E}(d_i|z_i=1)-\mathbb{E}(d_i|z_i=0)} \\
-&=\frac{\beta_1(\mathbb{E}(d_i|z_i=1)-\mathbb{E}(d_i|z_i=0))+
-\mathbb{E}(u_i|z_i=1)-\mathbb{E}(u_i|z_i=0) }
-{\mathbb{E}(d_i|z_i=1)-\mathbb{E}(d_i|z_i=0)} \\
-&=\beta_1+\frac{\mathbb{E}(u_i|z_i=1)-\mathbb{E}(u_i|z_i=0)}
-{\mathbb{E}(d_i|z_i=1)-\mathbb{E}(d_i|z_i=0)}
+&=\frac{\mathbb{E}[\beta_1+\beta_1d_i+u_i|z_i=1]-\mathbb{E}[\beta_1+\beta_1d_i+u_i|z_i=0]}
+{\mathbb{E}[d_i|z_i=1)-\mathbb{E}(d_i|z_i=0]} \\
+&=\frac{\beta_1\mathbb{E}[d_i|z_i=1]+\mathbb{E}[u_i|z_i=1]-
+\beta_1\mathbb{E}[d_i|z_i=0]-\mathbb{E}[u_i|z_i=0]}
+{\mathbb{E}[d_i|z_i=1)-\mathbb{E}(d_i|z_i=0]} \\
+&=\frac{\beta_1\left(\mathbb{E}[d_i|z_i=1]-\mathbb{E}[d_i|z_i=0]\right)+
+\mathbb{E}[u_i|z_i=1]-\mathbb{E}[u_i|z_i=0] }
+{\mathbb{E}[d_i|z_i=1]-\mathbb{E}[d_i|z_i=0]} \\
+&=\beta_1+\frac{\mathbb{E}[u_i|z_i=1]-\mathbb{E}[u_i|z_i=0]}
+{\mathbb{E}[d_i|z_i=1]-\mathbb{E}[d_i|z_i=0]} 
 \end{aligned}
 $$
 
@@ -111,25 +141,30 @@ $$
 
 In order to identify $\beta_1$ using the instrument, we need
 $$
-\frac{\mathbb{E}(u_i|z_i=1)-\mathbb{E}(u_i|z_i=0)}
-{\mathbb{E}(d_i|z_i=1)-\mathbb{E}(d_i|z_i=0)}=0
+\frac{\mathbb{E}[u_i|z_i=1]-\mathbb{E}[u_i|z_i=0]}
+{\mathbb{E}[d_i|z_i=1]-\mathbb{E}[d_i|z_i=0]}=0
 \iff
-\mathbb{E}(u_i|z_i=1)=\mathbb{E}(u_i|z_i=0)
+\begin{cases}
+\mathbb{E}[u_i|z_i=1]=\mathbb{E}[u_i|z_i=0] & \text{Exclusion Assumption} \\
+\mathbb{E}[d_i|z_i=1]\neq\mathbb{E}[d_i|z_i=0] & \text{Relevance Assumption}
+\end{cases}
 $$
 
 \textbf{Assumptions}
 
 \begin{itemize}
 \item SUTVA (Stable Unit Treatment Value Assumption): outcomes of the \textit{i}th individual are independent of other individuals' outcome
-\item Exclusion restriction: $\mathbb{E}(y_i|z=1,d)=\mathbb{E}(y_i|z=0,d)\quad\forall i=0,1$
-\item Instrument assumption: $\mathbb{E}(d|z=1)\neq\mathbb{E}(d|z=0)$
-\item Monotonicity assumption: $d_i(z_i=1)\geq d_i(z_i=0)\quad\forall i$
+\item Exclusion restriction: $\mathbb{E}[y_i|z=1,d]=\mathbb{E}[y_i|z=0,d]\quad\forall i=0,1$
+\item Relevance assumption: $\mathbb{E}[d|z=1]\neq\mathbb{E}[d|z=0]$
+\item Monotonicity assumption: $d_i[z_i=1]\geq d_i[z_i=0]\quad\forall i$
 \end{itemize}
 
-Only instrument assumption can be tested empirically. The vadility of other assumptions must be assessd on a case-by-case basis.
+Only relevance assumption can be tested empirically. The vadility of other assumptions must be assessed on a case-by-case basis.
 
 
 ## 3. Self selection revisited
+
+### 3(a)
 
 $$
 \begin{aligned}
@@ -150,12 +185,12 @@ $$
 
 $$
 \begin{aligned}
-\Delta^{\text{ATT}}&=\mathbb{E}(Y_{1i}-Y_{0i}|D=1) \\
-&=\mathbb{E}(\beta_1+u_{1i}-u_{0i}|D=1) \\
-&=\beta_1+\mathbb{E}(u_{1i}-u_{0i}|D=1) \\
-&=\Delta^{\text{ATE}}+\mathbb{E}(u_{1i}-u_{0i}|D=1) \\
-\mathbb{E}(u_{1i}-u_{0i}|D=1)&=\mathbb{E}(u_{1i}-u_{0i}|\beta_1+u_{1i}-u_{0i}>0) \\
-&=\mathbb{E}(u_{1i}-u_{0i}|u_{1i}-u_{0i}>-\beta_1)>0
+\Delta^{\text{ATT}}&=\mathbb{E}(Y_{1i}-Y_{0i}\mid D=1) \\
+&=\mathbb{E}(\beta_1+u_{1i}-u_{0i}\mid D=1) \\
+&=\beta_1+\mathbb{E}(u_{1i}-u_{0i}\mid D=1) \\
+&=\Delta^{\text{ATE}}+\mathbb{E}(u_{1i}-u_{0i}\mid D=1) \\
+\mathbb{E}(u_{1i}-u_{0i}\mid D=1)&=\mathbb{E}(u_{1i}-u_{0i}\mid\beta_1+u_{1i}-u_{0i}>0) \\
+&=\mathbb{E}(u_{1i}-u_{0i}\mid u_{1i}-u_{0i}>-\beta_1)>0
 \end{aligned}
 $$
 ATT is larger than ATE.
@@ -164,65 +199,82 @@ ATT is larger than ATE.
 
 $$
 \begin{aligned}
-\Delta^{\text{naive}}&=\mathbb{E}(Y_{1i}|D=1)-\mathbb{E}(Y_{0i}|D=0)\\
-&=\mathbb{E}(Y_{1i}|D=1)-\mathbb{E}(Y_{0i}|D=0)
-\color{red}{-\mathbb{E}(Y_{0i}|D=1)+\mathbb{E}(Y_{0i}|D=1)} \\
-&=\underbrace{\mathbb{E}(Y_{1i}|D=1)-\mathbb{E}(Y_{0i}|D=1)}_{\Delta^{\text{ATT}}}+
-\underbrace{\mathbb{E}(Y_{0i}|D=1)-\mathbb{E}(Y_{0i}|D=0)}_\text{selection bias}
+\Delta^{\text{naive}}&=\mathbb{E}(Y_{1i}\mid D=1)-\mathbb{E}(Y_{0i}\mid D=0)\\
+&=\mathbb{E}(Y_{1i}\mid D=1)-\mathbb{E}(Y_{0i}\mid D=0)
+\color{red}{-\mathbb{E}(Y_{0i}\mid D=1)+\mathbb{E}(Y_{0i}\mid D=1)} \\
+&=\underbrace{\mathbb{E}(Y_{1i}\mid D=1)-\mathbb{E}(Y_{0i}\mid D=1)}_{\Delta^{\text{ATT}}}+
+\underbrace{\mathbb{E}(Y_{0i}\mid D=1)-\mathbb{E}(Y_{0i}\mid D=0)}_\text{selection bias}
 \end{aligned}
 $$
 
 $$
 \begin{aligned}
-\text{selection bias}&=\mathbb{E}(Y_{0i}|D=1)-\mathbb{E}(Y_{0i}|D=0) \\
-&=\mathbb{E}(\beta_0+u_{0i}|\beta_1+u_{1i}-u_{0i}>0)-\mathbb{E}(\beta_0+u_{0i}|u_{1i}-u_{0i}\leq0) \\
-&=\mathbb{E}(u_{0i}|u_{1i}-u_{0i}>-\beta_1)-\mathbb{E}(u_{0i}|u_{1i}-u_{0i}\leq0) \\
-&=\mathbb{E}(u_{0i}|u_{1i}-u_{0i}>-\beta_1)-\mathbb{E}(u_{0i}|u_{1i}-u_{0i}>0)
-\quad\text{symmetric distribution} \\
-&>0
+\text{selection bias}&=\mathbb{E}(Y_{0i}\mid D=1)-\mathbb{E}(Y_{0i}\mid D=0) \\
+&=\mathbb{E}(\beta_0+u_{0i}\mid \beta_1+u_{1i}-u_{0i}>0)-\mathbb{E}(\beta_0+u_{0i}\mid \beta_1+u_{1i}-u_{0i}\leq0) \\
+&=\underbrace{\mathbb{E}(u_{0i}\mid u_{0i}<u_{1i}+\beta_1)}_\text{negative}-
+\underbrace{\mathbb{E}(u_{0i}\mid u_{0i}\geq u_{1i}+\beta_1)}_\text{positive} \\
+&<0
 \end{aligned}
 $$
 
-If individuals can self-select themselves into the program, the naive estimator will be larger since the selection bias is positive ($\mathbb{E}(Y_{0i}|D=1)>\mathbb{E}(Y_{0i}|D=0)$)
+If individuals can self-select themselves into the program, the naive estimator will be underestimated since the selection bias is negative ($\mathbb{E}(Y_{0i}|D=1)<\mathbb{E}(Y_{0i}|D=0)$)
 
 ### 3(c)
 
-
 $$
-\begin{aligned}
-\text{LATE}&=\frac{\mathbb{E}(Y|Z=1)-\mathbb{E}(Y|Z=0)}
-{\mathbb{E}(D|Z=1)-\mathbb{E}(D|Z=0)} \\
-&=\frac{\mathbb{E}(Y|Z=1)-\mathbb{E}(Y|Z=0)}{\mathbb{E}(D_{1i}|Z=1)-\mathbb{E}(D_{0i}|Z=0)} \\
-&=\frac{\mathbb{E}(Y|Z=1)-\mathbb{E}(Y|Z=0)}{\mathbb{E}(\pmb{1}(Y_{1i}-Y_{0i}+1>0))-
-\mathbb{E}(\pmb{1}(Y_{1i}-Y_{0i}>0))} \\
-&=\frac{\mathbb{E}(Y|Z=1)-\mathbb{E}(Y|Z=0)}{\mathbb{E}(\pmb{1}(\beta_1+u_{1i}-u_{0i}+1>0))-
-\mathbb{E}(\pmb{1}(\beta_1+u_{1i}-u_{0i}>0))} \\
-&=\frac{\mathbb{E}(Y|Z=1)-\mathbb{E}(Y|Z=0)}{\mathbb{E}(\beta_1+u_{1i}-u_{0i}+1)-
-\mathbb{E}(\beta_1+u_{1i}-u_{0i})} \\
-&=\mathbb{E}(Y|Z=1)-\mathbb{E}(Y|Z=0) \\
-&=\text{ITT}
-\end{aligned}
+\begin{cases}
+D_{1i}=\pmb{1}(Y_{1i}-Y_{0i}+Z_i>0) & Z_i=1 \\
+D_{0i}=\pmb{1}(Y_{1i}-Y_{0i}>0) & Z_i=0
+\end{cases}
 $$
 
+$$
+\begin{cases}
+D_{1i}=\pmb{1}(u_{1i}-u_{0i}>-\beta_1-Z_i) & Z_i=1 \\
+D_{0i}=\pmb{1}(u_{1i}-u_{0i}>-\beta_1) & Z_i=0
+\end{cases}
+$$
+
+In order to identify LATE, we need to determine the conditions for compliers. Compliers are those who are induced to switch treatment status as a result of the instrument. Therefore, D_{1i}>D_{0i}$ should hold for compliers.
+
+$$
+\textrm{LATE}=\mathbb{E}(Y_{1i}-Y_{0i}\mid D_{1i}>D_{0i})
+$$
 ### 3(d)
 
 $$
-\text{LATE}=\frac{\text{ITT}}{\text{proportion of compliers}}=\text{ITT}
+D_{1i}>D_{0i}\implies
+\begin{cases}
+D_{1i}=1 \\
+D_{0i}=0
+\end{cases}\implies
+\begin{cases}
+u_{1i}-u_{0i}>-\beta_1-Z_1 \\
+u_{1i}-u_{0i}<-\beta_1
+\end{cases}\implies
+-\beta_1-Z_1<u_{1i}+u_{0i}<-\beta_1
 $$
-We can derive that the proportion of compliers in the randomization experiment is 1. In other words, the instrument is randomly assigned with perfect compliance. Therefore, LATE=ATE.
 
+$$
+\begin{aligned}
+\textrm{LATE}&=\mathbb{E}(Y_{1i}-Y_{0i}\mid D_{1i}>D_{0i}) \\
+&=\beta_1+\mathbb{E}(u_{1i}-u_{0i}\mid D_{1i}>D_{0i}) \\
+&=\beta_1+
+\underbrace{\mathbb{E}(u_{1i}-u_{0i}\mid-\beta_1-Z_1<u_{1i}+u_{0i}<-\beta_1 )}_{<-\beta_1} \\
+&<\beta_1\equiv\textrm{ATE}
+\end{aligned}
+$$
 
 ## 4. Application: Angrist's (1990) study on military service
 
 ### 4(a)
 
-$$
-\ln(\widehat{\text{earnings}_i})=6.4364
-\underbrace{-0.0255}_\text{treatment effect}\cdot\text{veteran}_i+
-\underbrace{\beta\cdot x_i}_\text{other omitted control variables}
-$$
+The OLS estimate may be biased:
 
-Earnings are not only determined by the veteran status. There are some omitted variables.
+\begin{itemize}
+\item There may be a self-selection bias from participants. People may self-select themselves into or not into the program.
+\item There may be a self-selection bias from experimenter. The military authority can select who can join the army and who cannot.
+\end{itemize}
 
 ### 4(b)
 
@@ -236,23 +288,40 @@ rownames(df) <- c('$D=0$', '$D=1$')
 knitr::kable(df)
 ```
 
-Due to monotonicity:
+**Due to monotonicity:**
 
-\begin{itemize}
-\item In the observed $Z=0$ group, the individuals who received treatment ($D=1$) must be always-takers.
-\[p_A=\frac{\sum_iD_i(Z_i=0)}{\sum_iZ_i=0}=\frac{1400}{5928+1400}=0.191 \]
-\item In the observed $Z=1$ group, the individuals who did not receive treatment ($D=0$) must be never-takers.
-\[p_N=\frac{\sum_iD_i(Z_i=1)}{\sum_iZ_i=1}=\frac{1875}{1875+863}=0.685 \]
-\end{itemize}
+In the observed $Z=0$ group, the individuals who received treatment ($D=1$) must be always-takers.
 
-Due to randomization:
+$$
+p_A=\mathbb{E}(D_i\mid Z_i=0)=
+\frac{\sum_i\pmb{1}(D_i[Z_i=0]=1)}{\sum_i\pmb{1}(Z_i=0)}=
+\frac{1400}{5928+1400}=0.191
+$$
 
-\begin{itemize}
-\item The proportions of compliers, always-takers, and never-takers are the same between $Z=0$ and $Z=1$ group.
-\[p_C=1-p_A-p_N=0.124 \]
-\end{itemize}
+In the observed $Z=1$ group, the individuals who did not receive treatment ($D=0$) must be never-takers.
 
-**Note:**
+$$
+p_N=1-\mathbb{E}(D_i\mid Z_i=1)=
+\frac{\sum_i\pmb{1}(D_i[Z_i=1]=0)}{\sum_i\pmb{1}(Z_i=1)}=\frac{1875}{1875+863}=0.685
+$$
+
+$$
+\begin{aligned}
+p_C&=\mathbb{E}(D_i\mid Z_i=1)-\mathbb{E}(D_i\mid Z_i=0) \\
+&=1-0.685-0.191 \\
+&=0.124
+\end{aligned}
+$$
+
+**Due to randomization:**
+
+The proportions of compliers, always-takers, and never-takers are the same between $Z=0$ and $Z=1$ group.
+
+$$
+p_C=1-p_A-p_N=0.124
+$$
+
+Note:
 
 \begin{itemize}
 \item $N$ denotes \textbf{never takers}
@@ -275,41 +344,50 @@ knitr::kable(df)
 ```
 
 \begin{itemize}
-\item Average potential outcome for always-takers $\mathbb{E}(Y_1|Z=1,A)=6.4028$
-\item Average potential outcome for never-takers $\mathbb{E}(Y_0|Z=0,N)=6.4076$
+\item Average potential outcome for always-takers $\mathbb{E}(Y_{1i}\mid D_i=1,Z_i=0)=6.4076$
+\item Average potential outcome for never-takers $\mathbb{E}(Y_{0i}\mid D_i=0,Z_i=1)=6.4028$
 \end{itemize}
 
+Average potential outcome for compliers:
+
 In $Z=0$ group:
+
 $$
-\frac{p_C}{p_N+p_C}\times \mathbb{E}(Y_0|Z=0,C)+\frac{p_N}{p_N+p_C}\times
-\mathbb{E}(Y_0|Z=0,N)=6.4472 \implies
-\mathbb{E}(Y_0|Z=0,C)=6.666
+\underbrace{\mathbb{E}(Y_0\mid D=0,Z=0)}_{6.4472}=
+\frac{p_C}{p_N+p_C}\times\mathbb{E}(Y_{0i}\mid D_{1i}>D_{0i})+
+\frac{p_N}{p_N+p_C}\times\mathbb{E}(Y_{0i}\mid D_{1i}=0)
+$$
+
+$$
+\mathbb{E}(Y_{0i}\mid D_{1i}>D_{0i})=6.6867
 $$
 
 In $Z=1$ group:
+
 $$
-\frac{p_C}{p_A+p_C}\times \mathbb{E}(Y_1|Z=1,C)+\frac{p_A}{p_A+p_C}\times
-\mathbb{E}(Y_1|Z=1,A)=6.4289 \implies
-\mathbb{E}(Y_1|Z=1,C)=6.4691
+\underbrace{\mathbb{E}(Y_1\mid D=1,Z=1)}_{6.4289}=
+\frac{p_C}{p_A+p_C}\times\mathbb{E}(Y_{1i}\mid D_{1i}>D_{0i})+
+\frac{p_A}{p_A+p_C}\times\mathbb{E}(Y_{1i}\mid D_{1i}=0)
+$$
+
+$$
+\mathbb{E}(Y_{1i}\mid D_{1i}>D_{0i})=6.4616
 $$
 
 \begin{itemize}
-\item Average potential outcome for untreated compliers $\mathbb{E}(Y_0|Z=0,C)=6.666$
-\item Average potential outcome for treated compliers $\mathbb{E}(Y_1|Z=1,C)=6.4691$
+\item Average potential outcome for untreated compliers $\mathbb{E}(Y_0|Z=0,C)=6.6867$
+\item Average potential outcome for treated compliers $\mathbb{E}(Y_1|Z=1,C)=6.4616$
 \end{itemize}
 
 ### 4(d)
 
 $$
 \begin{aligned}
-\delta&=\frac{\mathbb{E}(Y|Z=1)-\mathbb{E}(Y|Z=0)}{\mathbb{E}(Y|Z=1)-\mathbb{E}(Y|Z=0)} \\
-&=\frac{p_C[\mathbb{E}(Y_1|Z=1,C)-\mathbb{E}(Y_0|Z=0,C)]}{p_C} \\
-&=\mathbb{E}(Y_1|Z=1,C)-\mathbb{E}(Y_0|Z=0,C) \\
-&=6.4691-6.666 \\
-&=-0.1969
+\textrm{LATE}&=\mathbb{E}(Y_{1i}\mid D_{1i}>D_{0i})-\mathbb{E}(Y_{0i}\mid D_{1i}>D_{0i}) \\
+&=6.4616-6.6867 \\
+&=-0.2251
 \end{aligned}
 $$
-
 
 ## 5. IV in action
 
@@ -319,6 +397,7 @@ $$
 library(haven) # read dta file
 library(lattice) # density plot
 library(stargazer) # print summary statistics
+library(ggplot2) # plot
 library(AER) # iv regression
 ```
 
@@ -327,14 +406,15 @@ d.mort <- read_dta('mortality.dta')
 ```
 
 ```{r}
-# outcome of interest
-summary(d.mort$before67dead)
+demo <- subset(d.mort, select = c('before67dead', 'dist65_ageATend4emp', 'Zd_during'))
+```
 
-# treatment
-summary(d.mort$dist65_ageATend4emp)
 
-# instrument
-summary(d.mort$Zd_during)
+```{r message=F, warning=F, results='asis'}
+subdata <- as.data.frame(
+  subset(d.mort, select = c('before67dead', 'dist65_ageATend4emp', 'Zd_during'))
+)
+stargazer(subdata, header = F, title = 'Descriptive Statistics', type = 'html')
 ```
 
 ### 5(b)
@@ -350,7 +430,7 @@ model.ols1 <- lm(before67dead ~ dist65_ageATend4emp + czeit1yATage50 +
 model.ols2 <- lm(before67dead ~ dist65_ageATend4emp, data=d.mort)
 
 stargazer(model.ols1, model.ols2, keep.stat='n', header=F, 
-          keep='dist65_ageATend4emp', font.size='small', type='html', 
+          keep='dist65_ageATend4emp', font.size='small', type = 'html',  
           column.labels=c('Control', 'Non-control'), digits=4, 
           title='Comparison between control and non-control')
 ```
@@ -377,10 +457,11 @@ Health status. If people are in a bad physical condition, they are more likely t
 ### 5(e)
 
 ```{r}
-densityplot(~ d.mort$dist65_ageATend4emp, auto.key = TRUE, 
-            xlab = 'the number of years spent in early retirement', 
-            data = data.frame(treatment=d.mort$dist65_ageATend4emp, 
-                              instrument=d.mort$Zd_during))
+ggplot(d.mort, aes(x = dist65_ageATend4emp)) + 
+  geom_density(aes(group = factor(Zd_during), 
+                   color = factor(Zd_during), 
+                   fill = factor(Zd_during)), alpha = 0.5) + 
+  theme_minimal() + ggtitle('The density of endogeneous variable by instrument')
 ```
 
 ### 5(f)
@@ -394,13 +475,13 @@ iv.1st.stage <- ivreg(dist65_ageATend4emp ~ Zd_during*as.factor(halfyearOFbirth)
                         I(czeit25yATage50^2) + as.factor(halfyearOFbirth) + 
                         as.factor(nutsATage50), data=d.mort)
 
-stargazer(iv.1st.stage, keep='Zd_during', keep.stat='n', header=F, type='html', 
+stargazer(iv.1st.stage, keep='Zd_during', keep.stat='n', header=F,type = 'html', 
           font.size='small', title='First stage regression', no.space=T)
 ```
 
 ### 5(g)
 
-```{r results='asis'}
+```{r warning=F, message=F, results='asis'}
 # second stage regression
 iv.2nd.stage <- lm(before67dead ~ predict(iv.1st.stage) + czeit1yATage50 + 
                      czeit2yATage50 + czeit5yATage50 + czeit10yATage50 + 
@@ -421,7 +502,7 @@ model.iv <- ivreg(before67dead ~ dist65_ageATend4emp + czeit1yATage50 +
                     I(czeit5yATage50^2) + I(czeit10yATage50^2) + I(czeit25yATage50^2) + 
                     as.factor(halfyearOFbirth) + as.factor(nutsATage50), data=d.mort)
 
-stargazer(iv.2nd.stage, model.iv, font.size='small', header=F, type='html', 
+stargazer(iv.2nd.stage, model.iv, font.size='small', header=F, type = 'html', 
           keep.stat=c('n', 'f'), title='Comparsion between 2SLS and ivreg', 
           keep=c('iv.1st.stage', 'dist65_ageATend4emp'), digits=4)
 ```
@@ -441,7 +522,7 @@ cat(sprintf('Standard errors using 2SLS: %.4f
 
 ```{r results='asis'}
 stargazer(model.ols1, model.iv, font.size='small', header=F,  
-          keep.stat=c('n', 'f'), keep='dist65_ageATend4emp', type='html', 
+          keep.stat=c('n', 'f'), keep='dist65_ageATend4emp', type = 'html', 
           title='Comparison between OLS and 2SLS results', digits=4)
 ```
 
