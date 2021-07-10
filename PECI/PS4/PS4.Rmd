@@ -8,8 +8,8 @@ author:
 - Zunhan Zhang
 subtitle: Program Evaluation and Causal Inference
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 date: 'Spring Semester 2021'
 ---
 \begin{center}
@@ -19,7 +19,7 @@ Names are listed in alphabetical order
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=T, message=F, warning=F)
 
-setwd('F:/University of Zurich/Second Semester/Program Evaluation and Causal Inference/PS4')
+setwd('D:/GitHub/class-notes/PECI/PS4')
 ```
 
 # Instrumental Variables
@@ -240,6 +240,7 @@ In order to identify LATE, we need to determine the conditions for compliers. Co
 $$
 \textrm{LATE}=\mathbb{E}(Y_{1i}-Y_{0i}\mid D_{1i}>D_{0i})
 $$
+
 ### 3(d)
 
 $$
@@ -414,7 +415,7 @@ demo <- subset(d.mort, select = c('before67dead', 'dist65_ageATend4emp', 'Zd_dur
 subdata <- as.data.frame(
   subset(d.mort, select = c('before67dead', 'dist65_ageATend4emp', 'Zd_during'))
 )
-stargazer(subdata, header = F, title = 'Descriptive Statistics', type = 'html')
+stargazer(subdata, header = F, title = 'Descriptive Statistics')
 ```
 
 ### 5(b)
@@ -430,7 +431,7 @@ model.ols1 <- lm(before67dead ~ dist65_ageATend4emp + czeit1yATage50 +
 model.ols2 <- lm(before67dead ~ dist65_ageATend4emp, data=d.mort)
 
 stargazer(model.ols1, model.ols2, keep.stat='n', header=F, 
-          keep='dist65_ageATend4emp', font.size='small', type = 'html',  
+          keep='dist65_ageATend4emp', font.size='small', 
           column.labels=c('Control', 'Non-control'), digits=4, 
           title='Comparison between control and non-control')
 ```
@@ -475,7 +476,7 @@ iv.1st.stage <- ivreg(dist65_ageATend4emp ~ Zd_during*as.factor(halfyearOFbirth)
                         I(czeit25yATage50^2) + as.factor(halfyearOFbirth) + 
                         as.factor(nutsATage50), data=d.mort)
 
-stargazer(iv.1st.stage, keep='Zd_during', keep.stat='n', header=F,type = 'html', 
+stargazer(iv.1st.stage, keep='Zd_during', keep.stat='n', header=F, 
           font.size='small', title='First stage regression', no.space=T)
 ```
 
@@ -502,7 +503,7 @@ model.iv <- ivreg(before67dead ~ dist65_ageATend4emp + czeit1yATage50 +
                     I(czeit5yATage50^2) + I(czeit10yATage50^2) + I(czeit25yATage50^2) + 
                     as.factor(halfyearOFbirth) + as.factor(nutsATage50), data=d.mort)
 
-stargazer(iv.2nd.stage, model.iv, font.size='small', header=F, type = 'html', 
+stargazer(iv.2nd.stage, model.iv, font.size='small', header=F, 
           keep.stat=c('n', 'f'), title='Comparsion between 2SLS and ivreg', 
           keep=c('iv.1st.stage', 'dist65_ageATend4emp'), digits=4)
 ```
@@ -522,7 +523,7 @@ cat(sprintf('Standard errors using 2SLS: %.4f
 
 ```{r results='asis'}
 stargazer(model.ols1, model.iv, font.size='small', header=F,  
-          keep.stat=c('n', 'f'), keep='dist65_ageATend4emp', type = 'html', 
+          keep.stat=c('n', 'f'), keep='dist65_ageATend4emp', 
           title='Comparison between OLS and 2SLS results', digits=4)
 ```
 
