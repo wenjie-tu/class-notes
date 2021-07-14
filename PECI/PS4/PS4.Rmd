@@ -121,19 +121,19 @@ From question 1, we know that
 $$
 \begin{aligned}
 \delta^{W}=\hat{\beta}_1&=\frac{Cov(y_i,z_i)}{Cov(d_i,z_i)} \\
-&=\frac{\mathbb{E}[y_i|z_i=1]-\mathbb{E}[y_i|z_i=0]}
-{\mathbb{E}[d_i|z_i=1]-\mathbb{E}[d_i|z_i=0]}
+&=\frac{\mathbb{E}[y_i\mid z_i=1]-\mathbb{E}[y_i\mid z_i=0]}
+{\mathbb{E}[d_i\mid z_i=1]-\mathbb{E}[d_i\mid z_i=0]}
 \\
-&=\frac{\mathbb{E}[\beta_1+\beta_1d_i+u_i|z_i=1]-\mathbb{E}[\beta_1+\beta_1d_i+u_i|z_i=0]}
-{\mathbb{E}[d_i|z_i=1)-\mathbb{E}(d_i|z_i=0]} \\
-&=\frac{\beta_1\mathbb{E}[d_i|z_i=1]+\mathbb{E}[u_i|z_i=1]-
-\beta_1\mathbb{E}[d_i|z_i=0]-\mathbb{E}[u_i|z_i=0]}
-{\mathbb{E}[d_i|z_i=1)-\mathbb{E}(d_i|z_i=0]} \\
-&=\frac{\beta_1\left(\mathbb{E}[d_i|z_i=1]-\mathbb{E}[d_i|z_i=0]\right)+
-\mathbb{E}[u_i|z_i=1]-\mathbb{E}[u_i|z_i=0] }
-{\mathbb{E}[d_i|z_i=1]-\mathbb{E}[d_i|z_i=0]} \\
-&=\beta_1+\frac{\mathbb{E}[u_i|z_i=1]-\mathbb{E}[u_i|z_i=0]}
-{\mathbb{E}[d_i|z_i=1]-\mathbb{E}[d_i|z_i=0]} 
+&=\frac{\mathbb{E}[\beta_1+\beta_1d_i+u_i\mid z_i=1]-\mathbb{E}[\beta_1+\beta_1d_i+u_i\mid z_i=0]}
+{\mathbb{E}[d_i\mid z_i=1)-\mathbb{E}(d_i\mid z_i=0]} \\
+&=\frac{\beta_1\mathbb{E}[d_i\mid z_i=1]+\mathbb{E}[u_i\mid z_i=1]-
+\beta_1\mathbb{E}[d_i\mid z_i=0]-\mathbb{E}[u_i\mid z_i=0]}
+{\mathbb{E}[d_i\mid z_i=1)-\mathbb{E}(d_i\mid z_i=0]} \\
+&=\frac{\beta_1\left(\mathbb{E}[d_i\mid z_i=1]-\mathbb{E}[d_i\mid z_i=0]\right)+
+\mathbb{E}[u_i\mid z_i=1]-\mathbb{E}[u_i\mid z_i=0] }
+{\mathbb{E}[d_i\mid z_i=1]-\mathbb{E}[d_i\mid z_i=0]} \\
+&=\beta_1+\frac{\mathbb{E}[u_i\mid z_i=1]-\mathbb{E}[u_i\mid z_i=0]}
+{\mathbb{E}[d_i\mid z_i=1]-\mathbb{E}[d_i\mid z_i=0]} 
 \end{aligned}
 $$
 
@@ -141,12 +141,12 @@ $$
 
 In order to identify $\beta_1$ using the instrument, we need
 $$
-\frac{\mathbb{E}[u_i|z_i=1]-\mathbb{E}[u_i|z_i=0]}
-{\mathbb{E}[d_i|z_i=1]-\mathbb{E}[d_i|z_i=0]}=0
+\frac{\mathbb{E}[u_i\mid z_i=1]-\mathbb{E}[u_i\mid z_i=0]}
+{\mathbb{E}[d_i\mid z_i=1]-\mathbb{E}[d_i\mid z_i=0]}=0
 \iff
 \begin{cases}
-\mathbb{E}[u_i|z_i=1]=\mathbb{E}[u_i|z_i=0] & \text{Exclusion Assumption} \\
-\mathbb{E}[d_i|z_i=1]\neq\mathbb{E}[d_i|z_i=0] & \text{Relevance Assumption}
+\mathbb{E}[u_i\mid z_i=1]=\mathbb{E}[u_i\mid z_i=0] & \text{Exclusion Assumption} \\
+\mathbb{E}[d_i\mid z_i=1]\neq\mathbb{E}[d_i\mid z_i=0] & \text{Relevance Assumption}
 \end{cases}
 $$
 
@@ -154,9 +154,9 @@ $$
 
 \begin{itemize}
 \item SUTVA (Stable Unit Treatment Value Assumption): outcomes of the \textit{i}th individual are independent of other individuals' outcome
-\item Exclusion restriction: $\mathbb{E}[y_i|z=1,d]=\mathbb{E}[y_i|z=0,d]\quad\forall i=0,1$
-\item Relevance assumption: $\mathbb{E}[d|z=1]\neq\mathbb{E}[d|z=0]$
-\item Monotonicity assumption: $d_i[z_i=1]\geq d_i[z_i=0]\quad\forall i$
+\item Exclusion restriction: $\mathbb{E}[y_i\mid z=1,d]=\mathbb{E}[y_i\mid z=0,d]\quad\forall i=0,1$
+\item Relevance assumption: $\mathbb{E}[d\mid z=1]\neq\mathbb{E}[d\mid z=0]$
+\item Monotonicity assumption: $d_i(z_i=1)\geq d_i(z_i=0)\quad\forall i$
 \end{itemize}
 
 Only relevance assumption can be tested empirically. The vadility of other assumptions must be assessed on a case-by-case basis.
@@ -376,8 +376,8 @@ $$
 $$
 
 \begin{itemize}
-\item Average potential outcome for untreated compliers $\mathbb{E}(Y_0|Z=0,C)=6.6867$
-\item Average potential outcome for treated compliers $\mathbb{E}(Y_1|Z=1,C)=6.4616$
+\item Average potential outcome for untreated compliers $\mathbb{E}(Y_{0i}\mid D_{1i}>D_{0i})=6.6867$
+\item Average potential outcome for treated compliers $\mathbb{E}(Y_{1i}\mid D_{1i}>D_{0i})=6.4616$
 \end{itemize}
 
 ### 4(d)
