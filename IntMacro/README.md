@@ -19,5 +19,5 @@ This directory is made for the course *International Macroeconomics*
 | [Final](Final/Final20.pdf)              | [Solutions to Final](Final/README.md)     |
 
 * Problem sets do not count towards to the final grade (they are only for practice).
-* All copy rights are reserved.
+* All copy rights reserved.
 
