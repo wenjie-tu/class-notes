@@ -1,0 +1,978 @@
+---
+title: "ISLR"
+author: "Wenjie Tu"
+output:
+  pdf_document: default
+  word_document: default
+---
+
+
+```{r echo=F}
+Sys.setenv(lang="en")
+setwd("F:/UZH/21Spring/ETH/CompStats/exercise/R") # set working directory
+rm(list = ls()) # clear the working environment
+```
+
+# Linear Regression
+
+```{r}
+library(MASS)
+library(ISLR)
+```
+
+## Simplie Linear Regression
+
+```{r}
+attach(Boston)
+data(Boston)
+names(Boston)
+```
+
+```{r}
+lm.fit <- lm(medv~lstat, data=Boston)
+summary(lm.fit)
+```
+
+```{r}
+## Confidence interval
+confint(lm.fit)
+```
+
+```{r}
+## Use predict() function to produce CIs and PIs
+predict(lm.fit, newdata=data.frame(lstat=c(5,10,15)), interval="confidence")
+predict(lm.fit, newdata=data.frame(lstat=c(5,10,15)), interval="prediction")
+```
+
+```{r}
+plot(lstat, medv)
+abline(lm.fit)
+```
+
+Note:
+
+\begin{itemize}
+  \item To draw a line with intercept \texttt{a} and slope \texttt{b}, we type \texttt{abline(a, b)}.
+\end{itemize}
+
+## Multiple Linear Regression
+
+```{r}
+lm.fit <- lm(medv~lstat+age, data=Boston)
+coef(summary(lm.fit))
+
+lm.fit <- lm(medv~., data=Boston)
+coef(summary(lm.fit))
+
+lm.fit <- lm(medv~.-age, data=Boston)
+coef(summary(lm.fit))
+```
+
+## Interaction Terms
+
+```{r}
+lm.fit <- lm(medv~lstat*age, data=Boston)
+coef(summary(lm.fit))
+```
+
+## Non-linear Transformations of the Predictors
+
+```{r}
+lm.fit <- lm(medv~lstat+I(lstat^2), data=Boston)
+coef(summary(lm.fit))
+```
+
+```{r}
+## Hypothesis test
+anova(lm(medv~lstat, data=Boston), lm(medv~lstat+I(lstat^2), data=Boston))
+```
+
+The \texttt{anova()} function performs a hypothesis test comparing the two models. The null hypothesis is that the two models fit the data equally well, and alternative hypothesis is that the full model is superior. 
+
+```{r}
+lm.fit5 <- lm(medv~poly(lstat, 5))
+summary(lm.fit5)
+```
+
+```{r}
+## Log-transformation
+summary(lm(medv~log(rm), data=Boston))
+```
+
+## Qualitative Predictors
+
+```{r}
+data("Carseats")
+names(Carseats)
+```
+
+```{r}
+lm.fit <- lm(Sales~.+Income:Advertising+Price:Age, data=Carseats)
+coef(summary(lm.fit))
+```
+
+```{r}
+attach(Carseats)
+contrasts(ShelveLoc)
+```
+
+The \texttt{contrasts()} function returns the coding for the dummy variables.
+
+# Classification
+
+## The Stock Market
+
+```{r}
+library(ISLR)
+names(Smarket)
+dim(Smarket)
+str(Smarket)
+```
+
+```{r}
+cor(Smarket[,-9])
+```
+
+```{r}
+attach(Smarket)
+plot(Volume)
+```
+
+## Logistic Regression
+
+```{r}
+glm.fits <- glm(Direction~Lag1+Lag2+Lag3+Lag4+Lag5+Volume, 
+                data=Smarket, family=binomial)
+summary(glm.fits)
+```
+
+```{r}
+glm.probs <- predict(glm.fits, type="response")
+glm.probs[1:10]
+```
+
+The \texttt{type="response"} argument in \texttt{predict()} function tells \texttt{R} to output probabilities of the form $P(Y=1|X)$, as opposed to other information such as the logit. 
+
+```{r}
+glm.pred <- rep("Down", nrow(Smarket))
+glm.pred[glm.probs>.5] <- "Up"
+
+## Confusion matrix
+table(glm.pred, Direction)
+
+## Training error rate
+mean(glm.pred!=Direction)
+```
+
+```{r}
+train <- (Year<2005)
+Smarket.2005 <- Smarket[!train, ]
+dim(Smarket.2005)
+Direction.2005 <- Direction[!train]
+```
+
+```{r}
+glm.fits <- glm(Direction~Lag1+Lag2+Lag3+Lag4+Lag5+Volume, 
+                data=Smarket, family=binomial, subset=train)
+glm.probs <- predict(glm.fits, Smarket.2005, type="response")
+glm.pred <- rep("Down", nrow(Smarket.2005))
+glm.pred[glm.probs>.5] <- "Up"
+
+## Confusion matrix
+table(glm.pred, Direction.2005)
+## Test error rate
+mean(glm.pred!=Direction.2005)
+```
+
+## Linear Discriminant Analysis
+
+```{r}
+library(MASS)
+lda.fit <- lda(Direction~Lag1+Lag2, data=Smarket, subset=train)
+lda.fit
+```
+
+The *coefficients of linear discriminants* output provides the linear combination of \texttt{Lag1} and \texttt{Lag2} that are used to form the LDA decision rule.
+
+```{r}
+lda.pred <- predict(lda.fit, Smarket.2005)
+names(lda.pred)
+```
+
+```{r}
+lda.class <- lda.pred$class
+table(lda.class, Direction.2005)
+mean(lda.class==Direction.2005)
+```
+
+```{r}
+sum(lda.pred$posterior[,1]>=.5)
+sum(lda.pred$posterior[,1]<.5)
+
+sum(lda.pred$posterior[,1]>=.9)
+sum(lda.pred$posterior[,1]<.9)
+```
+
+## Quadratic Discriminant Analysis
+
+```{r}
+qda.fit <- qda(Direction~Lag1+Lag2, data=Smarket, subset=train)
+qda.fit
+```
+
+```{r}
+qda.pred <- predict(qda.fit, Smarket.2005)
+qda.class <- qda.pred$class
+
+## Confusion matrix
+table(qda.class, Direction.2005)
+
+mean(qda.class==Direction.2005)
+```
+
+# Resampling Methods
+
+## The Validation Set Approach
+
+```{r}
+library(ISLR)
+data(Auto)
+dim(Auto)
+set.seed(1)
+train <- sample(nrow(Auto), nrow(Auto)/2)
+```
+
+```{r}
+attach(Auto)
+lm.fit <- lm(mpg~horsepower, data=Auto, subset=train)
+mean((mpg-predict(lm.fit, Auto))[-train]^2)
+```
+
+```{r}
+lm.fit2 <- lm(mpg~poly(horsepower, 2), data=Auto, subset=train)
+mean((mpg-predict(lm.fit2, Auto))[-train]^2)
+```
+
+## Leave-One-Out Cross-Validation
+
+```{r}
+glm.fit <- glm(mpg~horsepower, data=Auto)
+coef(glm.fit)
+
+lm.fit <- lm(mpg~horsepower, data=Auto)
+coef(lm.fit)
+```
+
+```{r}
+library(boot)
+glm.fit <- glm(mpg~horsepower, data=Auto)
+cv.err <- cv.glm(Auto, glm.fit)
+cv.err$delta
+```
+
+```{r}
+cv.error <- rep(0, 5)
+for (i in 1:5) {
+  glm.fit <- glm(mpg~poly(horsepower, i), data=Auto)
+  cv.error[i] <- cv.glm(Auto, glm.fit)$delta[1]
+}
+cv.error
+```
+
+## k-Fold Cross-Validation
+
+```{r}
+## 10-fold cross-validation
+set.seed(17)
+cv.error.10 <- rep(0, 10)
+for (i in 1:10) {
+  glm.fit <- glm(mpg~poly(horsepower, i), data=Auto)
+  cv.error.10[i] <- cv.glm(Auto, glm.fit, K=10)$delta[1]
+}
+cv.error.10
+```
+
+When we perform *k*-fold CV, the two numbers associated with \texttt{delta} differ slightly. The first is the standard *k*-fold CV estimate. The second is a bias-corrected version.
+
+## Bootstrap
+
+```{r}
+boot.fn <- function(data, index)
+  return(coef(lm(mpg~horsepower, data=data, subset=index)))
+
+boot.fn(Auto, 1:nrow(Auto))
+```
+
+
+```{r}
+set.seed(1)
+boot.fn(Auto, sample(nrow(Auto), nrow(Auto), replace=T))
+boot.fn(Auto, sample(nrow(Auto), nrow(Auto), replace=T))
+```
+
+```{r}
+boot(Auto, boot.fn, R=1000)
+```
+
+```{r}
+coef(summary(lm(mpg~horsepower, data=Auto)))
+```
+
+# Linear Model Selection and Regularization
+
+## Best Subset Selection
+
+```{r}
+library(ISLR)
+data(Hitters)
+sapply(Hitters, function(x) sum(is.na(x)))
+```
+
+```{r}
+Hitters <- na.omit(Hitters)
+```
+
+```{r}
+library(leaps)
+regfit.full <- regsubsets(Salary~., Hitters)
+summary(regfit.full)
+```
+
+Note:
+
+By default, \texttt{regsubsets()} only reports results up to the best eight-variable model. But the \texttt{nvmax} option can be used to return as many variables as desired.
+
+```{r}
+regfit.full <- regsubsets(Salary~., data=Hitters, nvmax=19)
+reg.summary <- summary(regfit.full)
+names(reg.summary)
+```
+
+```{r}
+reg.summary$rsq
+```
+
+```{r, fig.show='hold', out.width="50%"}
+# par(mfrow=c(2, 2))
+plot(reg.summary$rss, xlab="Number of Variables", ylab="RSS", type="l")
+plot(reg.summary$adjr2, xlab="Number of Variables", ylab="Adjusted RSq", type="l")
+which.max(reg.summary$adjr2)
+points(11, reg.summary$adjr2[11], col="red", cex=2, pch=20)
+
+plot(reg.summary$cp, xlab="Number of Variables", ylab="Cp", type="l")
+which.min(reg.summary$cp)
+points(10, reg.summary$cp[10], col="red", cex=2, pch=20)
+
+plot(reg.summary$bic, xlab="Number of Variables", ylab="BIC", type="l")
+which.min(reg.summary$bic)
+points(6, reg.summary$bic[6], col="red", cex=2, pch=20)
+```
+
+```{r, fig.show="hold", out.width="50%"}
+plot(regfit.full, scale="r2")
+plot(regfit.full, scale="adjr2")
+plot(regfit.full, scale="Cp")
+plot(regfit.full, scale="bic")
+```
+
+```{r}
+coef(regfit.full, 6)
+```
+
+## Forward and Backward Stepwise Selection
+
+```{r}
+regfit.fwd <- regsubsets(Salary~., data=Hitters, nvmax=19, method="forward")
+regfit.bwd <- regsubsets(Salary~., data=Hitters, nvmax=19, method="backward")
+```
+
+```{r}
+coef(regfit.full, 7)
+coef(regfit.fwd, 7)
+coef(regfit.bwd, 7)
+```
+
+## Choosing Among Models Using Cross-Validation
+
+```{r}
+set.seed(1)
+train <- sample(c(TRUE, FALSE), nrow(Hitters), rep=TRUE)
+test <- (!train)
+```
+
+```{r}
+regfit.best <- regsubsets(Salary~., data=Hitters[train,], nvmax=19)
+```
+
+```{r}
+test.mat <- model.matrix(Salary~., data=Hitters[test,])
+
+val.errors <- rep(NA, 19)
+for (i in 1:19) {
+  coefi <- coef(regfit.best, id=i)
+  pred <- test.mat[, names(coefi)]%*%coefi
+  val.errors[i] <- mean((Hitters$Salary[test]-pred)^2)
+}
+val.errors
+```
+
+```{r}
+which.min(val.errors)
+coef(regfit.best, 7)
+```
+
+```{r}
+## Define predict() method for regsubsets()
+predict.regsubsets <- function(object, newdata, id, ...){
+  form <- as.formula(object$call[[2]])
+  mat <- model.matrix(form, newdata)
+  coefi <- coef(object, id=id)
+  xvars <- names(coefi)
+  mat[, xvars]%*%coefi
+}
+```
+
+```{r}
+k <- 10
+set.seed(1)
+folds <- sample(1:k, nrow(Hitters), replace=T)
+cv.errors <- matrix(NA, k, 19, dimnames=list(NULL, paste(1:19)))
+
+for (i in 1:k) {
+  best.fit <- regsubsets(Salary~., data=Hitters[folds!=i,], nvmax=19)
+  for (j in 1:19) {
+    pred <- predict(best.fit, Hitters[folds==i,], id=j)
+    cv.errors[i, j] <- mean((Hitters$Salary[folds==i]-pred)^2)
+  }
+}
+```
+
+```{r}
+## Use apply() function to average over the columns
+mean.cv.errors <- apply(cv.errors, 2, mean)
+mean.cv.errors
+par(mfrow=c(1, 1))
+plot(mean.cv.errors, type="b")
+```
+
+```{r}
+reg.best <- regsubsets(Salary~., data=Hitters, nvmax=19)
+coef(reg.best, which.min(mean.cv.errors))
+```
+
+## Ridge Regression and the Lasso
+
+```{r}
+x <- model.matrix(Salary~., Hitters)[,-1]
+y <- Hitters$Salary
+```
+
+```{r}
+library(glmnet)
+grid <- 10^seq(10, -2, length=100)
+
+## Ridge regression
+ridge.mod <- glmnet(x, y, alpha=0, lambda=grid)
+```
+
+```{r}
+dim(coef(ridge.mod))
+```
+
+```{r}
+predict(ridge.mod, s=50, type="coefficients")[1:20,]
+```
+
+```{r}
+set.seed(1)
+train <- sample(1:nrow(x), nrow(x)/2)
+test <- (-train)
+y.test <- y[test]
+```
+
+```{r}
+ridge.mod <- glmnet(x[train,], y[train], alpha=0, lambda=grid, thresh=1e-12)
+ridge.pred <- predict(ridge.mod, s=4, newx=x[test,])
+mean((ridge.pred-y.test)^2)
+```
+
+```{r}
+mean((mean(y[train])-y.test)^2)
+```
+
+```{r}
+ridge.pred <- predict(ridge.mod, s=1e10, newx=x[test,])
+mean((ridge.pred-y.test)^2)
+```
+
+```{r}
+ridge.pred <- predict(ridge.mod, s=0, newx=x[test,], exact=T, 
+                      x=x[train,], y=y[train])
+mean((ridge.pred-y.test)^2)
+```
+
+```{r}
+lm(y~x, subset=train)
+predict(ridge.mod, s=0, exact=T, type="coefficients", 
+        x=x[train,], y=y[train])[1:20,]
+```
+
+```{r, echo=F}
+lm.fit <- lm(Salary~., data=Hitters[train, ])
+lm.pred <- predict(lm.fit, newdata=Hitters[test,])
+mean((lm.pred-y.test)^2)
+```
+
+```{r}
+set.seed(1)
+cv.out <- cv.glmnet(x[train,], y[train], alpha=0)
+plot(cv.out)
+bestlam <- cv.out$lambda.min
+bestlam
+```
+
+```{r}
+ridge.pred <- predict(ridge.mod, s=bestlam, newx=x[test,])
+mean((ridge.pred-y.test)^2)
+```
+
+```{r}
+out <- glmnet(x, y, alpha=0)
+predict(out, type="coefficients", s=bestlam)[1:20, ]
+```
+
+## The Lasso
+
+```{r}
+lasso.mod <- glmnet(x[train,], y[train], alpha=1, lambda=grid)
+plot(lasso.mod)
+```
+
+```{r}
+set.seed(1)
+cv.out <- cv.glmnet(x[train,], y[train], alpha=1)
+plot(cv.out)
+bestlam <- cv.out$lambda.min
+lasso.pred <- predict(lasso.mod, s=bestlam, newx=x[test,])
+mean((lasso.pred-y.test)^2)
+```
+
+```{r}
+out <- glmnet(x, y, alpha=1, lambda=grid)
+lasso.coef <- predict(out, type="coefficients", s=bestlam)[1:20,]
+lasso.coef
+lasso.coef[lasso.coef!=0]
+```
+
+Note: the lasso has a substantial advantage over ridge regression in that the resulting coefficient estimates are sparse.
+
+# Moving Beyond Linearity
+
+```{r}
+library(ISLR)
+attach(Wage)
+```
+
+## Polynomial Regression and Step Functions
+
+```{r}
+fit <- lm(wage~poly(age, 4), data=Wage)
+coef(summary(fit))
+```
+
+The \texttt{poly()} function returns a matrix whose columns are a basis of *orthogonal polynomials*, which essentially means that each column is a linear combination of variables \texttt{age}, \texttt{age\^{}2}, \texttt{age\^{}3} and \texttt{age\^{}4}.
+
+However, we can also use \texttt{poly()} to obtain \texttt{age}, \texttt{age\^{}2}, \texttt{age\^{}3} and \texttt{age\^{}4} directly. We can do this by using the \texttt{raw=TRUE} argument to the \texttt{poly()} function. This does not affect the model in a meaningful way. Though the choice of basis clearly affects the coefficient estimates, it does not affect the fitted values obtained.
+
+```{r}
+fit2 <- lm(wage~poly(age, 4, raw=T), data=Wage)
+coef(summary(fit2))
+```
+
+```{r}
+## Equivalent ways of fitting this model
+fit2a <- lm(wage~age+I(age^2)+I(age^3)+I(age^4), data=Wage)
+coef(fit2a)
+
+fit2b <- lm(wage~cbind(age, age^2, age^3, age^4), data=Wage)
+coef(fit2b)[1:5]
+```
+
+```{r}
+agelims <- range(age)
+age.grid <- seq(from=agelims[1], to=agelims[2])
+preds <- predict(fit, newdata=list(age=age.grid), se=TRUE)
+se.bands <- cbind(preds$fit+2*preds$se.fit, preds$fit-2*preds$se.fit)
+```
+
+```{r}
+# par(mfrow=c(1, 2))
+plot(age, wage, xlim=agelims, cex=.5, col="darkgrey")
+title("Degree-4 Polymonial")
+lines(age.grid, preds$fit, lwd=2, col="blue")
+matlines(age.grid, se.bands, lwd=1, col="blue", lty=3)
+```
+
+```{r}
+fit.1 <- lm(wage~age, data=Wage)
+fit.2 <- lm(wage~poly(age, 2), data=Wage)
+fit.3 <- lm(wage~poly(age, 3), data=Wage)
+fit.4 <- lm(wage~poly(age, 4), data=Wage)
+fit.5 <- lm(wage~poly(age, 5), data=Wage)
+anova(fit.1, fit.2, fit.3, fit.4, fit.5)
+```
+
+```{r}
+coef(summary(fit.5))
+```
+
+```{r}
+fit.1 <- lm(wage~education+age, data=Wage)
+fit.2 <- lm(wage~education+poly(age, 2), data=Wage)
+fit.3 <- lm(wage~education+poly(age, 3), data=Wage)
+anova(fit.1, fit.2, fit.3)
+```
+
+```{r}
+## Logistic regression
+fit <- glm(I(wage>250)~poly(age,4), data=Wage, family=binomial)
+preds <- predict(fit, newdata=list(age=age.grid), se=T)
+```
+
+The default prediction type for a \texttt{glm()} model is \texttt{type="link"}, which is what we use here. This means we get predictions for the *logit*: that is, we have fit a model of the form
+
+$$
+\log\left(\frac{\textrm{Pr}(Y=1|X)}{1-\textrm{Pr}(Y=1|X)}\right)
+=X\beta
+$$
+
+In order to obtain confidence intervals for $\textrm{Pr}(Y=1|X)$, we use the transformation
+
+$$
+\textrm{Pr}(Y=1|X)=\frac{\exp(X\beta)}{1+\exp(X\beta)}
+$$
+
+```{r}
+pfit <- exp(preds$fit)/(1+exp(preds$fit))
+se.bands.logit <- cbind(preds$fit+2*preds$se.fit, preds$fit-2*preds$se.fit)
+se.bands <- exp(se.bands.logit)/(1+exp(se.bands.logit))
+```
+
+Note that we could have directly computed the probabilities by selecting the \texttt{type="response"} option in the \texttt{predict()} function.
+
+```{r}
+preds <- predict(fit, newdata=list(age=age.grid), type="response", se=T)
+```
+
+```{r}
+plot(age, I(wage>250), xlim=agelims, type="n", ylim=c(0, .2))
+points(jitter(age), I((wage>250)/5), cex=.5, pch="|", col="darkgrey")
+lines(age.grid, pfit, lwd=2, col="blue")
+matlines(age.grid, se.bands,lwd=1, col="blue", lty=3)
+```
+
+```{r}
+table(cut(age,4))
+```
+
+```{r}
+fit <- lm(wage~cut(age, 4), data=Wage)
+coef(summary(fit))
+```
+
+## Splines
+
+```{r}
+library(splines)
+
+fit <- lm(wage~bs(age, knots=c(25,40,60)), data=Wage)
+pred <- predict(fit, newdata=list(age=age.grid), se=T)
+plot(age, wage, col="gray")
+lines(age.grid, pred$fit, lwd=2)
+lines(age.grid, pred$fit+2*pred$se, lty="dashed")
+lines(age.grid, pred$fit-2*pred$se, lty="dashed")
+
+## Natural spline
+fit2 <- lm(wage~ns(age, df=4), data=Wage)
+pred2 <- predict(fit2, newdata=list(age=age.grid), se=T)
+lines(age.grid, pred2$fit, col="red", lwd=2)
+legend("topleft", legend=c("black", "red"), lwd=2, lty=1, 
+       cex=.8, col=c("black", "red"))
+```
+
+Here we have prespecified knots at ages 25, 40, and 60. This produces a spline with six basis functions. (Recall that a cubic spline with three knots has seven degrees of freedom; these degrees of freedom are used up by an intercept, plus six basis functions.) We could also use the \texttt{df} option to produce a spline with knots at uniform quantiles of the data.
+
+```{r}
+dim(bs(age, knots=c(25, 40, 60)))
+dim(bs(age, df=6))
+attr(bs(age, df=6), "knots")
+```
+
+```{r, warning=F}
+## Smoothing spline
+plot(age, wage, xlim=agelims, cex=.5, col="darkgrey")
+title("Smoothing Spline")
+fit <- smooth.spline(age, wage, df=16)
+fit2 <- smooth.spline(age, wage, cv=TRUE)
+fit2$df
+lines(fit, col="red", lwd=2)
+lines(fit2, col="blue", lwd=2)
+legend("topleft", legend=c("16 DF", "6.8 DF"), 
+       col=c("red", "blue"), lty=1, lwd=2, cex=.8)
+```
+
+```{r}
+plot(age, wage, xlim=agelims, cex=.5, col="darkgrey")
+title("Local Regression")
+fit <- loess(wage~age, span=.2, data=Wage)
+fit2 <- loess(wage~age, span=.5, data=Wage)
+lines(age.grid, predict(fit, data.frame(age=age.grid)), col="red", lwd=2)
+lines(age.grid, predict(fit2, data.frame(age=age.grid)), col="blue", lwd=2)
+legend("topleft", legend=c("Span=0.2", "Span=0.5"), 
+       col=c("red", "blue"), lty=1, lwd=2, cex=.8)
+```
+
+Here we have performed local linear regression using spans of 0.2 and 0.5: that is, each neighborhood consists of 20% or 50% of the observations. The larger the span, the smoother the fit.
+
+## GAMs
+
+```{r}
+gam1 <- lm(wage~ns(year,4)+ns(age,5)+education, data=Wage)
+```
+
+```{r}
+library(gam)
+gam.m3 <- gam(wage~s(year, 4)+s(age, 5)+education, data=Wage)
+```
+
+```{r, fig.show="hold", out.width="33%"}
+plot(gam.m3, se=TRUE, col="blue")
+```
+
+```{r, fig.show="hold", out.width="50%"}
+plot.Gam(gam1, se=TRUE, col="red")
+```
+
+In these plots, the function of \texttt{year} looks rather linear. We can perform a series of ANOVA tests in order to determine which of three models is best: a GAM that excludes \texttt{year} ($\mathcal{M}_1$), a GAM that uses a linear function of \texttt{year} ($\mathcal{M}_2$), or a GAM that uses a spline function of \texttt{year} ($\mathcal{M}_3$)
+
+```{r}
+gam.m1 <- gam(wage~s(age, 5)+education, data=Wage)
+gam.m2 <- gam(wage~year+s(age, 5)+education, data=Wage)
+anova(gam.m1, gam.m2, gam.m3, test="F")
+```
+
+```{r}
+summary(gam.m3)
+```
+
+```{r}
+preds <- predict(gam.m2, newdata=Wage)
+```
+
+```{r, fig.show="hold", out.width="50%"}
+## Local regression
+gam.lo <- gam(wage~s(year, df=4)+lo(age, span=0.7)+education, data=Wage)
+plot.Gam(gam.lo, se=TRUE, col="green")
+```
+
+```{r}
+## Local regression with interactions
+gam.lo.i <- gam(wage~lo(year, age, span=0.5)+education, data=Wage)
+```
+
+```{r, figures-side, fig.show="hold", out.width="50%"}
+library(akima)
+plot(gam.lo.i)
+```
+
+```{r, fig.show="hold", out.width="33%"}
+## Logistic regression GAM
+gam.lr <- gam(I(wage>250)~year+s(age, df=5)+education, family=binomial, data=Wage)
+# par(mfrow=c(1, 3))
+plot(gam.lr, se=T, col="green")
+```
+
+```{r}
+table(education, I(wage>250))
+```
+
+```{r, fig.show="hold", out.width="33%"}
+gam.lr.s <- gam(I(wage>250)~year+s(age, df=5)+education, family=binomial, 
+                data=Wage, subset=(education!="1. < HS Grad"))
+plot(gam.lr.s, se=T, col="green")
+```
+
+# Tree-Based Methods
+
+```{r}
+library(tree)
+library(ISLR)
+attach(Carseats)
+```
+
+## Fitting Classification Tree
+
+```{r}
+High <- as.factor(ifelse(Sales<=8, "No", "Yes"))
+Carseats <- data.frame(Carseats, High)
+```
+
+```{r}
+tree.carseats <- tree(High~.-Sales, Carseats)
+summary(tree.carseats)
+```
+
+```{r}
+plot(tree.carseats)
+text(tree.carseats, pretty=0)
+```
+
+```{r}
+set.seed(2)
+train <- sample(1:nrow(Carseats), 200)
+Carseats.test <- Carseats[-train, ]
+High.test <- High[-train]
+tree.carseats <- tree(High~.-Sales, Carseats, subset=train)
+tree.pred <- predict(tree.carseats, Carseats.test, type="class")
+table(tree.pred, High.test)
+mean(tree.pred==High.test)
+```
+
+```{r}
+set.seed(3)
+cv.carseats <- cv.tree(tree.carseats, FUN=prune.misclass)
+names(cv.carseats)
+cv.carseats
+```
+
+Note that despite the name, \texttt{dev} corresponds to the cross-validation error rate in this instance. \texttt{size} is the number of terminal nodes of each tree considered. \texttt{k} is the value of the cost-complexity parameter used.
+
+```{r, fig.show="hold", out.width="50%"}
+# par(mfrow=c(1, 2))
+plot(cv.carseats$size, cv.carseats$dev, type="b")
+plot(cv.carseats$k, cv.carseats$dev, type="b")
+```
+
+```{r}
+prune.carseats <- prune.misclass(tree.carseats, best=which.min(cv.carseats$size))
+plot(prune.carseats)
+text(prune.carseats, pretty=0)
+```
+
+```{r}
+tree.pred <- predict(prune.carseats, Carseats.test, type="class")
+table(tree.pred, High.test)
+mean(tree.pred==High.test)
+```
+
+## Fitting Regression Tree
+
+```{r}
+library(MASS)
+data(Boston)
+attach(Boston)
+```
+
+```{r}
+set.seed(1)
+train <- sample(1:nrow(Boston), nrow(Boston)/2)
+tree.boston <- tree(medv~., Boston, subset=train)
+summary(tree.boston)
+```
+
+```{r}
+plot(tree.boston)
+text(tree.boston, pretty=0)
+```
+
+```{r}
+cv.boston <- cv.tree(tree.boston)
+plot(cv.boston$size, cv.boston$dev, type="b")
+```
+
+```{r}
+prune.boston <- prune.tree(tree.boston, best=5)
+plot(prune.boston)
+text(prune.boston, pretty=0)
+```
+
+```{r}
+yhat <- predict(tree.boston, newdata=Boston[-train,])
+boston.test <- Boston[-train, "medv"]
+plot(yhat, boston.test)
+abline(0, 1)
+mean((yhat-boston.test)^2)
+```
+
+## Bagging and Random Forests
+
+Note that bagging is simply a special case of a random forest with $m=p$. Therefore, the \texttt{randomForest} function can be used to perform both random forests and bagging.
+
+```{r}
+## Bagging
+library(randomForest)
+set.seed(1)
+bag.boston <- randomForest(medv~., data=Boston, subset=train, mtry=13, importance=TRUE)
+bag.boston
+```
+
+The argument \texttt{mtry=13} indicates that all 13 predictors should be considered for each split of the tree.
+
+```{r}
+yhat.bag <- predict(bag.boston, newdata=Boston[-train,])
+plot(yhat.bag, boston.test)
+abline(0, 1)
+mean((yhat.bag-boston.test)^2)
+```
+
+Growing a random forest proceeds in exactly the same way, except that we use a smaller value of the \texttt{mtry} argument. By default, \texttt{randomForest()} uses $p/3$ variables when building a random forest of regression trees, and $\sqrt{p}$ variables when building a random forest of classification trees.
+
+```{r}
+set.seed(1)
+rf.boston <- randomForest(medv~., data=Boston, subset=train, mtry=6, importance=TRUE)
+yhat.rf <- predict(rf.boston, newdata=Boston[-train,])
+mean((yhat.rf-boston.test)^2)
+```
+
+```{r}
+importance(rf.boston)
+```
+
+Two measures of variable importance are reported. The former is based upon the mean decrease of accuracy in predictions on the out of bag samples when a given variable is excluded from the model. The latter is a measure of the total decrease in node impurity that results from splits over that variable, averaged over all trees. In the case of regression trees, the node impurity is measured by the train RSS, and for classification trees by the deviance.
+
+```{r}
+varImpPlot(rf.boston)
+```
+
+## Boosting
+
+```{r}
+library(gbm)
+set.seed(1)
+boost.boston <- gbm(medv~., data=Boston[train,], distribution="gaussian", 
+                    n.trees=5000, interaction.depth=4)
+```
+
+```{r}
+summary(boost.boston)
+```
+
+
+```{r, fig.show="hold", out.width="50%"}
+# par(mfrow=c(1, 2))
+plot(boost.boston, i="rm")
+plot(boost.boston, i="lstat")
+```
+
+```{r}
+yhat.boost <- predict(boost.boston, newdata=Boston[-train, ], n.trees=5000)
+mean((yhat.boost-boston.test)^2)
+```
+
+```{r}
+boost.boston <- gbm(medv~., data=Boston[train, ], distribution="gaussian", 
+                    n.trees=5000, interaction.depth=4, shrinkage=0.2, verbose=F)
+yhat.boost <- predict(boost.boston, newdata=Boston[-train, ], n.trees=5000)
+mean((yhat.boost-boston.test)^2)
+```
+
