@@ -18,7 +18,7 @@ B_t&=\frac{C_t-NO_t}{1+r}+\frac{B_{t+1}}{1+r} \\
 B_{t+1}&=\frac{C_{t+1}-NO_{t+1}}{1+r}+\frac{B_{t+2}}{1+r} \\
 &\vdots \\
 B_{t+T-1}&=\frac{C_{t+T-1}-NO_{t+T-1}}{1+r}+\frac{B_{t+T}}{1+r}
-\end{align} 
+\end{align}
 $$
 
 $$
