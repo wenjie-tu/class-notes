@@ -18,6 +18,6 @@ This directory is made for the course *International Macroeconomics*
 | [Problem Set 12](PS12/Problemset12.pdf) | [Solutions 12](PS12/Solution12.pdf)                 |
 | [Final](Final/Final20.pdf)              | [Solutions to Final](Final/FinalSolution.pdf)       |
 
-* Problem sets do not count towards to the final grade (they are only for practice).
+* Problem sets for this course do not count towards the final grade.
 * All copy rights reserved.
 
