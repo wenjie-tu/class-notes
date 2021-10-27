@@ -1,0 +1,395 @@
+---
+title: "Problemt Set 1"
+subtitle: "Global Poverty and Economic Development"
+author: "Wenjie Tu"
+date: "Fall Semester 2021"
+output: pdf_document
+---
+
+```{r, echo=F}
+# set working directory
+setwd("F:/UZH/21Fall/Global-Poverty/PS/PS1")
+
+# set environment language
+Sys.setenv(lang = "us_en")
+
+# clear working directory
+rm(list=ls())
+```
+
+# 1 Education & Poverty
+
+$$
+\ln(inc_i)=\theta_0+\theta_1educ_i+\epsilon_i\tag{1}
+$$
+
+## 1.1
+
+In equation (1), the education in level terms while the dependent variable (income) in log terms.
+
+Take the differential of both sides:
+
+$$
+\begin{aligned}
+d\ln(inc_i)&=\theta_1d(educ_i) \\
+\frac{d(inc_i)}{inc_i}&=\theta_1d(educ_i)
+\end{aligned}
+$$
+
+Multiply both sides by 100 and rearrange:
+
+$$
+\frac{100\times d(inc_i)}{inc_i}=100\times\theta_1d(educ_i)
+$$
+
+$$
+100\times\theta_1=\frac{\frac{100\times d(inc_i)}{inc_i}}{d(educ_i)}=
+\frac{\%\Delta inc_i}{\text{unit}\Delta educ_i}
+$$
+
+Therefore, $100\times\theta_1$ can be interpreted as the percentage change in $inc_i$ for a unit increase in $educ_i$. In other words, holding other independent variable constant (only one independent variable in equation (1)), an additional year of schooling is associated with a 5% increase in income per year.
+
+## 1.2
+
+Null and alternative hypotheses:
+
+* $H_0: \theta_1=0$
+* $H_1: \theta_1\neq0$
+
+$t$-statistic:
+
+$$
+t=\frac{\hat{\theta}_1-\theta_1}{\frac{\textrm{SE}(\hat{\theta})}{\sqrt{n}}}=
+\frac{0.07}{\frac{0.4}{\sqrt{30}}}=0.959
+$$
+
+By looking up $t$-Distribution table with 29 ($30-1=29$) degrees of freedom. we find that 0.959 falls between 0.854 and 1.055. The corresponding $p$-value for a two-sided test is between 0.40 and 0.30. Alternatively, we can use the command \texttt{2$*$pt(0.959, df=30-1, lower.tail=FALSE)} in R console to get the corresponding $p$-value (0.345). The $p$-value is **NOT** less than the $\alpha=0.05$ level, we cannot reject the null hypothesis. Hence, we do not have sufficient evidence to say that the coefficient $\theta_1$ is statistically different from zero.
+
+## 1.3
+
+In specification (1), there is only one independent variable - years of schooling. The estimate for $\theta_1$ is more likely to be biased due to the following reasons:
+
+* Measurement error: when asked in the survey, subjects might overstate their incomes out of vanity. There might be a measurement error in dependent variable.
+* Omitted variables bias: some variables such as family, innate ability also have an impact on both income and education but they are not included in the model. The error term absorbs the omitted variables, which leads to a violation of mean-zero-error assumption (i.e., $\mathbb{E}[\epsilon_i\vert educ_i]\neq0$).
+* Reverse causality: individuals with higher income would also pursue higher further education.
+
+## 1.4
+
+There is a measurement error in income data. People tend to overstate their incomes out of vanity. The estimate would **NOT** be biased in expectations. But a possible concern is that the standard errors could be much larger. A measurement error in $Y$ is not a big problem since we can still get unbiased estimates (with larger standard errors).
+
+# 2 Data Analysis
+
+```{r, echo=F}
+# read data
+d.health <- read.csv("./Health_WB.csv")
+```
+
+## 2.1
+
+```{r, warning=F, message=F, echo=F, results="asis"}
+library(stargazer)
+
+stargazer(d.health[, c("data8", "data9", "data10", "data11", "data12", "data13")], 
+          header=F, single.row=F, font.size="small", 
+          title="Summary Statistics for Immunizations", 
+          covariate.labels=c("BCG", "DPT", "HepB3", "Hib3", "Pol3", "measles"))
+```
+
+```{r, warning=F, message=F, echo=F, results="asis"}
+stargazer(d.health[, c("data16", "data17", "data18")], 
+          header=F, single.row=F, font.size="small", 
+          title="Summary Statistics for Life Expectatncy", 
+          covariate.labels=c("female", "male", "total"))
+```
+
+```{r, warning=F, message=F, echo=F, results="asis"}
+stargazer(d.health[, c("data33", "data39")], 
+          header=F, single.row=F, font.size="small", 
+          title="Summary Statistics for School Enrollment", 
+          covariate.labels=c("net primary", "net secondary"))
+```
+
+## 2.2
+
+Regression output is formatted in a table (see *Table 4*).
+
+```{r, warning=F, message=F, include=F}
+model1 <- lm(data18 ~ data1 + data3, data=d.health)
+stargazer(model1, header=F, keep.stat=c("n", "rsq"), type="text", 
+          title="Regression output 2(a)", single.row=T, dep.var.labels.include=F,  
+          column.labels="Life expectancy at birth (total)", 
+          covariate.labels=c("Private expenditure on heathcare", 
+                             "Public expenditure on heathcare"))
+```
+
+```{r, warning=F, message=F, include=F, results="asis"}
+model2 <- lm(data18 ~ data14 + data15, data=d.health)
+stargazer(model2, header=F, keep.stat=c("n", "rsq"), type="text", 
+          title="Regression output 2(b)", single.row=T, dep.var.labels.include=F, 
+          column.labels="Life expectancy at birth (total)", 
+          covariate.labels=c("Sanitation access", "Water access"))
+```
+
+```{r, warning=F, message=F, include=F, results="asis"}
+model3 <- lm(data18 ~ log(data33) + log(data39), data=d.health)
+stargazer(model3, header=F, keep.stat=c("n", "rsq"), type="text", 
+          title="Regression output 2(c)", single.row=T, 
+          dep.var.labels.include=F, 
+          column.labels = "Life expectancy at birth (total)",
+#          dep.var.caption="Life expectancy at birth (total)", 
+          covariate.labels=c("Private expenditure on heathcare", 
+                             "Public expenditure on heathcare", 
+                             "Sanitation access", "Water access",
+                             "Log of primary", "Log of secondary"))
+```
+
+```{r, warning=F, message=F, echo=F, results="asis"}
+stargazer(model1, model2, model3, header=F, keep.stat=c("n", "rsq"),  
+          title="Regression output 2.2", single.row=T, 
+          dep.var.labels.include=F, 
+          dep.var.caption="Life expectancy at birth (total)", 
+             covariate.labels=c("Private expenditure", "Public expenditure", 
+                                "Sanitation access", "Water access", 
+                                "Log of primary", "Log of secondary"))
+```
+
+
+## 2.3
+
+```{r, warning=F, message=F, echo=F}
+library(ggplot2)
+library(dplyr)
+```
+
+```{r, echo=F}
+table <- d.health %>%
+  group_by(countryname) %>%
+  summarise(avg.life = mean(data18, na.rm=T), 
+            avg.primary = mean(data33, na.rm=T), .groups="drop")
+```
+
+```{r, warning=F, message=F, echo=F, results="asis"}
+ggplot(table, aes(x=avg.primary, y=avg.life)) + 
+  geom_point(color="blue", alpha=0.5) + 
+  xlab("Average primary school education") + 
+  ylab("Average life expectancy by country") + 
+  theme_minimal() + ggtitle("Scatter life expectancy of life against primary education")
+```
+
+# 3 Fixed Effects
+
+```{r,echo=F}
+dta <- read.csv("./data_FE.csv")
+```
+
+## 3.1
+
+```{r, echo=F, results='asis'}
+cat(sprintf("The mean of $x_1$ is %.3f with a standard deviation of %.3f", mean(dta$x1), sd(dta$x1)))
+```
+
+## 3.2
+
+From table 5, we see that the coefficient on $x_1$ is 0.415
+
+```{r, warning=F, message=F, echo=F, results="asis"}
+lm.ols <- lm(y ~ x1, data=dta)
+stargazer(lm.ols, header=F, keep.stat=c("n", "rsq"), single.row=T, 
+          title="Regression table for 3.2")
+```
+
+## 3.3
+
+From table 6, we see that the coefficient on $x_1$ is 0.475 if we use household fixed effects.
+
+```{r, warning=F, message=F, echo=F, results="asis"}
+library(plm)
+```
+
+```{r, warning=F, message=F, include=F, results="asis"}
+dtaPanel <- pdata.frame(dta, index=c("household", "t"))
+```
+
+```{r, warning=F, message=F, echo=F, results="asis"}
+lm.fe <- plm(y ~ x1, data=dta, index=c("household", "t"), model="within", effect="individual")
+
+stargazer(lm.fe, header=F, single.row=T, keep.stat=c("n", "rsq"),  
+          title="Regression table for 3.3")
+```
+
+## 3.4
+
+```{r, warning=F, message=F, echo=F, results="asis"}
+dta$x1hat <- ifelse(dta$household<=60, dta$x1, dta$x1+100)
+```
+
+```{r, warning=F, message=F, echo=F, results="asis"}
+cat(sprintf("The mean of $\\hat{x}_1$ is %.3f with a standard deviation of %.3f", mean(dta$x1hat), sd(dta$x1hat)))
+```
+
+## 3.5
+
+```{r, warning=F, message=F, echo=F, results="asis"}
+lm.ols1 <- lm(y ~ x1hat, data=dta)
+lm.fe1 <- plm(y ~ x1hat, data=dta, index=c("household", "t"), model="within", effect="individual")
+```
+
+```{r, warning=F, message=F, echo=F, results="asis"}
+stargazer(lm.ols, lm.ols1, header=F, 
+          keep.stat=c("n", "rsq"), single.row=T, 
+          title="OLS regressions comparison in 3.5")
+```
+
+
+$$
+\text{OLS}:\quad y_{it}=\theta_0+\theta_1x_{it}+\eta_{it}\tag{2}
+$$
+
+$$
+\text{FE}:\quad y_{it}=\alpha_i+\beta x_{it}+\epsilon_{it}\tag{3}
+$$
+
+In table 7, we see the coefficients of interest are different in OLS regression. 
+
+Intuition: in OLS regression (2), $\theta_0$ is the overall intercept and it is the same across all households. We cannot control for any household-specific characteristics in OLS specification. Hence, the coefficient of $\hat{x}_1$ differs from the coefficient of $x_1$.
+
+## 3.6
+
+```{r, warning=F, message=F, echo=F, results="asis"}
+stargazer(lm.fe, lm.fe1, header=F, 
+          keep.stat=c("n", "rsq"), single.row=T, 
+          title="Fixed effects regressions comparison in 3.6")
+```
+
+In table 7, we see the coefficients of interest are the same in fixed-effects model.
+
+Intuition: in fixed-effects model (3), $\alpha_i$ is the household-specific intercept. It allows for any household-specific effect. We can control for household-specific effect in an indirect way simply by demeaning the variables. $\beta$ is also called within estimator. We can difference out the household-specific effect (e.g. intercept). Therefore, the coefficient of $\hat{x}_1$ does not differ from the coefficient of $x_1$.
+
+Within transformation:
+
+$$
+y_{it}-\bar{y}_i=\underbrace{(\alpha_i-\bar{\alpha}_i)}_{0}
++\beta(x_{it}-\bar{x}_{it})+\epsilon_{it}-\bar{\epsilon}_i
+$$
+
+
+# 4 Omitted Variable Bias
+
+## 4.1
+
+True model:
+
+$$
+Y_i=\theta_0+\theta_1T_i+\theta_2X_i+\epsilon_i
+$$
+
+We estimate:
+
+$$
+Y_i=\beta_0+\beta_1T_i+\eta_i
+$$
+Take covariance w.r.t. $T_i$:
+
+$$
+\begin{aligned}
+Cov(T_i,Y_i)&=Cov(T_i,\beta_0+\beta_1T_i+\eta_i) \\
+&=\beta_1Var(T_i)+Cov(T_i,\eta_i)
+\end{aligned}
+$$
+
+Rearrange:
+
+$$
+\hat{\beta}_1=\frac{Cov(T_i,Y_i)}{Var(T_i)}
+$$
+
+Substitute $Y_i$ with the true model:
+
+$$
+\begin{aligned}
+\hat{\beta}_1&=\frac{Cov(T_i,Y_i)}{Var(T_i)} \\
+&=\frac{Cov(T_i,\theta_0+\theta_1T_i+\theta_2X_i+\epsilon_i)}{Var(T_i)} \\
+&=\frac{\theta_1Var(T_i)+\theta_2Cov(T_i,X_i)+Cov(T_i,\epsilon_i)}{Var(T_i)} \\
+&=\theta_1+\theta_2\frac{Cov(T_i,X_i)}{Var(T_i)}+\frac{Cov(T_i,\epsilon_i)}{Var(T_i)}
+\end{aligned}
+$$
+
+$$
+\mathbb{E}[\hat{\beta}_1]=\theta_1+\theta_2\frac{Cov(T_i,X_i)}{Var(T_i)}\tag{4}
+$$
+
+Given that:
+
+$$
+\mathbb{E}[X_i|T_i]=\alpha_0+\alpha_1T_i
+$$
+
+Rewrite the above equation:
+
+$$
+X_i=\alpha_0+\alpha_1T_i+\nu_i
+$$
+
+$$
+\begin{aligned}
+Cov(T_i,X_i)&=Cov(T_i,\alpha_0+\alpha_1T_i+\nu_i) \\
+&=\alpha_1Var(T_i)+Cov(T_i,\nu_i)
+\end{aligned}
+$$
+
+Rearrange:
+
+$$
+\hat{\alpha}_1=\frac{Cov(T_i,X_i)}{Var(T_i)}
+$$
+
+Substitute above into equation (4):
+
+$$
+\mathbb{E}[\hat{\beta}_1]=\theta_1+\theta_2\hat{\alpha}_1
+$$
+
+## 4.2
+
+Because people are randomized to treatment and control groups, on average there is no difference between these two groups on any characteristics other than their treatment.
+
+This means that before the treatment is given, on average the two groups (T and C) are equivalent to one another on every observed and unobserved variable. For example, the two groups should be similar in all pre-treatment variables: age, gender, motivation levels, heart disease, math ability, etc. When the treatment is assigned and implemented, any differences between outcomes can be attributed to the treatment. Thus, OVB can be addressed through randomization.
+
+## 4.3
+
+### 4.3(a)
+
+I would expect the sign of $\theta_1$ to be negative. If there is a conflict in a geographical unit, the income for the geographical unit will decrease. Hence, $\theta_1<0$.
+
+### 4.3(b)
+
+I would expect the sign of $\theta_2$ to be positive and the sign of $\alpha_1$ to be positive.
+
+* An increase in mineral prices would lead to a rise in people's income since they can sell minerals at higher prices. Therefore, $Cov(X_i,Y_i)>0$ and $\theta_2>0$.
+* More conflicts between groups or villages would increase the mineral prices. The reasoning is that higher selling prices must compensate for the losses in conflicts. Thus, $Cov(T_i,X_i)>0$ and $\alpha_1>0$.
+
+### 4.3(c)
+
+$$
+\mathbb{E}[\hat{\beta}_1]=\theta_1+\theta_2\hat{\alpha}_1
+$$
+
+It is argued in previous question that $\theta_1>0$ and $\hat{\alpha}_1>0$. Hence, the estimated effect of conflict on income would be biased upward (i.e., $\mathbb{E}[\hat{\beta}_1]>\theta_1$).
+
+Regarding examples below, equation (4) is used for analysis.
+
+**Example 1:**
+
+* $Y$ is the hourly wage in the first job.
+* $T$ is whether the individual receives higher education.
+* $X$ is unobserved innate ability.
+
+In this setting, individuals with higher innate ability **on average** will earn higher wages (i.e., $\theta_2>0$), and individuals with higher innate ability **on average** will receive higher education (i.e., $Cov(T,X)<0$). Therefore, there is a **upward bias** in the estimated effect.
+
+**Example 2:** 
+
+* $Y$ is the final score for a course.
+* $T$ is the time spent on the course per week.
+* $X$ is unobserved innate ability.
+
+In this setting, individuals with higher innate ability **on average** will achieve higher score (i.e., $\theta_2>0$) while individuals with higher innate ability **on average** will spend a bit less time on the course (i.e., $Cov(T,X)<0$). Hence, there is a **downward bias** in the estimated effect.
