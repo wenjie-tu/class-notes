@@ -13,5 +13,5 @@ This directory is made for the course *Empirical Methods*.
 
 * Check out for [course description](syllabus2020.pdf).
 
-* Four problem sets count toward 20% of the final grade.
+* Four problem sets contribute to 20% of the final grade.
 

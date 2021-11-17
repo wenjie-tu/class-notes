@@ -15,5 +15,5 @@ This directory is made for the course *Program Evaluation and Causal Inference*.
 **Note:**
 
 * Check out for [course description](Syllabus2021.pdf).
-* Seven problem sets count toward 30% of the final grade.
+* Seven problem sets contribute to 30% of the final grade.
 

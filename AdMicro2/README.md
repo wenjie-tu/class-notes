@@ -19,6 +19,6 @@ This directory is made for the course *Advanced Microeconomics II*
 | [Problem Set 13](PS13.pdf) | [Solutions 13](PS13_Sol.pdf)            |
 | [Mock Exam](MockExam.pdf)  | [Mock Exam Solutions](MockExam_Sol.pdf) |
 
-* Problem sets for this course do not count towards the final grade.
+* Problem sets do not contribute to the final grade.
 * All copy rights reserved.
 
