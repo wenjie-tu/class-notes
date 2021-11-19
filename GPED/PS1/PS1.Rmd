@@ -49,6 +49,8 @@ $$
 
 Therefore, $100\times\theta_1$ can be interpreted as the percentage change in $inc_i$ for a unit increase in $educ_i$. In other words, holding other independent variable constant (only one independent variable in equation (1)), an additional year of schooling is associated with a 5% increase in income per year.
 
+Mechanism: since the relationship is positive, it suggests that more years of schooling imply a higher income level. This could be because people who spend more time in school are able to access jobs with higher payment.
+
 ## 1.2
 
 Null and alternative hypotheses:
@@ -105,8 +107,44 @@ There is a measurement error in income data. People tend to overstate their inco
 d.health <- read.csv("./Health_WB.csv")
 ```
 
-```{r, echo=F}
+```{r, include=F}
 aggr.list <- c("Arab World", "Central Europe and the Baltics", "Early-demographic dividend", "East Asia & Pacific", "East Asia & Pacific (IDA & IBRD countries)", "East Asia & Pacific (excluding high income)", "Europe & Central Asia", "Europe & Central Asia (IDA & IBRD countries)", "Europe & Central Asia (excluding high income)", "European Union", "Fragile and conflict affected situations", "Heavily indebted poor countries (HIPC)", "Latin America & Caribbean", "Latin America & Caribbean (excluding high income)", "Latin America & the Caribbean (IDA & IBRD countries)", "Least developed countries: UN classification", "Low & middle income", "Low income", "Lower middle income", "Middle East & North Africa", "Middle East & North Africa (IDA & IBRD countries)", "Middle East & North Africa (excluding high income)", "Middle income", "Not classified", "OECD members", "Other small states", "Pacific island small states", "Post-demographic dividend", "Pre-demographic dividend", "South Asia", "South Asia (IDA & IBRD)", "Sub-Saharan Africa", "Sub-Saharan Africa (IDA & IBRD countries)", "Sub-Saharan Africa (excluding high income)", "Upper middle income", "West Bank and Gaza", "World")
+
+d.health <- d.health[!(d.health$countryname %in% aggr.list), ]
+```
+
+```{r, echo=F}
+aggr.list <- c("Arab World", "Caribbean small states",
+               "Central Europe and the Baltics", 
+               "Early-demographic dividend", 
+               "East Asia & Pacific", 
+               "East Asia & Pacific (IDA & IBRD countries)", 
+               "East Asia & Pacific (excluding high income)", 
+               "Euro area", "Europe & Central Asia", 
+               "Europe & Central Asia (IDA & IBRD countries)", 
+               "Europe & Central Asia (excluding high income)", 
+               "European Union", 
+               "Fragile and conflict affected situations", 
+               "Heavily indebted poor countries (HIPC)", 
+               "High income", 
+               "Late-demographic dividend", 
+               "Latin America & Caribbean", 
+               "Latin America & Caribbean (excluding high income)", 
+               "Latin America & the Caribbean (IDA & IBRD countries)", 
+               "Least developed, countries: UN classification", 
+               "Low & middle income", "Low income", 
+               "Lower middle income", "Middle East & North Africa", 
+               "Middle East & North Africa (IDA & IBRD countries)", 
+               "Middle East & North Africa (excluding high income)", 
+               "Middle income", "North America", "Not classified", 
+               "OECD members", "Other small states", 
+               "Pacific island small states", 
+               "Post-demographic dividend", "Pre-demographic dividend", 
+               "Small states", "South Asia", "South Asia (IDA & IBRD)", 
+               "Sub-Saharan Africa", 
+               "Sub-Saharan Africa (IDA & IBRD countries)", 
+               "Sub-Saharan Africa (excluding high income)", 
+               "Upper middle income", "World")
 
 d.health <- d.health[!(d.health$countryname %in% aggr.list), ]
 ```
@@ -411,7 +449,7 @@ Regarding examples below, equation (4) is used for analysis.
 * $T$ is whether the individual receives higher education.
 * $X$ is unobserved innate ability.
 
-In this setting, individuals with higher innate ability **on average** will earn higher wages (i.e., $\theta_2>0$), and individuals with higher innate ability **on average** will receive higher education (i.e., $Cov(T,X)<0$). Therefore, there is a **upward bias** in the estimated effect.
+In this setting, individuals with higher innate ability **on average** will earn higher wages (i.e., $\theta_2>0$), and individuals with higher innate ability **on average** will receive higher education (i.e., $Cov(T,X)>0$). Therefore, there is a **upward bias** in the estimated effect.
 
 **Example 2:** 
 
