@@ -1,0 +1,105 @@
+---
+title: "Problem Set 3"
+subtitle: "Global Poverty and Economic Development"
+author: "Wenjie Tu"
+date: "Fall Semester 2021"
+output: pdf_document
+---
+
+```{r, echo=F}
+# set working directory
+setwd('F:/UZH/21Fall/Global-Poverty/PS/PS3')
+
+# set environment language
+Sys.setenv(lang = "us_en")
+
+# clear working directory
+rm(list=ls())
+```
+
+```{r}
+library(stargazer)
+library(AER) # iv regression
+```
+
+
+```{r}
+# read in data
+dta <- read.csv("./Data_IV.csv")
+```
+
+```{r}
+table(dta[dta$assignment==1, ]$treated)
+```
+
+```{r}
+table(dta[dta$assignment==0, ]$treated)
+```
+
+```{r}
+model1 <- lm(y ~ treated, data=dta)
+
+stargazer(model1, title="OLS Regression", header=F, 
+          keep.stat = c("n", "rsq"), type="text", single.row=T)
+```
+
+
+```{r}
+# reduced form
+model2 <- lm(y ~ assignment, data=dta)
+
+stargazer(model1, model2, title="Reduced Form", header=F, 
+          keep.stat = c("n", "rsq"), type="text", single.row=T)
+```
+
+```{r}
+model3 <- ivreg(y ~ treated | assignment, data=dta)
+
+stargazer(model1, model2, model3, model4, title="IV Regression", header=F, 
+          keep.stat = c("n", "rsq"), no.space=T, single.row=T, type="text", 
+#          dep.var.labels.include=F
+          column.labels=c("OLS", "IIT", "LATE", "1st Stage"), digits=5, 
+          model.names=F)
+```
+
+```{r}
+model4 <- lm(treated ~ assignment, data=dta)
+
+stargazer(model4, title="First Stage", header=F, 
+          keep.stat = c("n", "rsq"), type="text", single.row=T)
+```
+
+```{r}
+model5 <- lm(y ~ assignment, data=dta, subset=dta$sex==0)
+
+model6 <- lm(y ~ assignment, data=dta, subset=dta$sex==1)
+
+stargazer(model5, model6, title="ITT by gender", header=F, type="text",
+          keep.stat = c("n", "rsq"), no.space=T, model.numbers = F, single.row = T, 
+          column.labels=c("sex=0", "sex=1"))
+```
+
+
+```{r}
+model7 <- ivreg(y ~ treated | assignment, 
+                data=dta, subset=dta$sex==0)
+
+model8 <- ivreg(y ~ treated | assignment, 
+                data=dta, subset=dta$sex==1)
+
+reg1 <- lm(y ~ treated, data=dta, subset=dta$sex==0)
+
+reg2 <- lm(y ~ treated, data=dta, subset=dta$sex==1)
+
+stargazer(model7, model8, reg1, reg2, title="LATE by gender", header=F, type="text", 
+          keep.stat = c("n", "rsq"), single.row=T, model.numbers=F, 
+          column.labels=c("sex=0", "sex=1", "", ""))
+```
+
+```{r}
+model9 <- ivreg(y ~ treated + sex | assignment + sex, data=dta)
+
+stargazer(model9, title="IV Regression", header=F, model.numbers=F,  
+          keep.stat = c("n", "rsq"), single.row=T)
+```
+

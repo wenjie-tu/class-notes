@@ -1,0 +1,414 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+%\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{comment}
+\usepackage{multirow}
+% \usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[top=2.0cm, left=2.0cm, right=2.0cm, bottom=3.0cm]{geometry}
+
+\title{%
+\begin{center}
+    \includegraphics[scale=0.1]{UZH2.png}
+\end{center}
+%\vspace{1em}
+    Problem Set 3 \\
+    \vspace{1mm}
+    \large Global Poverty and Economic Development
+}
+\author{Wenjie Tu}
+\date{Fall Semester 2021}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+%\onehalfspacing
+\begin{document}
+
+\maketitle
+
+\section{Data Exercise - IV estimation}
+
+\subsection{}
+
+\begin{verbatim}
+> dta <- read.csv("./Data_IV.csv")
+> table(dta[dta$assignment==0, ]$treated)
+> table(dta[dta$assignment==1, ]$treated)
+\end{verbatim}
+
+\begin{table}[!htbp] \centering
+    \caption{IV Table}
+    \label{tab:counts}
+    \vspace{1mm}
+    \begin{tabular}{lcc}
+    \hline\hline
+    \vspace{1mm}
+           & $treated=0$ & $treated=1$ \\
+    \hline
+    $assignment=0$ & 2499 &  0   \\
+    $assignment=1$ & 1200 & 1301 \\
+    \hline\hline
+    \end{tabular}
+\end{table}
+
+\begin{equation*}
+    \mathbb{E}[treated=0\mid assignment=1]=
+    \frac{1200}{1200+1301}=\frac{1200}{2501}\approx0.480
+\end{equation*}
+
+\begin{comment}
+\begin{table}[!htbp] \centering 
+  \caption{Regression results} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lcccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{4}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-5} 
+\\[-1.8ex] & \multicolumn{3}{c}{y} & treated \\ 
+ & OLS & IIT & LATE & 1st Stage \\ 
+\\[-1.8ex] & (1) & (2) & (3) & (4)\\ 
+\hline \\[-1.8ex] 
+ treated & 6.583$^{***}$ &  & 16.439$^{***}$ &  \\ 
+  & (0.120) &  & (0.311) &  \\ 
+  assignment &  & 8.551$^{***}$ &  & 0.520$^{***}$ \\ 
+  &  & (0.057) &  & (0.010) \\ 
+  Constant & 2.536$^{***}$ & $-$0.028 & $-$0.028 & $-$0.000 \\ 
+  & (0.061) & (0.040) & (0.114) & (0.007) \\ 
+ \hline \\[-1.8ex] 
+Observations & 5,000 & 5,000 & 5,000 & 5,000 \\ 
+R$^{2}$ & 0.374 & 0.820 & $-$0.465 & 0.351 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{4}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+\end{comment}
+
+
+%---------------------------------------------------------------------
+
+\subsection{}
+
+\begin{verbatim}
+> model1 <- lm(y ~ treated, data=dta)
+\end{verbatim}
+
+Results: see Table \ref{tab:ivreg} column (1).
+
+\subsection{}
+\begin{verbatim}
+> model2 <- lm(y ~ assignment, data=dta)
+\end{verbatim}
+Results: see Table \ref{tab:ivreg} column (2).
+
+\subsection{}
+\begin{verbatim}
+> model3 <- ivreg(y ~ treated | assignment, data=dta)
+\end{verbatim}
+Results: see Table \ref{tab:ivreg} column (3).
+
+
+\begin{table}[!htbp] \centering 
+  \caption{IV Regression} 
+  \label{tab:ivreg} 
+\begin{tabular}{@{\extracolsep{5pt}}lcccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{4}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-5} 
+\\[-1.8ex] & \multicolumn{3}{c}{y} & treated \\ 
+ & OLS & ITT & LATE & 1st Stage \\ 
+\\[-1.8ex] & (1) & (2) & (3) & (4)\\ 
+\hline \\[-1.8ex] 
+ treated & 6.583$^{***}$ (0.120) &  & 16.439$^{***}$ (0.311) &  \\ 
+  assignment &  & 8.551$^{***}$ (0.057) &  & 0.520$^{***}$ (0.010) \\ 
+  Constant & 2.536$^{***}$ (0.061) & $-$0.028 (0.040) & $-$0.028 (0.114) & $-$0.000 (0.007) \\ 
+ \hline \\[-1.8ex] 
+Observations & 5,000 & 5,000 & 5,000 & 5,000 \\ 
+R$^{2}$ & 0.374 & 0.820 & $-$0.465 & 0.351 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{4}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+
+%---------------------------------------------------------------
+
+\subsection{} % Wald estimate
+
+From \textbf{1.1}, we see that the proportion of those assigned to treatment did not receive treatment is 0.480. We can further derive that the proportion of those assigned to treatment received treatment is 0.520 (1-0.480), which is also consistent with the first-stage regression (see Table \ref{tab:ivreg} column (4)).
+
+\begin{align*}
+    \delta^{Wald}&=\frac{\mathbb{E}[Y_i\mid Z=1] - \mathbb{E}[Y_i\mid Z=0]}
+    {\mathbb{E}[D_i\mid Z=1] - \mathbb{E}[D_i\mid Z=0]} \\
+    &=\frac{\textrm{ITT}}{\textrm{1st stage}} \\
+    &=\frac{8.551}{0.520} \\
+    &\approx16.44
+\end{align*}
+
+\subsection{}
+
+Table \ref{tab:ivreg} shows that the estimate in column (2) is different from the estimate in column (3). The OLS reduced-form regression captures the intent-to-treat effect while the IV regression captures the local average treatment effect. From \textbf{1.1} we see that the assignment of treatment is not strictly implemented. There are some units who are assigned to treatment but do not receive treatment. Therefore, the observed treatment indicator is not ``clean''.  If we divide intent-to-treat effect by the proportion of units who were assigned to treatment and received treatment, we can derive the same result as in IV regression.
+
+%--------------------------------------------------------
+
+\begin{comment}
+\begin{table}[!htbp] \centering 
+  \caption{ITT by gender} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lcc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-3} 
+\\[-1.8ex] & \multicolumn{2}{c}{y} \\ 
+ & sex=1 & sex=0 \\ 
+\hline \\[-1.8ex] 
+ assignment & 9.959$^{***}$ & 7.143$^{***}$ \\ 
+  & (0.043) & (0.089) \\ 
+  Constant & $-$0.059$^{*}$ & 0.003 \\ 
+  & (0.031) & (0.063) \\ 
+ \hline \\[-1.8ex] 
+Observations & 2,502 & 2,498 \\ 
+R$^{2}$ & 0.955 & 0.721 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+\end{comment}
+
+%--------------------------------------------------------------------------------
+
+\subsection{}
+
+\begin{verbatim}
+> # intent-to-treat by gender
+> model5 <- lm(y ~ assignment, data=dta, subset=dta$sex==1)
+> model6 <- lm(y ~ assignment, data=dta, subset=dta$sex==0)
+\end{verbatim}
+
+Regression results: Table \ref{tab:ITT}.
+
+\begin{table}[!htbp] \centering 
+  \caption{ITT by gender} 
+  \label{tab:ITT} 
+\begin{tabular}{@{\extracolsep{5pt}}lcc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-3} 
+\\[-1.8ex] & \multicolumn{2}{c}{y} \\ 
+ & sex=0 & sex=1 \\ 
+\hline \\[-1.8ex] 
+ assignment & 7.143$^{***}$ (0.089) & 9.959$^{***}$ (0.043) \\ 
+  Constant & 0.003 (0.063) & $-$0.059$^{*}$ (0.031) \\ 
+ \hline \\[-1.8ex] 
+Observations & 2,498 & 2,502 \\ 
+R$^{2}$ & 0.721 & 0.955 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+
+%------------------------------------------------------------------------------
+
+% Discuss the results from the previous two regressions. The ITT is higher for one gender, while the LATE is higher for the other gender. Why might this be the case?
+
+%-----------------------------------------------------------------------------
+
+\subsection{}
+
+\begin{verbatim}
+> # local average treatment effect by gender
+> model7 <- ivreg(y ~ treated | assignment, data=dta, subset=dta$sex==1)
+> model8 <- ivreg(y ~ treated | assignment, data=dta, subset=dta$sex==0)
+\end{verbatim}
+Regression results: Table \ref{tab:LATE}.
+Two separate IV regressions capture the local average treatment effects across different gender groups.
+
+\begin{table}[!htbp] \centering 
+  \caption{LATE by gender} 
+  \label{tab:LATE} 
+\begin{tabular}{@{\extracolsep{5pt}}lcc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-3} 
+\\[-1.8ex] & \multicolumn{2}{c}{y} \\ 
+ & sex=0 & sex=1 \\ 
+\hline \\[-1.8ex] 
+ treated & 8.928$^{***}$ (0.058) & 41.392$^{***}$ (2.012) \\ 
+  Constant & 0.003 (0.033) & $-$0.059 (0.342) \\ 
+ \hline \\[-1.8ex] 
+Observations & 2,498 & 2,502 \\ 
+R$^{2}$ & 0.925 & $-$4.641 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+
+%--------------------------------------------------------------------------------
+
+\subsection{}
+
+\begin{equation*}
+    \textrm{LATE}=\frac{\mathrm{ITT}}{\mathrm{ITT_D}}
+\end{equation*}
+\begin{itemize}
+    \item Note: $\mathrm{ITT_D}$ is the proportion of units who are assigned to treatment and receive treatment (i.e. the proportion of compliers).
+\end{itemize}
+
+In Table \ref{tab:ITT} and Table \ref{tab:LATE}, we see that the difference between ITT and LATE among sex=1 is significantly larger than the difference between ITT and LATE among sex=0. We can infer that the proportion of compliers among sex=0 is much larger than the proportion of compliers among sex=1.
+
+%-------------------------------------------------------------------------------
+
+\subsection{}
+
+\begin{verbatim}
+> model9 <- ivreg(y ~ treated + sex | assignment + sex, data=dta)
+\end{verbatim}
+\begin{table}[!htbp] \centering 
+  \caption{IV Regression} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & y \\ 
+\hline \\[-1.8ex] 
+ treated & 16.444$^{***}$ (0.266) \\ 
+  sex & 5.948$^{***}$ (0.157) \\ 
+  Constant & $-$3.006$^{***}$ (0.144) \\ 
+ \hline \\[-1.8ex] 
+Observations & 5,000 \\ 
+R$^{2}$ & $-$0.069 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+
+The estimate from the IV regression after controlling gender is quite close to the estimate from the IV regression without controlling gender.
+
+\section{Theory - Centralized vs. Decentralized Corruption}
+
+\textbf{Centralized Corruption}
+
+\subsection{}
+
+\begin{align*}
+    \Pi&=P\times (Q(P)-c) \\
+    &=P\times\left(\frac{\alpha}{2}-\beta\times P-c\right)
+%    &=\sum_{i}^{N}p_i\times\left(\frac{\alpha}{2}-\beta\times \sum_{i}^{N}p_i-c\right) \\
+\end{align*}
+\begin{align*}
+    \max_{P}\quad P\times\left(\frac{\alpha}{2}-\beta\times P-c\right)
+\end{align*}
+FOC w.r.t. $P$:
+
+\begin{equation*}
+    \frac{\alpha}{2}-2\beta\times P-c=0\implies P^{*}=\frac{1}{2\beta}\left(\frac{\alpha}{2}-c\right)
+\end{equation*}
+\begin{equation*}
+    p^C=\frac{P^*}{N}=\frac{1}{2\beta N}\left(\frac{\alpha}{2}-c\right)
+\end{equation*}
+
+The monopolist sets the bribe level at $p^C=\frac{1}{2\beta N}\left(\frac{\alpha}{2}-c\right)$ in each of the $N$ identical checkpoints.
+
+\subsection{}
+
+\begin{align*}
+    \pi^C&=P^*\times (Q(P^*)-c) \\
+    &=P^*\times\left(\frac{\alpha}{2}-\beta\times P^*-c\right) \\
+    &=\frac{1}{2\beta}\left(\frac{\alpha}{2}-c\right)\times
+    \left(\frac{\alpha}{2}-\frac{1}{2}\left(\frac{\alpha}{2}-c\right)-c\right) \\
+    &=\frac{1}{2\beta}\left(\frac{\alpha}{2}-c\right)\times\left(\frac{\alpha}{4}-\frac{c}{2}\right) \\
+    &=\frac{1}{4\beta}\left(\frac{\alpha}{2}-c\right)^2
+\end{align*}
+
+The total profits from centralized corruption is $\pi^C=\frac{1}{4\beta}\left(\frac{\alpha}{2}-c\right)^2$ 
+
+\textbf{Decentralized Corruption}
+
+\subsection{}
+Setup:
+\begin{itemize}
+    \item 2 checkpoints set bribe level at 0
+    \item $N-3$ checkpoints set bribe level at $p^C$
+\end{itemize}
+\begin{align*}
+    \pi_i&=p_i\times (Q(P)-c) \\
+    &=p_i\times\left(\frac{\alpha}{2}-\beta\times P-c \right) \\
+    &=p_i\times\left(\frac{\alpha}{2}-\beta\times\left(p_i + (N-3)\cdot p^C\right)-c \right) \\
+    &=p_i\times\left(\frac{N+3}{2N}\left(\frac{\alpha}{2}-c\right)-\beta p_i \right) 
+\end{align*}
+\begin{align*}
+    \max_{p_i}\quad p_i\times\left(\frac{N+3}{2N}\left(\frac{\alpha}{2}-c\right)-\beta p_i \right) 
+\end{align*}
+
+FOC w.r.t. $p_i$:
+
+\begin{equation*}
+    \frac{N+3}{2N}\left(\frac{\alpha}{2}-c\right)-2\beta p_i=0\implies 
+    p_i=\frac{N+3}{4\beta N}\left(\frac{\alpha}{2}-c\right)
+\end{equation*}
+
+\begin{equation*}
+    \frac{p_i}{p^C}=\frac{N+3}{2}>1\quad (N\geq 2\text{ by assumption})\implies p_i>p^C
+\end{equation*}
+
+The checkpoint $i$ would set $p_i=\frac{N+3}{4\beta N}\left(\frac{\alpha}{2}-c\right)$ and it would be larger than $p^C$.
+
+\subsection{}
+
+Denote bribe level under decentralized corruption by $p^D$. In a symmetric equilibrium, $P=N\times p^D$.
+
+\begin{align*}
+    \pi_i&=p_i\times (Q(P)-c) \\
+    &=p_i\times\left(\frac{\alpha}{2}-\beta\times P-c \right) \\
+    &=p_i\times\left(\frac{\alpha}{2}-\beta\times\left(p_i + \sum_{j\neq i}p_j\right)-c \right)
+\end{align*}
+\begin{align*}
+    \max_{p_i}\quad p_i\times\left(\frac{\alpha}{2}-\beta\times\left(p_i + \sum_{j\neq i}p_j\right)-c \right)
+\end{align*}
+FOC w.r.t. $p_i$:
+
+\begin{align*}
+    \frac{\alpha}{2}-2\beta p_i-\beta\sum_{j\neq i}p_j -c&=0 \\
+    \frac{\alpha}{2}-2\beta p^D-\beta(N-1)\times p^D -c&=0 \\
+    p^D&=\frac{1}{\beta(N+1)}\left(\frac{\alpha}{2}-c \right)
+\end{align*}
+\begin{equation*}
+    \frac{p^D}{p^C}=\frac{2N}{N+1}>1\quad (N\geq 2\text{ by assumption})\implies p^D>p^C
+\end{equation*}
+The equilibrium bribe is $\frac{1}{\beta(N+1)}\left(\frac{\alpha}{2}-c \right)$ and it is larger than $p^C$.
+
+\subsection{}
+
+Denote the total profits from decentralized corruption by $\pi^D$.
+
+\begin{align*}
+    \pi^D&=N\times p^D \times (Q(P)-c) \\
+    &=N\times p^D \times \left(\frac{\alpha}{2}-\beta\times P-c \right) \\
+    &=N\times p^D \times \left(\frac{\alpha}{2}-\beta N\times p^D-c \right) \\
+    &=\frac{N}{\beta(N+1)^2}\left(\frac{\alpha}{2}-c \right)^2
+\end{align*}
+
+\begin{equation*}
+    \frac{\pi^D}{\pi^C}=\frac{4N}{(N+1)^2}<1 \quad (N\geq 2\text{ by assumption})\implies \pi^D<\pi^C
+\end{equation*}
+
+The total profits from decentralized corruption are $\frac{N}{\beta(N+1)^2}\left(\frac{\alpha}{2}-c \right)^2$ and they are smaller than $\pi^C$.
+
+\subsection{}
+
+I would ensure corruption to be centralized. From \textbf{2.4}, we see that $p^D>p^C$ (i.e. the bribe level at each checkpoint is higher in decentralized corruption than in centralized corruption). In decentralized bribing setting, independent price-setters lead to higher corruption per trip. The decentralized price is so high that it leads to lower total profits from corruption since each price-setter does not take into account the externality of his price decision on demand at other checkpoints.
+
+\end{document}
