@@ -8,10 +8,11 @@
 \usepackage{multirow}
 % \usepackage[a4paper, total={6in, 8in}]{geometry}
 \usepackage[top=2.0cm, left=2.0cm, right=2.0cm, bottom=3.0cm]{geometry}
+\renewcommand{\familydefault}{\sfdefault}
 
 \title{%
 \begin{center}
-    \includegraphics[scale=0.1]{UZH2.png}
+    \includegraphics[scale=0.15]{UZH2.png}
 \end{center}
 %\vspace{1em}
     Problem Set 3 \\
@@ -30,12 +31,14 @@
 
 \section{Data Exercise - IV estimation}
 
-\subsection{}
+\subsection{} % 1.1
+
+
 
 \begin{verbatim}
-> dta <- read.csv("./Data_IV.csv")
-> table(dta[dta$assignment==0, ]$treated)
-> table(dta[dta$assignment==1, ]$treated)
+dta <- read.csv("./Data_IV.csv")
+table(dta[dta$assignment==0, ]$treated)
+table(dta[dta$assignment==1, ]$treated)
 \end{verbatim}
 
 \begin{table}[!htbp] \centering
@@ -90,25 +93,26 @@ R$^{2}$ & 0.374 & 0.820 & $-$0.465 & 0.351 \\
 
 %---------------------------------------------------------------------
 
-\subsection{}
+\subsection{} % 1.2
 
 \begin{verbatim}
-> model1 <- lm(y ~ treated, data=dta)
+model1 <- lm(y ~ treated, data=dta)
 \end{verbatim}
 
 Results: see Table \ref{tab:ivreg} column (1).
 
-\subsection{}
+\subsection{} % 1.3
 \begin{verbatim}
-> model2 <- lm(y ~ assignment, data=dta)
+model2 <- lm(y ~ assignment, data=dta)
 \end{verbatim}
 Results: see Table \ref{tab:ivreg} column (2).
 
-\subsection{}
+\subsection{} % 1.4
 \begin{verbatim}
-> model3 <- ivreg(y ~ treated | assignment, data=dta)
+model3 <- ivreg(y ~ treated | assignment, data=dta)
 \end{verbatim}
 Results: see Table \ref{tab:ivreg} column (3).
+
 
 
 \begin{table}[!htbp] \centering 
@@ -120,12 +124,15 @@ Results: see Table \ref{tab:ivreg} column (3).
  & \multicolumn{4}{c}{\textit{Dependent variable:}} \\ 
 \cline{2-5} 
 \\[-1.8ex] & \multicolumn{3}{c}{y} & treated \\ 
- & OLS & ITT & LATE & 1st Stage \\ 
+ & OLS & IIT & LATE & 1st Stage \\ 
 \\[-1.8ex] & (1) & (2) & (3) & (4)\\ 
 \hline \\[-1.8ex] 
- treated & 6.583$^{***}$ (0.120) &  & 16.439$^{***}$ (0.311) &  \\ 
-  assignment &  & 8.551$^{***}$ (0.057) &  & 0.520$^{***}$ (0.010) \\ 
-  Constant & 2.536$^{***}$ (0.061) & $-$0.028 (0.040) & $-$0.028 (0.114) & $-$0.000 (0.007) \\ 
+ treated & 6.583$^{***}$ &  & 16.439$^{***}$ &  \\ 
+  & (0.120) &  & (0.311) &  \\ 
+  assignment &  & 8.551$^{***}$ &  & 0.520$^{***}$ \\ 
+  &  & (0.057) &  & (0.010) \\ 
+  Constant & 2.536$^{***}$ & $-$0.028 & $-$0.028 & $-$0.000 \\ 
+  & (0.061) & (0.040) & (0.114) & (0.007) \\ 
  \hline \\[-1.8ex] 
 Observations & 5,000 & 5,000 & 5,000 & 5,000 \\ 
 R$^{2}$ & 0.374 & 0.820 & $-$0.465 & 0.351 \\ 
@@ -183,35 +190,43 @@ R$^{2}$ & 0.955 & 0.721 \\
 
 %--------------------------------------------------------------------------------
 
-\subsection{}
+\subsection{} % 1.7
 
 \begin{verbatim}
-> # intent-to-treat by gender
-> model5 <- lm(y ~ assignment, data=dta, subset=dta$sex==1)
-> model6 <- lm(y ~ assignment, data=dta, subset=dta$sex==0)
+model5 <- lm(y ~ assignment, data=dta, subset=dta$sex==1)
+model6 <- lm(y ~ assignment, data=dta, subset=dta$sex==0)
 \end{verbatim}
 
-Regression results: Table \ref{tab:ITT}.
-
 \begin{table}[!htbp] \centering 
-  \caption{ITT by gender} 
-  \label{tab:ITT} 
-\begin{tabular}{@{\extracolsep{5pt}}lcc} 
+  \caption{ITT and LATE Comparison} 
+  \label{tab:late} 
+\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
 \\[-1.8ex]\hline 
 \hline \\[-1.8ex] 
- & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
-\cline{2-3} 
-\\[-1.8ex] & \multicolumn{2}{c}{y} \\ 
- & sex=0 & sex=1 \\ 
+ & \multicolumn{5}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-6} 
+\\[-1.8ex] & \multicolumn{5}{c}{y} \\ 
+\\[-1.8ex] & \multicolumn{2}{c}{\textit{ITT}} & \multicolumn{3}{c}{\textit{LATE}} \\ 
+ %& \multicolumn{2}{c}{\textit{}} & \multicolumn{3}{c}{\textit{variable}} \\ 
+ & sex=0 & sex=1 & sex=0 & sex=1 & both \\ 
+\\[-1.8ex] & (1) & (2) & (3) & (4) & (5)\\ 
 \hline \\[-1.8ex] 
- assignment & 7.143$^{***}$ (0.089) & 9.959$^{***}$ (0.043) \\ 
-  Constant & 0.003 (0.063) & $-$0.059$^{*}$ (0.031) \\ 
+ assignment & 7.143$^{***}$ & 9.959$^{***}$ &  &  &  \\ 
+  & (0.089) & (0.043) &  &  &  \\ 
+  treated &  &  & 8.928$^{***}$ & 41.392$^{***}$ & 8.928$^{***}$ \\ 
+  &  &  & (0.058) & (2.012) & (0.430) \\ 
+  sex &  &  &  &  & $-$0.062 \\ 
+  &  &  &  &  & (0.344) \\ 
+  treated:sex &  &  &  &  & 32.464$^{***}$ \\ 
+  &  &  &  &  & (1.493) \\ 
+  Constant & 0.003 & $-$0.059$^{*}$ & 0.003 & $-$0.059 & 0.003 \\ 
+  & (0.063) & (0.031) & (0.033) & (0.342) & (0.244) \\ 
  \hline \\[-1.8ex] 
-Observations & 2,498 & 2,502 \\ 
-R$^{2}$ & 0.721 & 0.955 \\ 
+Observations & 2,498 & 2,502 & 2,498 & 2,502 & 5,000 \\ 
+R$^{2}$ & 0.721 & 0.955 & 0.925 & $-$4.641 & $-$2.318 \\ 
 \hline 
 \hline \\[-1.8ex] 
-\textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\textit{Note:}  & \multicolumn{5}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
 \end{tabular} 
 \end{table} 
 
@@ -224,34 +239,12 @@ R$^{2}$ & 0.721 & 0.955 \\
 \subsection{}
 
 \begin{verbatim}
-> # local average treatment effect by gender
-> model7 <- ivreg(y ~ treated | assignment, data=dta, subset=dta$sex==1)
-> model8 <- ivreg(y ~ treated | assignment, data=dta, subset=dta$sex==0)
+model7 <- ivreg(y ~ treated | assignment, data=dta, subset=dta$sex==1)
+model8 <- ivreg(y ~ treated | assignment, data=dta, subset=dta$sex==0)
 \end{verbatim}
-Regression results: Table \ref{tab:LATE}.
+Regression results: Table \ref{tab:late} column (1) and column (2).
 Two separate IV regressions capture the local average treatment effects across different gender groups.
 
-\begin{table}[!htbp] \centering 
-  \caption{LATE by gender} 
-  \label{tab:LATE} 
-\begin{tabular}{@{\extracolsep{5pt}}lcc} 
-\\[-1.8ex]\hline 
-\hline \\[-1.8ex] 
- & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
-\cline{2-3} 
-\\[-1.8ex] & \multicolumn{2}{c}{y} \\ 
- & sex=0 & sex=1 \\ 
-\hline \\[-1.8ex] 
- treated & 8.928$^{***}$ (0.058) & 41.392$^{***}$ (2.012) \\ 
-  Constant & 0.003 (0.033) & $-$0.059 (0.342) \\ 
- \hline \\[-1.8ex] 
-Observations & 2,498 & 2,502 \\ 
-R$^{2}$ & 0.925 & $-$4.641 \\ 
-\hline 
-\hline \\[-1.8ex] 
-\textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
-\end{tabular} 
-\end{table} 
 
 %--------------------------------------------------------------------------------
 
@@ -264,38 +257,18 @@ R$^{2}$ & 0.925 & $-$4.641 \\
     \item Note: $\mathrm{ITT_D}$ is the proportion of units who are assigned to treatment and receive treatment (i.e. the proportion of compliers).
 \end{itemize}
 
-In Table \ref{tab:ITT} and Table \ref{tab:LATE}, we see that the difference between ITT and LATE among sex=1 is significantly larger than the difference between ITT and LATE among sex=0. We can infer that the proportion of compliers among sex=0 is much larger than the proportion of compliers among sex=1.
+In Table \ref{tab:late} from column (3) to column (4), we see that the difference between ITT and LATE among sex=1 is significantly larger than the difference between ITT and LATE among sex=0. We can infer that the proportion of compliers among sex=0 is much larger than the proportion of compliers among sex=1.
 
 %-------------------------------------------------------------------------------
 
 \subsection{}
 
 \begin{verbatim}
-> model9 <- ivreg(y ~ treated + sex | assignment + sex, data=dta)
+model9 <- ivreg(y ~ treated + sex | assignment + sex, data=dta)
 \end{verbatim}
-\begin{table}[!htbp] \centering 
-  \caption{IV Regression} 
-  \label{} 
-\begin{tabular}{@{\extracolsep{5pt}}lc} 
-\\[-1.8ex]\hline 
-\hline \\[-1.8ex] 
- & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
-\cline{2-2} 
-\\[-1.8ex] & y \\ 
-\hline \\[-1.8ex] 
- treated & 16.444$^{***}$ (0.266) \\ 
-  sex & 5.948$^{***}$ (0.157) \\ 
-  Constant & $-$3.006$^{***}$ (0.144) \\ 
- \hline \\[-1.8ex] 
-Observations & 5,000 \\ 
-R$^{2}$ & $-$0.069 \\ 
-\hline 
-\hline \\[-1.8ex] 
-\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
-\end{tabular} 
-\end{table} 
 
-The estimate from the IV regression after controlling gender is quite close to the estimate from the IV regression without controlling gender.
+
+In Table \ref{tab:late} from column (3) to column (5), the estimate from the IV regression after adding interaction term is quite close to the estimate from the IV regression for sex=0.
 
 \section{Theory - Centralized vs. Decentralized Corruption}
 
@@ -410,5 +383,7 @@ The total profits from decentralized corruption are $\frac{N}{\beta(N+1)^2}\left
 \subsection{}
 
 I would ensure corruption to be centralized. From \textbf{2.4}, we see that $p^D>p^C$ (i.e. the bribe level at each checkpoint is higher in decentralized corruption than in centralized corruption). In decentralized bribing setting, independent price-setters lead to higher corruption per trip. The decentralized price is so high that it leads to lower total profits from corruption since each price-setter does not take into account the externality of his price decision on demand at other checkpoints.
+
+Centralized is better. Higher corruption but also higher GDP (i.e. higher number of trips) and lower corruption per GDP (i.e. lower $p$). This implies that the marginal lorry driver is more likely to stay in the market.
 
 \end{document}
