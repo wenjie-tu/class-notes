@@ -1,0 +1,180 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+%\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{comment}
+\usepackage{multirow}
+\usepackage{diagbox}
+% \usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[top=2.0cm, left=2.0cm, right=2.0cm, bottom=3.0cm]{geometry}
+
+\title{%
+\begin{center}
+    \includegraphics[scale=0.15]{UZH2.png}
+\end{center}
+%\vspace{1em}
+    Problem Set 4 \\
+    \vspace{1mm}
+    \large Global Poverty and Economic Development
+}
+\author{Wenjie Tu}
+\date{Fall Semester 2021}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+%\onehalfspacing
+\begin{document}
+
+\maketitle
+
+\section{Theory - Repeated Game}
+
+\textbf{Setup:}
+
+\begin{itemize}
+    \item The seller can offer a high-quality product or a low-quality product:
+    \begin{itemize}
+        \item The cost of producing a high-quality product: $0<c<3$
+        \item The cost of producing a low-quality product: the information is not given by the question. I assume it to be 0 
+    \end{itemize}
+    \item The buyer is willing to pay $p_H=3$ for a high-quality product and $p_L=1$ for a low-quality product
+\end{itemize}
+
+\subsection{} % 1.1
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{l|c|c}
+    \hline\diagbox{Seller}{Buyer} & $p_H=3$ & $p_L=1$ \\
+    \hline
+    High-quality & $3-c, 0$ & $1-c, 2$ \\
+    \hline
+    Low-quality  & $3, -2$ & $1, 0$ \\
+    \hline
+    \end{tabular}
+    \caption{Normal-Form Matrix}
+    \label{tab:table1}
+\end{table}
+
+In the one-period game without repetition, we can use backward induction. Table \ref{tab:table1} shows the normal-form matrix for such a game. Whatever price the buyer is willing to pay, it is always a dominant strategy for the seller to offer a low-quality product. Anticipating this, the buyer will be willing to pay $p_L=1$. 
+
+\subsection{} % 1.2
+
+In a finitely repeated game, by backward induction the seller will always offer a low-quality product and the buyer will always pay $p_L$. In an infinitely repeated game, the buyer plays a grim-trigger strategy (the buyer pays $p_H$ if the seller offers a high-quality product but as soon as the seller defects the buyer pays $p_L$ forever).
+
+\textbf{Folk Theorem:} we can support the alternative set of strategies along the equilibrium path through the credible threat to revert back to the equilibrium of the stage game. As long as the discount factor $\delta$ is close enough to 1, there will be no profitable deviation. We can calculate the minimum necessary value of $\delta$ by considering the utility along the equilibrium path against the utility for the most attractive deviation plus the discounted utility for the equilibrium for the rest of time.
+
+
+\subsection{} % 1.3
+
+\textbf{Trust Equilibrium}
+
+In the first period (and in any future period), the seller will find it worth to provide the high-quality product if the flow of profit she gets by doing so is larger than the profits she makes when ``defaulting'':
+\begin{align*}
+    p_H - c + \sum_{t=1}^{\infty}\delta^{t}(p_H - c) &\geq p_H - 0 + \sum_{t=1}^{\infty}\delta^{t}(p_L - 0) \\
+    \frac{\delta}{1-\delta} (p_H - c) &\geq c + \frac{\delta}{1-\delta}p_L \\
+    % p_H - p_L &\geq \frac{c}{\delta}
+\end{align*}
+The profits the seller makes when offering high-quality products in future periods, $\frac{\delta}{1-\delta} (p_H - c)$, must be larger than the immediate temptation to provide low quality this period, $c$, plus the profits she makes afterwards (punishment periods), $\frac{\delta}{1-\delta}p_L$.
+
+\subsection{} % 1.4
+
+Plug $\begin{cases}p_H=3 \\ p_L=1 \end{cases}$ into above condition:
+\[p_H - p_L \geq \frac{c}{\delta} \implies \delta\geq\frac{c}{2} \]
+
+
+For given $p_H=3$, $p_L=1$, $c$, the trust equilibrium is sustainable if the discount factor $\delta$ is above $\frac{c}{2}$.
+
+\subsection{} % 1.5
+
+%$p_{max}$ is the expected value of the high-quality product for the buyer:
+\begin{itemize}
+    \item The high-quality product breaks down with a probability of $\beta$
+    \item The high-quality product does not break down with a probability of $1-\beta$
+    \item The buyer is willing to pay $p_L=1$ if the product does not work (breaks down)
+    \item The buyer is willing to pay $p_H=3$ if the product works
+\end{itemize}
+\begin{align*}
+    p_{max}&=\beta\times p_L + (1-\beta)\times p_H \\
+    &=\beta\times1 + (1-\beta)\times3 \\
+    &=3-2\beta
+\end{align*}
+
+\subsection{} % 1.6
+
+No-deviation condition:
+
+\[V^{+} \geq p_{max} + \delta V^{-}\]
+
+The total value to the seller in the trust setting must be larger or equal to the immediate temptation to provide low quality this period, plus the discounted continuation value in punishment periods, plus the discounted value in trust setting after punishment periods.
+
+\subsection{} % 1.7
+\begin{align*}
+    V^{+}&=p_{max}-c+(1-\beta)\delta V^{+}+\beta\delta V^{-} \\
+    V^{+}&=3-2\beta-c+(1-\beta)\delta V^{+}+\beta\delta\times \delta^TV^{+} \\
+    V^{+}&=\frac{3-2\beta-c}{1-(1-\beta)\delta-\beta\delta^{T+1}} \\
+    V^{+}&=\frac{3-2\beta-c}{1-\delta+\beta\delta(1-\delta^T)}
+\end{align*}
+
+Simplify no-deviation condition:
+\begin{align*}
+    V^{+}&\geq p_{max} + \delta V^{-} \\
+    V^{+}&\geq 3-2\beta + \delta\times\delta^{T}V^{+} \\
+    %(1-2\delta^{T+1})V^{+}&\geq p_{max} \\
+    V^{+}&\geq\frac{3-2\beta}{1-\delta^{T+1}} \\
+\end{align*}
+Plug $V^{+}=\frac{3-2\beta-c}{1-\delta+\beta\delta(1-\delta^T)}$ into above inequality:
+\begin{align*}
+    \frac{3-2\beta-c}{1-\delta+\beta\delta(1-\delta^T)}&\geq\frac{3-2\beta}{1-\delta^{T+1}} \\
+    \frac{3-2\beta-c}{3-2\beta}&\geq\frac{1-\delta+\beta\delta(1-\delta^T)}{1-\delta^{T+1}} \\
+    1-\frac{c}{3-2\beta}&\geq\frac{1-\delta+\beta\delta(1-\delta^T)}{1-\delta^{T+1}} \\
+    1-\frac{1-\delta+\beta\delta(1-\delta^T)}{1-\delta^{T+1}}&\geq\frac{c}{3-2\beta} \\
+    \frac{\delta(1-\delta^T)(1-\beta)}{1-\delta^{T+1}}&\geq\frac{c}{3-2\beta} \\
+    \frac{\delta(1-\delta^T)}{1-\delta^{T+1}}&\geq\frac{c}{3-2\beta}
+\end{align*}
+
+\newpage
+\section{Evaluation Design}
+
+\textbf{Setup:}
+\begin{itemize}
+    \item Program: to build primary schools in regions of the country with low enrollment rates
+    \item Objective: to increase education levels in the country
+\end{itemize}
+
+% long-term impacts
+
+\textbf{Structure of the Program:}
+
+The large-scale program is intended to introduce to the regions where the enrollment rates are lower. A threshold (i.e., cut-off point) must be set in order to select the regions as treatment units (i.e., regions with enrollment rates below the threshold are eligible for the program). 
+
+\textbf{Evaluation Design:}
+\begin{itemize}
+    \item \underline{Outcome:} enrollment rates for the short-run impact; education level, wages and employment for the long-run impact
+    %Enrolment rates are expressed as net enrolment rates, which are calculated by dividing the number of students of a particular age group enrolled in all levels of education by the number of people in the population in that age group within a region.
+    \item \underline{Treatment:} the program is introduced/implemented to the region.
+\end{itemize}
+
+\textbf{Empirical Strategy:}
+
+Before the introduction of the program, there is little difference among the regions with enrollment rates just above or just below the cut-off point in terms of any other socioeconomic characteristics (e.g., income level, population density, education level). The regions around the cut-off are considered ``marginal'' regions and they are the units of interest in our estimation. The intuition is that a region with enrollment rates just above the cut-off is likely to be very similar to a region with enrollment rates just below the cut-off. However, one region is eligible for the program while the other is not. A regression discontinuity design (RDD) can exploit exogenous characteristics of the program to elicit causal effects. There are two possible cases:
+
+% be used as the empirical strategy to identify the causal effect of the program on education outcome, with the cut-off point as the running variable. There are two possible cases:
+\begin{itemize}
+    \item The cut-off point is strictly implemented: a sharp cut-off around which there is a discontinuity in the probability of assignment from 0 to 1.
+    \item The cut-off point is not strictly implemented: a fuzzy RDD is proposed to allow for imperfect assignment. The idea in this setting is the same as in the instrumental-variable strategy. The local average treatment effect on compliers is identified.
+\end{itemize}
+
+\textbf{General Equilibrium Concerns:}
+
+Large-scale schooling program can generate substantive general equilibrium effects in the labor market and the education sector.
+\begin{itemize}
+    \item There are also large distributional effects, where labor market benefits are transferred from the skilled to the unskilled, especially among the young. High-skill workers who would have acquired skill even in the absence of the policy lose out in terms of labor market earnings.
+    \item Total welfare, however, is higher, driven by decreases in the household’s costs of education and increases in the local economy output.
+\end{itemize}
+
+ 
+
+\end{document}
