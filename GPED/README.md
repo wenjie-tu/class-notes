@@ -13,5 +13,5 @@ This directory is made for the course *Global Poverty and Economic Development*.
 
 * Check out for [course description](course_description.pdf).
 * Four problem sets contribute to 30% of the final grade.
-* Revision notes can be found [here](Revision/revision.pdf)
+* Revision notes can be found [here](Revision/revision.pdf).
 
