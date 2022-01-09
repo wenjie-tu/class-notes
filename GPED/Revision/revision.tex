@@ -1,0 +1,249 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+%\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{comment}
+% \usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[top=2.0cm, left=2.0cm, right=2.0cm, bottom=3.0cm]{geometry}
+\renewcommand{\familydefault}{\sfdefault}
+
+\title{%
+     Global Poverty and Economic Development
+}
+\author{Wenjie Tu}
+\date{Fall Semester 2021}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+%\onehalfspacing
+\begin{document}
+
+\maketitle
+
+\section{Adverse Selection}
+\textbf{Setup:}
+\begin{itemize}
+    \item Projects need startup cost $L$
+    \item Entrepreneurs (borrowers) vary in their unobservable type: risky or safe
+    \begin{itemize}
+        \item Risky borrowers: invest in risky assets and obtain return $R'>L$ with probability $p$ and zero return with probability $1-p$
+        \item Safe borrowers: invest in safe assets and always obtain return $R<R'$
+        \item No borrower's action/effort
+    \end{itemize}
+    \item Only one potential borrower of each type and one lender who can issue only one single loan, $L$
+    \begin{itemize}
+        \item If both borrowers apply, the lender randomly picks one (the lender cannot observe the borrow's type)
+    \end{itemize}
+\end{itemize}
+\textbf{Solution:}
+\begin{itemize}
+    \item Maximum interest rate that borrowers will accept
+    \begin{itemize}
+        \item Safe borrower: $i_s=\frac{R-L}{L}$
+        \item Risky borrower: $i_r=\frac{R'-L}{L}$ (she pays only if the project succeeds)
+    \end{itemize}
+    \item If the lender offers a loan at interest rate $i_s$, both borrowers willy apply and the lender's expected profit is:
+    \[\pi_s=\frac{1}{2}L(1+i_s)+\frac{1}{2}Lp(1+i_s)-L \]
+    \item If the lender offers a loan at interest rate $i_r$, only the risky borrower will apply and the lender's expected profit is:
+    \[\pi_r=pL(1+i_r)-L \]
+    \item The lender will choose $i_s$ if $\pi_s>\pi_r$
+    \[p<\frac{R}{2R'-R} \]
+    \item Intuition
+    \begin{itemize}
+        \item By raising the interest rate, only risky borrowers apply (\underline{adverse selection}) $\to$ higher interest may reduce lender's profit
+        \item If the lender chooses $i_s$, there is \textbf{credit rationing}: demand exceeds supply at $i_s$, but the lender does not raise the price
+    \end{itemize}
+\end{itemize}
+
+\section{Moral Hazard}
+\textbf{Setup:}
+\begin{itemize}
+    \item An entrepreneur can invest in a project that leads to return $R$ with probability $e$ and 0 otherwise
+    \item The entrepreneur chooses the effort level $e$:
+    \begin{itemize}
+        \item Cost of effort: $c(e)=\frac{1}{2}ce^2$
+    \end{itemize}
+    \item Opportunity cost of capital: $\rho$
+    \item Opportunity cost of labor/time: $u$
+\end{itemize}
+\textbf{Solution:}
+\begin{itemize}
+    \item If the entrepreneur can self-finance the project, her maximization problem is:
+    \[\max_{e}\quad eR+(1-e)0-\frac{1}{2}ce^2-\rho-u \]
+    \item The optimal (First Best) level of effort is:
+    \[e^{FB}=\frac{R}{c} \]
+    \begin{itemize}
+        \item assume an interior solution $e<1$
+    \end{itemize}
+    \item Now assume the entrepreneur cannot self-finance: she has illiquid wealth $w$ that she can use as collateral for a loan
+    \item The entrepreneur can get a loan from a lender:
+    \begin{itemize}
+        \item He pays back interest $r$ if the project  succeeds
+        \item He pays collateral $w$ if the project does not succeed (extreme case of limited liability: $w=0$)
+    \end{itemize}
+    \item Entrepreneur (borrower) payoff:
+    \[\pi^B=e(R-r)+(1-e)(-w)-\frac{1}{2}ce^2-u \]
+    \item Lender payoff:
+    \[\pi^L=er+(1-e)w-\rho \]
+    \item If the two parts could contract on effort, they would choose the level that maximizes the joint surplus ($\pi^B+\pi^L$), which is again $e^{FB}$
+    \item Now assume that the lender and the borrower cannot contract on effort
+    \begin{itemize}
+        \item Notice that the lender observes the type of the borrower but he still cannot contract on the action of the borrower
+    \end{itemize}
+    \item For a given interest, the borrower will choose the level of effort that maximizes $\pi^B$ (\textit{Incentive Compatibility Constraint})
+    \[e^{SB}=\frac{R-r+w}{c} \]
+    \begin{itemize}
+        \item If $w<r$, then $e^{SB}<e^{FB}$. Why?
+    \end{itemize}
+    \item Assume perfect competition among lenders $\to$ Lender's expected profit must equal the cost of capital (\textit{Zero Profit Condition}):
+    \[er+(1-e)w=\rho \]
+    \item Blug the IC into the ZPC, we obtain
+    \[ce^2-eR+(\rho-w)=0 \]
+    \item The solution is the larger root:
+    \[e^*(w)=\frac{R+\sqrt{R^2-4c(\rho-w)}}{2c} \]
+    \begin{itemize}
+        \item The lender is indifferent between two roots, but the borrower is better off with the larger root
+        \item $e^*$ is increasing in $w$. If $w=\rho$, $e^*=e^{FB}$
+    \end{itemize}
+    \item We can also solve for the equilibrium interest (i.e., loan$\times$(1+interest rate))
+    \[r^*(w)=w+\frac{R-\sqrt{R^2-4c(\rho-w)}}{2} \]
+    \item It can be shown that, for $w<\rho$, $\frac{\partial r^*(w)}{\partial w}<0$
+    \begin{itemize}
+        \item Richer borrowers get the loan at a lower interest rate and in equilibrium they will be more successful in their projects
+        \item If $w$ is very low, it may be impossible to satisfy the lenders' ZPC while also ensuring the borrower's utility is above $u$ $\to$ poor borrowers do not receive the loan
+    \end{itemize}
+\end{itemize}
+
+\textbf{Example:}
+
+\textbf{Question 1:} Agents can undertake a project at cost of 1. The project has outcome $y$ if it succeeds and 0 otherwise. The probability of success is equal to the amount of effort $e$ the agent exerts (or probability = 1 if $e>1$). The cost of effort is $\frac{1}{2}ce^2$
+\begin{enumerate}
+    \item What is the first best effort choice? In this and next questions, assume $c\geq y$.
+    \item Suppose the agent cannot self-finance the project, but she has to borrow from a bank at (gross) interest rate $r>1$. Assume the agent has limited liability. Write down the borrower’s problem. What is the level of effort chosen by the borrower? How does it compare to the first best? Why?
+    \item Now suppose two borrowers $i$, $j$ (with same $c$) are in a group lending scheme: if agent $i$ succeeds but agent $j$ fails, agent i pays a cost $k$ to the lender (assume $k<c$). Suppose the two borrowers choose independently their level of effort, taking as given the choice of the other borrower. What is the (symmetric) level of effort the borrowers choose?
+\end{enumerate}
+
+
+
+\textbf{Question 2:} An entrepreneur can invest k in a project and obtain $F(k)$. He was own wealth $w<k$ and need to borrow the rest at interest rate r. When the time to repay the loan comes, the entrepreneur can run away by paying a cost $\eta$ per unit of capital. In other words, the lender cannot enforce repayment.
+\begin{enumerate}
+    \item When will the borrower choose to default? Therefore, what is the maximum amount a lender will lend?
+    \item What is the relationship between the amount invested and wealth?
+\end{enumerate}
+Now suppose that the borrower’s cost of defaulting is zero unless the lender bears a monitoring cost $\phi$ (in which case the cost of defaulting is again $\eta$ per unit of $k$). Also, suppose that the cost of capital is $\rho$. The equilibrium in the lending market is driven by a zero profit condition for the lender that equates the profits lender makes on loan to the cost of capital.
+\begin{enumerate}
+    \setcounter{enumi}{2}
+    \item What is zero profit condition for the lender?
+    \item What is the maximum loan amount a borrower can get? (hint: equate the lender zero profit condition and the incentive constraint for the borrower)
+    \item What is the interest rate when the credit constraint binds? How does the interest rate compare to the cost of capital $\rho$? How does this comparison depend on the monitoring cost $\phi$?
+\end{enumerate}
+
+\section{Quasi-Hyperbolic Discounting vs. EU}
+\begin{equation*}
+    U^t(c_t,c_{t+1},\cdots,c_T)=\delta^{t-1}u(c_t)+\beta\sum_{\tau=t+1}^{T}\delta^{\tau-1}u(c_{\tau})
+\end{equation*}
+\begin{equation*}
+    \delta_{t,s}=
+    \begin{cases}
+    1, & \textrm{if } t=s \\
+    \beta\delta^{t-s}, & \textrm{if } t>s
+    \end{cases}
+\end{equation*}
+\begin{itemize}
+    \item $\beta=1$: standard exponential discounting
+    \item $\beta<1$: present bias
+    \item The time-inconsistency here comes from comparing future periods; the discounting between today and tomorrow, and between one month from now vs. two months from now, are discounted differently
+    \item We hit all future periods with an extra $\beta$
+\end{itemize}
+\textbf{Example:}
+
+Suppose $\beta=0.9$ and $\delta=1$
+\begin{enumerate}
+    \item Choose between \$99 in $t=1$ and \$100 in $t=2$
+    \item Choose between \$99 in $t=3$ and in \$100 $t=4$
+\end{enumerate}
+In $t=1$:
+\begin{align*}
+    U^1&=\delta^{0}u(c_1)=1\times 99=99 \\
+    U^1&=\beta\delta^{1}u(c_2)=0.9\times 1\times 100=90 \\
+    U^1&=\beta\delta^{2}u(c_3)=0.9\times 1\times 99=89.1 \\
+    U^1&=\beta\delta^{3}u(c_4)=0.9\times 1\times 100=90
+\end{align*}
+In $t=3$:
+\begin{align*}
+    U^3&=\delta^{0}u(c_3)=\times 1\times 99=99 \\
+    U^3&=\beta\delta^{1}u(c_4)=0.9\times 1\times 100=90
+\end{align*}
+
+\section{Self-Control}
+\begin{itemize}
+    \item There are three periods
+    \item Income = $Y_1$ (no other income sources in other periods)
+    \item There are matching contributions: $M$ times the amount saved by the start of $t=3$
+    \item $t=1, 2$, agent must make an allocation decision between savings and consumption
+    \item The consumer has quasi-hyperbolic preferences with $\delta=1$ for simplicity and $\beta\in(0,1]$
+    \item Assume sophistication: agent knows his future $\beta$ and there is no uncertainty
+    \item Utility is given by an instantaneous utility function $u(c_t)$ which is increasing and concave
+    \[u'(\cdot)>0 \textrm{ and } u''(\cdot)<0 \]
+    \item Agent's maximization problem is as follows:
+    \begin{itemize}
+        \item In $t=1$:
+        \[\max\quad U_1(c_1,c_2,c_3)\equiv u(c_1)+\beta[u(c_2)+u(c_3) ] \]
+        \item In $t=2$:
+        \[\max\quad U_2(c_2,c_3)\equiv u(c_2)+\beta u(c_3) \]
+    \end{itemize}
+\end{itemize}
+\textbf{No commitment savings}
+
+Solve recursively:
+\begin{itemize}
+    \item In $t=3$, the agent consumes whatever is left
+    \item In $t=2$, solve the following maximization problem:
+    \[\max_{c_2}\quad u(c_2)+\beta u\left((Y_1-c_1-c_2)(1+M)\right) \]
+    \[u'(c_2)=\beta(1+M)u'\left((Y_1-c_1-c_2)(1+M)\right) \]
+    \item In $t=1$, the agent takes the $t=2$ constraint as given and solves:
+    \begin{align*}
+        \max_{c_1}\quad & u(c_1)+\beta[u(c_2)+u(c_3) ] \\
+        \textrm{s.t.}\quad & c_3=(Y_1-c_1-c_2)(1+M) \\
+        & u'(c_2)=\beta(1+M)u'(c_3) \\
+        & c_1, c_2, c_3 \geq 0
+    \end{align*}
+    \begin{itemize}
+        \item Defining $Y_2\equiv Y_1-c_1$
+        \begin{align*}
+            u'(c_1)&=\beta\left[u'(c_2)\frac{\textrm{d}c_2}{\textrm{d}Y_2}+
+            u'(c_3)\frac{\textrm{d}c_3}{\textrm{d}Y_2} \right] \\
+            u'(c_2)&=\beta(1+M)u'(c_3) \\
+            c_3&=(Y_1-c_1-c_2)(1+M)
+        \end{align*}
+        \item Euler equation:
+        \[u'(c_1)=\left[\beta\frac{\textrm{d}c_2}{\textrm{d}Y_2}+
+        \left(\frac{\textrm{d}c_2}{\textrm{d}Y_2}\right)u'(c_2) \right] \]
+    \end{itemize}
+\end{itemize}
+
+\textbf{Commitment savings}
+
+\begin{itemize}
+    \item In $t=1$, the agent would like to set $u'(c_2)=(1+M)u'(c_3)$
+    \item When the agent has self-control problems, he is unable to ensure this pattern of consumption, as in $t=2$ he would prefer to set $u'(c_2)=\beta(1+M)u'(c_3)$, which is more than he would like to in $t=1$
+    \item The agent solves the problem as a $t=1$ maximization for all periods, which gives the following set of equations for the solution
+    \begin{align*}
+        u'(c_1)&=\beta u'(c_2) \\
+        u'(c_2)&=(1+M) u'(c_3) \\
+        c_3&=(Y_2-c_2)(1+M)
+    \end{align*}
+    \begin{itemize}
+        \item If $\beta=1$, commitment savings has no effect
+        \item If $\beta=0$, no savings
+        \item If $\beta\in(0,1)$, two opposing effects on the impact of commitment on savings
+        \begin{itemize}
+            \item Without commitment, $t=2$ self will deviate further from optimal consumption in $t=1$. The impact on savings of having a commitment device is larger for increased present bias.
+            \item However, $t=1$ self also has a decreasing $\beta$, therefore less of a desire to allocate consumption to later periods.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\end{document}

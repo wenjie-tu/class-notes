@@ -325,6 +325,8 @@ I would cluster regressions at a village level to address spillovers within the 
 
 I will do a intention-to-treat analysis to test if attrition is a big problem. Households in C villages may use the new type of insecticide-diffuser intentionally or accidentally. I can also instrument the treatment variable with the intent-to-treat variable and estimate the local average treatment effect on compliers. 
 
+\textcolor{cyan}{Collect data on baseline characteristics between groups (those who dropped out and those who stayed), to ensure that there was no selection issues. You would also want to test that your control and treatment groups are still comparable. Would want to ensure that the attrition is random.}
+
 ### 2.3 (c)
 
 If the randomization is conducted without any compromise, I would expect estimates to be the same more or less after including baseline covariates. Randomized controlled trials always produce an unbiased estimate for the treatment effect even without adjusting for any baseline covariate. 
@@ -403,9 +405,11 @@ mean(d.did[d.did$treatment==0, "x2"]))
 )
 ```
 
-As shown above, the mean value of $x_1$ is quite close between treatment and control towns, while the mean value of $x_2$ is significantly different between treatment and control towns. 
+<!-- As shown above, the mean value of $x_1$ is quite close between treatment and control towns, while the mean value of $x_2$ is significantly different between treatment and control towns. 
 
-Imbalance between groups in baseline variables that may influence outcome can bias statistical tests (standard errors), which in some sense affects the validity of the DiD approach.
+Imbalance between groups in baseline variables that may influence outcome can bias statistical tests (standard errors), which in some sense affects the validity of the DiD approach. -->
+
+The coefficient for $x_1$ is not significant for the first regression, indicating that $x_1$ is not different between treatment and control towns. On the contrary, $x_2$ is significantly different between the two groups. This is not necessarily a concern for the DiD approach, since $x_1$ and $x_2$ are controls, and therefore should not directly effect our estimates for the treatment effect. What matters is that x1 and x2 are independent from the treatment assignment, and are not affected by the treatment. It doesn’t affect the validity of the DiD approach as long as we control for it and as long a the parallel trend assumption holds. The coefficient is almost the same, controlling for covariates only increased precision.
 
 <!-- Randomized controlled trial ensures that allocation of towns to treatments is left purely to chance. The characteristics of towns that may influence outcome are distributed between treatment groups so that any difference in outcome can be assumed to be due to the intervention. However, imbalance between groups in baseline variables that may influence outcome can bias statistical tests, a property sometimes referred to as chance bias. Observed differences in outcome between groups in a particular trial could by chance be due to characteristics of the towns, not treatments.  -->
 
@@ -500,9 +504,4 @@ The placebo test is performed using a fake treatment group. The fake treatment g
 
 ## 3.7
 
-DiD estimation can be formulated in different ways: table form and regression form. 
-
-* Table form is more intuitive and straightforward. But it does not work in some more complicated settings such as adding baseline covariates and fixed effects. Furthermore, we cannot use statistical tests and control for other covariates.
-* Regression form is less straightforward but more powerful. It allows for statistical tests and fixed effects.
-
-
+\textcolor{cyan}{This suggests that the method used in the first two subsections gave us biased coefficient as we do not have the parallel trends assumption holding for all time periods before the treatment hits.}
