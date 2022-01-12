@@ -315,6 +315,8 @@ Spillovers:
 
 Spillover effect is stronger within the village than across villages.
 
+\textcolor{cyan}{The spillovers would most likely be positive, for example if the diffuser is killing mosquitos carrying the disease, thereby lowering the chance of others being infected. In order to account for spillover effects, you would want to randomize at the village level as well as the individual level. This would allow you to capture the effects of the spillovers, by controlling the outcomes of individuals in control villages with those untreated individuals in treated villages.}
+
 ## 2.3
 
 ### 2.3 (a)
@@ -330,6 +332,12 @@ I will do a intention-to-treat analysis to test if attrition is a big problem. H
 ### 2.3 (c)
 
 If the randomization is conducted without any compromise, I would expect estimates to be the same more or less after including baseline covariates. Randomized controlled trials always produce an unbiased estimate for the treatment effect even without adjusting for any baseline covariate. 
+
+\textcolor{cyan}{If the randomization was properly done, it should not affect the estimates significantly. It will increase precision if the control variables are correlated with the potential outcomes. These variables are not of interest to us in estimating treatment effects directly, but we want to control for any variation they introduce into the dependent variable, thereby increasing precision, but not affecting treatment.}
+
+\textcolor{cyan}{However, this does not hold if you have a sample that is so small that adding too many covariates would decrease precision slightly, since it reduces your degrees of freedom. This is mostly true if your covariates are independent of your outcome.}
+
+\textcolor{cyan}{Finally, if the randomization was compromised, and you observe unbalance between treatment and control groups, then controlling for covariates is necessary to remove biases.}
 
 # 3 Data Exercise: Difference-in-Differences (DiD)
 
