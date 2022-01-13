@@ -121,8 +121,12 @@
 \textbf{Question 1:} Agents can undertake a project at cost of 1. The project has outcome $y$ if it succeeds and 0 otherwise. The probability of success is equal to the amount of effort $e$ the agent exerts (or probability = 1 if $e>1$). The cost of effort is $\frac{1}{2}ce^2$
 \begin{enumerate}
     \item What is the first best effort choice? In this and next questions, assume $c\geq y$.
+    \[\max_{e}\quad ey+(1-e)0-\frac{1}{2}ce^2-1 \implies e^{FB}=\max\left\{\frac{y}{c},1\right\} \]
     \item Suppose the agent cannot self-finance the project, but she has to borrow from a bank at (gross) interest rate $r>1$. Assume the agent has limited liability. Write down the borrower’s problem. What is the level of effort chosen by the borrower? How does it compare to the first best? Why?
+    \[\max_{e}\quad e(y-r)+(1-e)0-\frac{1}{2}ce^2-1 \implies e^{SB}=\frac{y-r}{c}<e^{FB} \]
     \item Now suppose two borrowers $i$, $j$ (with same $c$) are in a group lending scheme: if agent $i$ succeeds but agent $j$ fails, agent i pays a cost $k$ to the lender (assume $k<c$). Suppose the two borrowers choose independently their level of effort, taking as given the choice of the other borrower. What is the (symmetric) level of effort the borrowers choose?
+    \[\max_{e_i}\quad e_i[(y-r)-(1-e_j)k]+(1-e_i)[0+(1-e_j)0]-\frac{1}{2}ce^2-1 \]
+    \[e_i=\frac{y-r-k(1-e_j)}{c}\overset{e_i=e_j=e^{GL}}{\Longrightarrow}e^{GL}=\frac{y-r-k}{c-k} \]
 \end{enumerate}
 
 
@@ -130,14 +134,19 @@
 \textbf{Question 2:} An entrepreneur can invest k in a project and obtain $F(k)$. He was own wealth $w<k$ and need to borrow the rest at interest rate r. When the time to repay the loan comes, the entrepreneur can run away by paying a cost $\eta$ per unit of capital. In other words, the lender cannot enforce repayment.
 \begin{enumerate}
     \item When will the borrower choose to default? Therefore, what is the maximum amount a lender will lend?
+    \[F(k)-r(k-w)<F(k)-\eta k \implies r(k-w)>\eta k \]
     \item What is the relationship between the amount invested and wealth?
+    \[r(k-w)=\eta k \implies k=\frac{rw}{r-\eta} \implies \frac{\partial k}{\partial w}=\frac{r}{r-\eta}<1 \]
 \end{enumerate}
-Now suppose that the borrower’s cost of defaulting is zero unless the lender bears a monitoring cost $\phi$ (in which case the cost of defaulting is again $\eta$ per unit of $k$). Also, suppose that the cost of capital is $\rho$. The equilibrium in the lending market is driven by a zero profit condition for the lender that equates the profits lender makes on loan to the cost of capital.
+Now suppose that the borrower’s cost of defaulting is zero unless the lender bears a monitoring cost $\phi$ (in which case the cost of defaulting is again $\eta$ per unit of $k$). Also, suppose that the cost of capital is $\rho$ per unit. The equilibrium in the lending market is driven by a zero profit condition for the lender that equates the profits lender makes on loan to the cost of capital.
 \begin{enumerate}
     \setcounter{enumi}{2}
     \item What is zero profit condition for the lender?
+    \[r(k-w)-\rho(k-w)-\phi=0 \]
     \item What is the maximum loan amount a borrower can get? (hint: equate the lender zero profit condition and the incentive constraint for the borrower)
+    \[k-w=\frac{\phi-\eta w}{\eta-\rho} \]
     \item What is the interest rate when the credit constraint binds? How does the interest rate compare to the cost of capital $\rho$? How does this comparison depend on the monitoring cost $\phi$?
+    \[r=\rho+\frac{\eta-\rho}{\phi-\eta w}\phi \]
 \end{enumerate}
 
 \section{Quasi-Hyperbolic Discounting vs. EU}
@@ -173,7 +182,7 @@ In $t=1$:
 \end{align*}
 In $t=3$:
 \begin{align*}
-    U^3&=\delta^{0}u(c_3)=\times 1\times 99=99 \\
+    U^3&=\delta^{0}u(c_3)=1\times 99=99 \\
     U^3&=\beta\delta^{1}u(c_4)=0.9\times 1\times 100=90
 \end{align*}
 
@@ -245,5 +254,90 @@ Solve recursively:
         \end{itemize}
     \end{itemize}
 \end{itemize}
+
+\section{Self-Enforcing Contracts}
+
+\subsection{Product Quality Problem}
+\begin{itemize}
+    \item A firm can choose to produce a good with two qualities
+    \begin{itemize}
+        \item The cost of high quality: $c_1$
+        \item The cost of low quality: $c_0$
+    \end{itemize}
+    \item A buyer is willing to buy $p_1$ for a high-quality product and $p_0$ for a low-quality product
+    \begin{itemize}
+        \item We assume $c_0=p_0=0$ and $p_1>c_1>0$
+        \item The buyer cannot observe the quality of the good before buying, but only after buying
+    \end{itemize}
+    \item A one-period game
+    \begin{itemize}
+        \item High-quality production will not be an equilibrium
+        \begin{itemize}
+            \item Whatever price the buyer is willing to pay, the seller’s will give him a low-quality product
+            \item Anticipating this, the buyer will only be willing to pay $p_0$
+            \item In a static game, the only (Nash) equilibrium is a low quality one
+        \end{itemize}
+    \end{itemize}
+    \item A finitely repeated game
+    \begin{itemize}
+        \item In $T$, the seller will cheat because she has no reputation to maintain
+        \begin{itemize}
+            \item The buyer knows this and offers $p_0$
+        \end{itemize}
+        \item In $T-1$, both parts know that they will not ``cooperate'' in $T$
+        \begin{itemize}
+            \item If the buyer offered $p_1$ in $T-1$, the seller would cheat because she has not incentives to have a reputation in $T$
+        \end{itemize}
+        \item By backward induction, the price is always $p_0$ and the quality is always low
+    \end{itemize}
+    \item An infinitely repeated game
+    \begin{itemize}
+        \item Assume that the buyer and the seller interact over an infinite amount of periods
+        \begin{itemize}
+            \item The seller has a discount factor: $\delta<1$
+        \end{itemize}
+        \item Consider the following buyer's strategy
+        \begin{itemize}
+            \item The buyer pays $p_1$ in the first period
+            \item In subsequent periods: he pays $p_1$ if the seller offers high-quality product, otherwise pays $p_0$
+        \end{itemize}
+        \item Cooperative equilibrium
+        \[p_1-c_1+\sum_{t=1}^{\infty}\delta^t(p_1-c_1)\geq p_1-0+\sum_{t=1}^{\infty}\delta^t\times0 \]
+        \begin{itemize}
+            \item For given $p_1$, $c_1$, the cooperative equilibrium is sustainable if $\delta$ is above a certain threshold (\textit{Folk Theorem})
+        \end{itemize}
+    \end{itemize}
+    \item Building brands
+    \begin{itemize}
+        \item If firms produce the low-quality good and sell it at a high price, they get punished and exit the market, and re-enter with a different name
+        \begin{itemize}
+            \item Suppose there is a fixed cost of entry $A$ (e.g. adverting to create a recognizable name)
+            \item Assume $p_1=1$
+            \item Consider a firm that has already paid the entry cost, and it can decide whether to produce
+            \begin{itemize}
+                \item high-quality good, the flow of discounted profits is: $\frac{1-c_1}{1-\delta}$
+                \item low-quality good, the flow of discounted profits is: $1+\delta(-A+\frac{1-c_1}{1-\delta})$
+            \end{itemize}
+            \item The firm will produce high-quality goods if 
+            \[\frac{1-c_1}{1-\delta}>1+\delta(-A+\frac{1-c_1}{1-\delta}) \]
+            \begin{itemize}
+                \item $A>\frac{c_1}{\delta}$: the cost of re-entering is too high relative to the benefit from cheating the consumer this period
+                \item We also need $A<\frac{1-c_1}{1-\delta}$ to induce entry in the first place
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+
+\subsection{Loan Default Problem}
+\begin{itemize}
+    \item Consider a case where an entrepreneur borrows $L$ at interest rate $i$ to finance a project that gives return $R>(1+i)L$
+    \item Without a loan, he gets (exogenous) utility $v$
+    \item Consider an infinitely repeated game (discount factor $\delta$)
+    \item A cooperative equilibrium where the borrower does not default is sustainable only if:
+    \[ R-(1+i)L+\frac{\delta}{1-\delta}[R-(1+i)L]\geq R+\frac{\delta}{1-\delta}v \]
+    \[\frac{\delta}{1-\delta}[R-(1+i)L-v]\geq (1+i)L\]
+\end{itemize}
+
 
 \end{document}
