@@ -1,0 +1,372 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+%\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{setspace}
+% \usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[top=2.0cm, left=2.0cm, right=2.0cm, bottom=3.0cm]{geometry}
+\usepackage{xcolor}
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\title{%
+    Applied Statistical Regression 
+}
+\author{Wenjie Tu}
+\date{Fall Semester 2021}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+%\onehalfspacing
+\begin{document}
+
+%\maketitle
+
+\section{Simple Regression}
+\begin{itemize}
+    \item The LOESS-Smoother is better, more flexible and more robust than the Gaussian Kernel Smoother.
+    \item Log-transformation on both response and predictor: this is an estimate for the median of the conditional distribution $y\mid x$, but not the conditional mean $E[y\mid x]$. If we require unbiased fitted values on the original scale, applying a correction factor is required!
+    \[\hat{y}=\exp(\hat{y}'+\frac{\hat{\sigma}_E^2}{2}) \]
+    \[\hat{y}=\exp(\hat{y}')\cdot\frac{1}{n}\sum_{i=1}^n\exp(r_i') \]
+    \item Confidence intervals for the median and prediction intervals by simple transformation:
+    \[[lo,up]\to[\exp(lo),\exp(up)] \]
+    \begin{itemize}
+        \item If one needs a confidence interval for the mean, the theoretical or Duan's smearing correction has to be used
+    \end{itemize}
+\end{itemize}
+
+\section{Multiple Regression}
+\begin{itemize}
+    \item \underline{Necessary but not sufficient condition} for the full rank of $X$: $p<n$
+    \item Gauss-Markov Theorem: The OLS regression coefficients are unbiased, and they have minimal variance among all estimators that are \underline{linear and unbiased}.
+    \item If the errors are i.i.d. and follow a Normal distribution, the estimated regression coefficients and the fitted values will also be normally distributed.
+    \item Adjusted R-squared is always (but often irrelevantly) smaller than multiple R-squared.
+    \item Individual Parameter Tests
+    \begin{itemize}
+        \item The p-values of the individual hypothesis tests are based on the assumption that the other predictors remain in the model and do not change. Therefore, you must not drop \underline{more than one} single non-significant predictor at a time.
+        \item It can happen that all individual tests do not reject the null hypothesis, although some predictors have a significant effort on the response. \textbf{Reason}: correlated predictors!
+        \item Multiple testing problem: when doing many tests, the total type I error (i.e. false rejection) increases and we may observe spuriously significant predictors. (Overall type I error: $1-(1-p)^m$)
+    \end{itemize}
+    \item Prediction: only interpolation (i.e. prediction within the range of observed y-values works well); extrapolation yields non-reliable results.
+    \item Inference with Factor Variable
+    \begin{itemize}
+        \item In a regression model where factor variables that have \underline{more than 2 levels and/or interaction terms} are present, the \texttt{summary()} function does not provide useful information for variable selection. We have to work with \texttt{drop1()} instead! \texttt{drop1()} performs correct model comparisons and respects the model hierarchy.
+    \end{itemize}
+    \item Inference with Categorical Predictors
+    \begin{itemize}
+        \item Do not perform individual hypothesis tests on factors that have \underline{more than 2 levels}, they are meaningless! We use \texttt{anova()}.
+    \end{itemize}
+    \item Residuals vs. Errors
+    \begin{itemize}
+        \item The residual random variables $R_i$ share some properties of the errors $E_i$, but not all - there are important differences.
+        \item Even in cases where the $E_i$ are uncorrelated and have constant variance, the residuals $R_i$ feature some \underline{estimation-related correlation and non-constant variance}.
+        \item The estimation-induced correlation and heteroskedasticity in the residuals $R_i$ is usually very small. Thus, residual analysis using the raw residuals $r_i$ is both useful and sensible.
+        \item One can try to improve the raw residual $r_i$ with dividing it by an estimate of its standard deviation
+        \[\tilde{r}_i=\frac{r_i}{\hat{\sigma}_E\cdot\sqrt{1-H_{ii}}} \]
+        where $H_{ii}$ is the diagonal element of hat matrix
+        \begin{itemize}
+            \item Standardized Residuals: $\hat{\sigma}_E$ is the residual standard error.
+            \item Studentized Residuals: $\hat{\sigma}_E$ is estimated by ignoring the $i$-th data point.
+        \end{itemize}
+    \end{itemize}
+    \item Tukey-Anscombe-Plot: Residuals vs. Fitted
+    \begin{itemize}
+        \item If $E[E_i]\neq0$, the response/predictor relation might be nonlinear or some important predictors/interaction may be missing
+        \item If non-constant variance of $E_i$, the smoother deviates from 0
+        \item When is the plot OK?
+        \begin{itemize}
+            \item the residual scatter around the x-axis without any structure (i.e. constant variance)
+            \item the smoother line is horizontal without systematic deviation (i.e. zero expectation)
+            \item there are no outliers
+        \end{itemize}
+        \item Systematic error (i.e. the smoother deviates from the x-axis and hence $E[E_i]\neq0$)
+        \begin{itemize}
+            \item Log-transformation on the response and/or predictors
+            \item Omitted variables (novel variables, higher polynomials, interaction terms)
+        \end{itemize}
+        \item Non-constant variance
+        \begin{itemize}
+            \item Transformations!
+        \end{itemize}
+    \end{itemize}
+    \item Normal Plot
+    \begin{itemize}
+        \item Identifying non-iid or non-Gaussian errors
+        \item When is the plot OK?
+        \begin{itemize}
+            \item No systematic deviation from line which leads to the 1st and 3rd quantile
+            \item A few data points that are slightly ``off the line'' near the boundaries are often encountered and usually tolerable
+            \item Long-tailed but symmetrical residuals are not optimal either, but often tolerable. Alternative: robust regression!
+        \end{itemize}
+    \end{itemize}
+    \item Scale-Location-Plot: $\sqrt{|\tilde{r}_i|}$ vs. $\hat{y}_i$
+    \begin{itemize}
+        \item Identifying heteroscedasticity
+        \item If $Var(E_i)\neq\sigma_E^2$, use transformations or weighted regression!
+        \item When is the plot OK?
+        \begin{itemize}
+            \item The smoother line runs horizontally along the x-axis, without any systematic deviations.
+        \end{itemize}
+    \end{itemize}
+    \item Leverage-Plot: $\tilde{r}_i$ vs. $H_{ii}$
+    \begin{itemize}
+        \item Leverage: $H_{ii}$
+        \begin{itemize}
+            \item Leverage points are different from the bulk of data
+            \item The average value for leverage is given by $\dfrac{p+1}{n}$
+            \item We say a data point has high leverage if $H_{ii}>\dfrac{2(p+1)}{n}$
+        \end{itemize}
+        \item Standardized residuals: $\tilde{r}_i$
+        \item Cook's Distance
+        \[D_i=\dfrac{\sum(\hat{y}_k^{[-i]}-\hat{y}_k)^2}{(p+1)\sigma_E^2}=\dfrac{H_{ii}}{1-H_{ii}}\cdot\dfrac{\tilde{r}_i^2}{p+1} \]
+        \begin{itemize}
+            \item Cook's Distance can be computed directly \underline{without} fitting the regression $n$ times.
+            \item It measures the influence of a data point and depends on leverage and standardized residuals.
+            \item Data points with $D_i>0.5$ are called influential. If $D_i>1$, the data point is potentially damaging to the regression problem.
+        \end{itemize}
+        \item Identifying outliers, leverage points, influential observations and uncritical data points at one and the same time
+        \item When is the plot OK?
+        \begin{itemize}
+            \item No extreme outliers in $y$-direction
+            \item High leverage (i.e. $H_{ii}>\dfrac{2(p+1)}{n}$) is always potentially dangerous, especially if it appears in conjunction with large residuals
+        \end{itemize}
+        \item How to deal with influential observations (i.e. $D_i>0.5$)?
+        \begin{itemize}
+            \item Check the data for misprints, typos
+            \item Influential observations often appear if the input is not suitable (i.e. predictors are extremely skewed, log-transformations were forgotten)
+            \item Simply omitting these data points is always a delicate matter and should at least be reported openly
+            \item Influential data points tell much about the benefits and limits of a model and create opportunities and ideas for how to improve the model
+        \end{itemize}
+    \end{itemize}
+    \item Partial Residual Plots
+    \begin{itemize}
+        \item The plot of response $y$ vs. predictor $x_k$ can be deceiving because other predictors also influence the response and thus blur our impression
+        \item Partial residual plots show the marginal relation between a predictor $x_k$ and the response $y$, after/when the effect of the other variables is accounted for
+        \item When is the plot OK?
+        \begin{itemize}
+            \item If the red line with the actual fit from the linear model, and the green line of the smoother do not show systematic differences
+        \end{itemize}
+        \item What to do if not OK?
+        \begin{itemize}
+            \item Using transformations; including additional predictors; adding interaction terms
+            \item Using GAM
+        \end{itemize}
+    \end{itemize}
+    \item Correlated Errors
+    \begin{itemize}
+        \item If the errors/residuals are correlated
+        \begin{itemize}
+            \item OLS procedure still leads to \underline{unbiased} estimates of both regression coefficients and fitted value
+            \item OLS estimator is \underline{no longer efficient}
+            \item The standard errors for the coefficients are biased and wiill inevitably lead to flawed inference results (i.e. hypothesis tests and confidence intervals)
+            \item The standard errors can be either too small (majority of cases), or too large
+        \end{itemize}
+        \item Residuals vs. Time/Index
+        \begin{itemize}
+            \item When is the plot OK?
+            \begin{itemize}
+                \item No systematic structure
+                \item No long sequences of positive/negative residuals
+                \item No back-and-forth between positive/negative residuals
+                \item The p-value in Durbin-Watson test is $>0.05$
+            \end{itemize}
+            \item What to do if not OK?
+            \begin{itemize}
+                \item Adding omitted variables
+                \item Using generalized least squares method (GLS)
+                \item Estimated coefficients and fitted values are unbiased but confience intervals and tests are biased!
+            \end{itemize}
+        \end{itemize}
+        \item Autocorrelation of Residuals
+        \item Durbin-Watson-Test
+        \[DW=\frac{\sum_{i=2}^n(r_i-r_{i-1})^2}{\sum_{i=1}^nr_i^2} \]
+        \begin{itemize}
+            \item Under the null hypothesis, no correlation. The test-statistic has a $\chi^2$-distribution. The p-value can be computed.
+            \item The DW-test is somewhat problematic, because it can only detect simple correlation structure. When more complex dependency exists, it has very low power.
+        \end{itemize}
+    \end{itemize}
+    \item Multicollinearity
+    \begin{itemize}
+        \item The columns $X$ show strong correlation (but not perfect dependence).
+        \begin{itemize}
+            \item In these cases, there is a (technically) unique solution, but it is often highly variable and poor for practical use
+            \item The estimated coefficients feature large standard errors (wider confidence intervals)
+            \item Typical case: the global F-test turns out to be significant, but none of the individual predictors is significant
+            \item Extrapolation may yield extremely poor results
+        \end{itemize}
+        \item Analyzing all pairwise correlation coefficients among predictors will not identify all situations where there is multicollinearity because multicollinearity is not always a pairwise phenomenon
+        \item Dealing with multicollinearity
+        \begin{itemize}
+            \item Amputation: among all colinear predictors, all except one will be discarded
+            \item Generating new variables
+            \item For factor variables, use generalized VIFs. If the squared $GVIF^{1/(2df)}$ exceed the usual threshold rules (i.e. $>5$, $>10$), then we have overly redundant factor variables among our predictors
+        \end{itemize}
+    \end{itemize}
+    \item Ridge Regression
+    \begin{itemize}
+        \item Ridge regression requires centered and standardized predictors as the solution is sensitive to location and scale. Furthermore, it is important not to penalize the intercept!
+        \item \texttt{lm.ridge()} does \underline{neither provide fitted values nor residuals}. These have to be sorted out by oneself via the design matrix
+        \item Residual plots have to be generated by hand too
+    \end{itemize}
+    \item Variable selection is not a method! The search for the best predictor set is an iterative process. It also involves estimation, inference and model diagnostics
+    \item Backward Elimination with p-Values
+    \begin{itemize}
+        \item The removed variables can still be related to the response. If we run a simple linear regression, they can even be significant. In the multiple linear model, however, there are other better and more informative predictors
+        \item In a step-by-step backward elimination, the best model is often missed.
+    \end{itemize}
+    \item AIC/BIC allow for comparison of models that are \underline{not hierarchical}. But they need to be fitted on exactly the same data points and the response variable needs to be identical
+    \item Backward Elimination with AIC/BIC
+    \begin{itemize}
+        \item The selection stops when AIC/BIC cannot be improved anymore. \underline{Predictors do not need to be significant}
+    \end{itemize}
+    \item Exhaustive Search
+    \begin{itemize}
+        \item For finding the model that globally minimizes AIC, a complete search over all $2^p$ models is required. Depending on $n$ and computing speed, this is feasible for $p\approx15-20$
+        \item R function \texttt{regsubsets()} of \texttt{library(leaps)} does the job, but \underline{it cannot deal with factor variable correctly}
+    \end{itemize}
+    \item Guidelines for Variable Selection
+    \begin{itemize}
+        \item Factor variables either remain with all their dummies, or are entirely removed. There is no in-between solution
+        \item If interaction terms are present, then the main effects for these variables must be in the models as well
+        \item In case of polynomial terms, all lower order terms must be used as well
+        \item Stick to these rules when using manual selection procedures
+        \item \texttt{regsubsets()} does not obey to these rules, while \texttt{step(), drop1(), add1()} do
+    \end{itemize}
+    \item LASSO
+    \begin{itemize}
+        \item Coefficients are artificially shrunken towards zero and hence \underline{biased}. The benefit is that they are less variable (smaller standard errors)
+        \item No explicit closed-form solution to LASSO.
+        \item In contrast to the OLS and Ridge estimators, the solution is found via numerical optimization. Using the Coordinate Descent procedure in R allows for finding the solution up to problem size around $np\approx10^6$
+        \item In contrast to the OLS and Ridge estimators, LASSO is not a linear estimator. There is \underline{no hat matrix} $H$ such that $\hat{y}=Hy$
+        \item As a result, \underline{the concept of degrees of freedom does not exist for LASSO} and there is no trivial procedure for choosing the optimal penalty parameter $\lambda$ 
+        \item Inference on the fitted model is difficult, or even impossible (biased). One can compare standardized coefficients
+        \item The standard LASSO \underline{only works} with numerical predictors. Extension to factor variables exist (see Group LASSO)
+    \end{itemize}
+    \item Cross Validation
+    \begin{itemize}
+        \item The only key point is that the \underline{same response variable} is predicted.
+        \item We can perform cross validation on datasets with \underline{different number of observations, or even on different datasets}
+        \item Cross validation allows for comparison of models that are \underline{not hierarchical}, and that can be arbitrarily different
+        \item It is possible to infer the effect of response variable transformations, LASSO, Ridge, robust procedures
+        \item AIC/BIC and Adjusted R-squared \underline{do not work} if
+        \begin{itemize}
+            \item We want to investigate whether we obtain better prediction from a model with transformed response or not
+            \item We want to check whether excluding data points from the fit yields better predictions from the entire sample
+            \item We want to compare performance of alternative methods such as LASSO, Ridge or Robust Regression
+        \end{itemize}
+    \end{itemize}
+    \item Significance vs. Relevance
+    \begin{itemize}
+        \item The larger a sample, the smaller the p-values for the very same predictor effect. Do not confuse small p-values with an important predictor effect!
+        \item With large datasets,
+        \begin{itemize}
+            \item statistically significant results which are practically useless
+            \item most predictors have influence, thus $\beta_j=0$ hardly ever holds
+            \item the point null hypothesis is thus usually wrong in practice
+        \end{itemize}
+        \item Absence of Evidence $\neq$ Evidence of Absence
+        \item Measuring the relevance of predictors
+        \begin{itemize}
+            \item Maximum effect of a predictor variable on the response:
+            \[\lvert\beta_j\cdot(\max_ix_{ij}-\min_ix_{ij}) \rvert \]
+            \item Standardizing all predictors to mean zero and unit variance, which makes the coefficients $\beta_j$ directly comparable
+            \item More sophisticated approach - LMG criterion
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\section{Extending the Linear Model}
+\begin{itemize}
+    \item Penalized Regression Splines
+    \begin{itemize}
+        \item Fitting Penalized Regression Splines is a parametric problem that can be solved analytically in closed form via Generalized Ridge Regression
+        \item Choosing $\lambda$ such that the Generalized Cross Validation Score (GCV) is minimized
+    \end{itemize}
+    \item \texttt{smooth.spline()} vs. \texttt{gam()}
+    \begin{itemize}
+        \item \texttt{smooth.spline()}
+        \begin{itemize}
+            \item Uses all knots (if \texttt{all.knots=TRUE})
+            \item Spends more degrees of freedom for the fit
+            \item Only works with one single predictor variable
+        \end{itemize}
+        \item \texttt{mgcv::gam()}
+        \begin{itemize}
+            \item By default uses thin plate regression splines
+            \item Method can be adjusted by \texttt{s(xx, "cr")}, not recommended
+            \item By default does not use all knots (i.e. uses a basis that has a limited dimension for saving computing time for obtaining good performance in multiple predictor settings)
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\section{Exam S21}
+\begin{itemize}
+    \item Confidence Intervals vs. Prediction Intervals
+    \begin{itemize}
+        \item The CI characterizes the variability in the fitted value, not the future response value
+        \item The PI says that if we use another sample from the same population, the response values will be lying within this interval
+        \item The PI accounts for the scatter of the data points around the regression line, thus PI is always wider than the corresponding CI
+    \end{itemize}
+    \item \texttt{gam()}: which variable is penalized the most?
+    \begin{itemize}
+        \item The variable with smaller \texttt{edf} is penalized harder
+    \end{itemize}
+    \item In a regression model where factor variables that have $>2$ levels and/or interaction terms are present, the \texttt{summary} function does not provide useful information for variable selection. Alternatives: \texttt{drop1()}, \texttt{anova()}
+    \item Because the first model is fully parametrized with all pairwise interactions terms, hence can be separated into models for each species.
+    \item It is possible that the model obtained with \texttt{direction='both'} is larger than the one obtained by using \texttt{direction='forward'}
+    \item Under Gaussian errors the OLS estimator is the maximum likelihood estimator.
+    \item Split the data into $K$ roughly equal-sized parts in cross validation (True).
+    \item For any $\lambda\in(0,\infty)$, the minimizer of the smoothing splines is always given by cubic splines with knots at \underline{each data point}.
+    \item Logistic regression model can be viewed as a model where we try to find a relation between the conditional expected value of response y and the predictors.
+\end{itemize}
+
+\section{Exam S20}
+\begin{itemize}
+    \item $exp$ makes the distribution right-skewed and therefore the mean is bigger than the median
+    \item By comparing this formula to the one for the AIC (above), one can notice that for any $n>7$, $\log(n)>2$, hence BIC penalizes for model size stronger than AIC
+    \item If the observed response of a data point is increased by 1, then the new fitted value of this data point is equal to the old fitted value times the leverage of the data point
+    \item The \texttt{anova} function can be employed to test two Gaussian Kernel smoother fits with different bandwidths.
+    \item When fitting a model using regression splines, setting a knot at each data point would result in overfitting (True)
+    \item Generally, for a twice differentiable piecewise cubic fit with $k$ knots, there are $k+4$ basis functions.
+\end{itemize}
+
+\section{Exam W20}
+\begin{itemize}
+    \item A global test of the fitted model against the null model in logistic regression - $\chi_{p-q}^2$
+    \item If we incorporate the dispersion parameter in binomial model, the following features of fitted object do not change:
+    \begin{itemize}
+        \item the estimated coefficients
+        \item the fitted values
+        \item any prediction
+        \item degrees of freedom
+        \item residual deviance
+        \item AIC score of the model
+        \item log-oods
+        \item $\hat{y}(=\hat{p}n)$
+    \end{itemize}
+    \item The running mean smoother is not robust to outliers
+    \item The function \texttt{step()} can not perform variable selection based on $p$-values.
+    \item We do not need values of the response variable to compute the leverages of the individual data points
+    \item The Cook’s Distance tells us how strongly a data point may force the regression line to run through it (False)
+    \item It is mandatory to use a \underline{non-robust smoother} in the TA plot in logistic regression
+    \item Type I and Type II error
+\end{itemize}
+
+\section{Exam S19}
+\begin{itemize}
+    \item Even in a well specified least squares regression we expect the residuals to be correlated.
+    \item Diagnostic plots
+\end{itemize}
+
+\section{Exam W19}
+\begin{itemize}
+    \item VIFs are strictly more informative than pairwise correlation plots; If predictors are correlated pairwise, their VIF is high, but the reverse implication does not hold.
+    \item Ridge regression is not appropriate as it does not force predictors out from the model and hence \underline{does not change}  the VIFs.
+    \item Leverage of point $i$ is given by $H_{ii}$, where $H$ is the hat matrix.
+    \item Sum of the leverages of all data points:
+    \[\sum_iH_{ii}=Tr(H)=Tr(X(X^TX)^{-1}X^T)=Tr((X^TX)^{-1}X^TX)=Tr(I)=p \]
+    \item Interaction term between categorical variable and numerical variable
+\end{itemize}
+
+\end{document}

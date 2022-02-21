@@ -1,0 +1,809 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+%\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{setspace}
+% \usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[top=2.5cm, left=2.0cm, right=2.0cm, bottom=3.0cm]{geometry}
+
+\title{%
+     Business Cycles: Empirics and Theory
+}
+\author{Wenjie Tu}
+\date{Fall Semester 2021}
+
+\setlength{\parindent}{0pt}
+%\setlength{\parskip}{1em}
+%\onehalfspacing
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+Some jargons:
+
+\begin{itemize}
+    \item ar = annual rate
+    \item na = not adjusted
+    \item sa = seasonally adjusted (Swiss case: sa = sport-event adjusted)
+    \item q/q sa quarterly seasonally adjusted growth
+    \item q/q csa quarterly seasonally and calendar adjusted growth
+    \item q/q saar = quarterly seasonally growth expressed at an annual rate
+    \[\textrm{q}/\textrm{q saar} = (1+\textrm{q/q sa})^4 - 1\]
+    \item y/y = growth relative to the same quarter of the previous year (usually calculated using na series)
+\end{itemize}
+
+Some examples:
+
+\begin{itemize}
+    \item $Y_\text{Q2 2018}$ = level of real GDP in Q2 2018
+    \item $4\times Y_\text{Q2 2018}$ = level of real GDP in Q2 2018, expressed at an annual rate
+    \item $Y_\text{Q2 2018}^{sa}$ = seasonally adjusted level of real GDP in Q2 2018
+    \item q/q growth in Q2 2018 (sa) = $\left(\dfrac{Y_\text{Q2 2018}^{sa}}{Y_\text{Q1 2018}^{sa}}\right)^4-1$
+    \item y/y growth = $\dfrac{Y_\text{Q2 2018}}{Y_\text{Q2 2017}}-1$
+    \item annual growth = $\dfrac{Y_\text{Q1 2018}+Y_\text{Q2 2018}+Y_\text{Q3 2018}+Y_\text{Q4 2018}}{Y_\text{Q1 2017}+Y_\text{Q2 2017}+Y_\text{Q3 2017}+Y_\text{Q4 2017}}-1$
+\end{itemize}
+
+Some notations:
+
+\begin{itemize}
+    \item $X_t$ = level in period $t$, e.g., GDP during Q1 2018
+    \item $x_t=\log(X_t)$ = natural logarithm of $X_t$
+    \item $\Delta x_t=x_t-x_{t-1}$
+    \item The growth rate of $X_t$
+    \[\dfrac{X_t-X_{t-1}}{X_{t-1}}\simeq\log\dfrac{X_t}{X_{t-1}}=\Delta x_t \]
+\end{itemize}
+
+Some useful approximations:
+
+\begin{itemize}
+    \item y/y growth = 4 quarter moving average of q/q ar growth = sum of q/q growth rates = $\Delta x_t+\Delta x_{t-1}+\Delta x_{t-2}+\Delta x_{t-3}$
+    \item Some definitions to write down approximations to annual growth rates
+    \begin{itemize}
+        \item $g_{t,q}^{q/q}\equiv$ q/q growth rate in $q$th quarter of the year $t$
+        \item $g_{t,q}^{y/y}\equiv$ y/y growth rate in $q$th quarter of the year $t$
+        \item $g_{t,q}^{A}\equiv$ annual growth rate in year $t$
+    \end{itemize}
+    \item The following approximations hold
+    \begin{itemize}
+        \item $g_t^A\simeq\frac{1}{4}(g_{t,4}^{q/q}+2g_{t,3}^{q/q}+3g_{t,2}^{q/q}+4g_{t,1}^{q/q}+3g_{t-1,4}^{q/q}+2g_{t-1,3}^{q/q}+g_{t-1,2}^{q/q})$
+        \item $g_t^A\simeq\frac{1}{4}(g_{t,4}^{y/y}+g_{t,3}^{y/y}+g_{t,2}^{y/y}+g_{t,1}^{y/y})$
+    \end{itemize}
+\end{itemize}
+
+Important implications of approximations to annual growth rate
+
+\begin{itemize}
+    \item Annual growth is not the average of the quarterly growth rates of the respective year.
+    \item Annual growth depends also on quarterly growth in the previous year.
+    \item In fact, the previous year's Q4 growth rate is three times as important for this year's annual growth than this year's Q4 growth rate.
+    \item Once you know growth up to Q2, you can already make a very precise forecast for annual growth (you already know 13/16 of the annual growth rate).
+    \item Similar effect for y/y growth rates (you always know already 3/4 of the next y/y growth rate).
+\end{itemize}
+
+\section{Detrending}
+
+\textbf{Linear trend}
+
+\[\log(Y_t)=\beta_0+\beta_1 t+\varepsilon_t \]
+
+\begin{itemize}
+    \item $\beta_1$ is the trend growth rate.
+    \item $\varepsilon_t$ are the deviations from the trend and therewith the cycle.
+\end{itemize}
+
+\textbf{Time-varying trend}
+
+\[c_t\equiv\frac{Y_t-Z_t}{Z_t} \]
+
+\begin{itemize}
+    \item $Z_t$: the ``trend level'' of GDP.
+    \item $c_t$: the percentage deviation of GDP from trend by $c_t$.
+\end{itemize}
+
+Using log-approximations:
+
+\[c_t=\frac{Y_t}{Z_t}-1\simeq\log\frac{Y_t}{Z_t}=y_t-z_t \]
+
+\[y_t=\log(Y_t)=z_t+c_t \]
+
+i.e., log-level of GDP consists of a trend $z_t$ and a cyclical component $c_t$ that fluctuates around the trend.
+
+\vspace{4mm}
+
+\textbf{How to govern the degree of time variation in trend growth}
+
+Trend growth rate:
+
+\[\frac{Z_t}{Z_{t-1}}-1\simeq\log\frac{Z_t}{Z_{t-1}}=z_t-z_{t-1} \]
+
+The change of the trend growth rate:
+
+\[v_t=(z_t-z_{t-1})-(z_{t-1}-z_{t-2}) \]
+
+If we allow for a lot of time-variation in the trend growth rate, we can choose $v_t$ such that most of the observed changes in $\log(Y_t)$ is attributable to changes in $z_t$ and only little to cyclical component $c_t$ and vice versa.
+
+\vspace{4mm}
+
+\textbf{HP filter}
+
+\begin{align*}
+    L&=\sum_t c_t^2 + \lambda\sum_t v_t^2 \\
+    &=\sum_t (\log(Y_t)-z_t)^2 + \lambda\sum_t ((z_t-z_{t-1}) - (z_{t-1}-z_{t-2}))^2
+\end{align*}
+
+\[\hat{z}_t=\underset{z_t}{\arg\min}\quad L \]
+
+For $\lambda\to0$:
+
+\[\min_{z_t} L=\min_{z_t}\sum_t(\log(Y_t)-z_t)^2 \]
+
+\begin{itemize}
+    \item The time trend $z_t$ that minimizes the loss function is simply $\log(Y_t)=z_t$.
+    \item There is no cycle!
+\end{itemize}
+
+For $\lambda\to\infty$:
+
+\[\min_{z_t} L=\min_{z_t}\sum_t ((z_t-z_{t-1}) - (z_{t-1}-z_{t-2}))^2 \]
+
+\begin{itemize}
+    \item The loss function is minimized with $z_t-z_{t-1}=z_{t+j}-z_{t+j-1}\quad\forall t, j$.
+    \item Trend growth is constant, i.e., linear time trend.
+\end{itemize}
+
+Problems with HP filters:
+
+\begin{itemize}
+    \item Instability of the HP trend at the margin.
+    \item HP filter cannot separate demand from supply shocks (i.e., a slowdown in trend growth is identified during a long-lasting recession).
+    \item What is the right $\lambda$ for HP filter.
+\end{itemize}
+
+\textbf{Production function approach}
+
+Cobb-Douglas production function:
+
+\[Y=AK^{\alpha}L^{1-\alpha} \]
+
+\begin{itemize}
+    \item Measure $K$ and $L$ (which is not trivial) and solve for $A$.
+    \item Filter $A, K, L$ to get their potential levels.
+    \item Plug these back into production function to get potential GDP.
+\end{itemize}
+
+\textbf{Another way of writing the HP filter}
+
+Assume that the change in the trend is a random variable:
+
+\[\Delta z_t-\Delta z_{t-1}=v_t, v_t\sim\mathcal{N}(0,\sigma^2) \]
+
+\[(z_t-z_{t-1})-(z_{t-1}-z_{t-2})=v_t \]
+
+
+\[
+\underbrace{
+\begin{bmatrix}
+    z_t \\ z_{t-1}
+\end{bmatrix}
+}_{Z_t}
+=
+\underbrace{
+\begin{bmatrix}
+    2 & -1 \\
+    1 & 0
+\end{bmatrix}
+}_{F}
+\underbrace{
+\begin{bmatrix}
+    z_{t-1} \\ z_{t-2}
+\end{bmatrix}
+}_{Z_{t-1}}
++
+\underbrace{
+\begin{bmatrix}
+    \sigma & 0 \\
+    0 & 0
+\end{bmatrix}
+}_{Q}
+\underbrace{
+\begin{bmatrix}
+    \varepsilon_t^{\Delta z} \\ 0
+\end{bmatrix}
+}_{w_t}
+\]
+
+\[Z_t=FZ_{t-1}+Qw_t, w_t\sim\mathcal{N}(0, 1) \]
+
+We do not observe the trend $Z_t$, but we observe data that is a function of the unobserved trend:
+
+\[
+\log(Y_t)=z_t+c_t=
+\underbrace{
+\begin{bmatrix}
+    1 & 0
+\end{bmatrix}
+}_{H}
+\underbrace{
+\begin{bmatrix}
+    z_t \\ z_{t-1}
+\end{bmatrix}
+}_{Z_t}
++
+\underbrace{
+\begin{bmatrix}
+    \sigma & 0
+\end{bmatrix}
+}_{R}
+\underbrace{
+\begin{bmatrix}
+    \lambda\varepsilon_t^c \\ 0
+\end{bmatrix}
+}_{e_t}
+\]
+
+\[
+\log(Y_t)=HZ_t+Re_t, e_t\sim\mathcal{N}(0, 1)
+\]
+
+Note: variance of $c_t$ is $\lambda$ times larger than variance of $v_t$.
+
+\vspace{4mm}
+
+\textbf{The state-space form}
+
+\underline{Measurement equation} with standard normal i.i.d. shocks $e_t$:
+
+\[\log(Y_t)=X_t=HZ_t+Re_t \]
+
+\underline{Transition equation} with standard normal i.i.d. shocks $w_t$:
+
+\[Z_t=FZ_{t-1}+Qw_t \]
+
+Note: 
+
+\begin{itemize}
+    \item Whenever, we can write something in state-space form, we can use \textit{Kalman filter} to estimate the unobserved states $Z_t$ given the parameter matrices $H, R, F, Q$ and the data $X_t$.
+    \item \textit{Kalman filter} can easily handle missing data.
+\end{itemize}
+
+\section{Recessions v.s. Expansions}
+
+\textbf{Recessions}
+
+\begin{itemize}
+    \item Periods with contracting economic activity.
+    \item Popular rule of thumb: two consecutive quarters of negative real GDP growth.
+\end{itemize}
+
+\textbf{Regime switching model (Hamilton filter)}
+
+\begin{itemize}
+    \item Assume that there are two regimes $S_t=1, 2$
+    \item Assume that the economy stochastically switches between the two regimes with the following probabilities
+    \begin{center}
+        \includegraphics[scale=0.2]{state-space.png}
+    \end{center}
+\end{itemize}
+
+Regimes differ in average growth:
+
+\[
+\Delta y_t = 
+\begin{cases}
+c_1+\varepsilon_t & S_t=1 \\
+c_2+\varepsilon_t & S_t=2
+\end{cases},
+\varepsilon_t\sim\mathcal{N}(0,\sigma^2)
+\]
+
+\textbf{Comparison}
+
+Linear view:
+
+\begin{itemize}
+    \item Business cycles are fluctuations around a trend.
+    \item Most modern macro models (DSGEs) implicitly have this view.
+\end{itemize}
+
+Non-linear view:
+
+\begin{itemize}
+    \item Business cycles are transitions between two (or more) distinct regimes.
+    \item While there are fluctuations within a regime, what really matters is the transition between the regimes.
+    \item The public and high-level policy makers often take this view.
+\end{itemize}
+
+\textbf{One of the best forecasting indicators for recessions: the yield curve}
+
+\begin{itemize}
+    \item Yield curve slope is historically one of the best indicators for upcoming recessions.
+    \item All recessions were preceded by an inverted (negatively sloped) yield curves, yield curve was rarely inverted without a recession following.
+\end{itemize}
+
+\textbf{Why is an inverted yield curve a good recession predictor?}
+
+Assume you have 100 USD to invest for two years
+
+There are two options:
+
+\begin{itemize}
+    \item Option 1: buy a 2-year treasury bond with a yield of $i_t^{2y}$, get the principal payment $2(100(1+i_t^{2y})^2)$ after 2 years.
+    \item Option 2: buy a 1-year treasury bond with a yield of $i_t^{1y}$, get the principal payment $100(1+i_t^{1y})$ after 1 year and reinvest it in a new 1-year treasury bond with an expected yield $\mathbf{E}\left[(1+i_{t+1}^{1y})\right]$. You expect to have $100(1+i_t^{1y})\mathbf{E}\left[(1+i_{t+1}^{1y})\right]$ after 2 years.
+\end{itemize}
+
+Except for the uncertainty about $i_{t+1}^{1y}$, the two options are very similar, therefore the return has to be similar
+
+\[
+100(1+i_t^{2y})^2\approx 100(1+i_t^{1y})\mathbf{E}\left[(1+i_{t+1}^{1y})\right]
+\]
+
+Take logs of both sides:
+
+\[
+2\log(1+i_t^{2y})\approx\log(1+i_t^{1y})+\log\left(1+\mathbf{E}\left[i_{t+1}^{1y}\right] \right)
+\]
+
+Use the approximation equation $\log(1+x)=x$:
+
+\[
+i_t^{2y}\approx\frac{1}{2}\left(i_t^{1y}+\mathbf{E}\left[i_{t+1}^{1y}\right] \right)
+\]
+
+Similarly, for 10-year yield:
+
+\[
+i_t^{10y}\approx\frac{1}{10}\sum_{i=0}^{9}\mathbf{E}_t \left[i_{t+i}^{1y}\right]
+\]
+
+\begin{itemize}
+    \item Short-term yields are mostly driven by monetary policy ($i_t^{1y}\approx\text{policy rate}$).
+    \item An inverted yield curve implies that the policy rate is currently higher than what is expected in the future.
+    \item In other words, market participants expect the central bank to lower the policy rate.
+    \item Central banks typically only lower policy rates in response to economic weakness.
+    \item Word of caution: the risk-premium may lead to an inverted yield curve, without market participants expecting falling policy rates
+    \[i_t^{10y}=\frac{1}{10}\sum_{i=0}^{9}\mathbf{E}_t i_{t+i}^{1y}+\text{risk premium}_t \]
+\end{itemize}
+
+Recession nowcasting is feasible!
+
+Good rule of thumb: a recession has started if 3-month change of the 3-month moving average of seasonally adjusted unemployment rate rises above 0.3 pp.
+
+\textbf{Important references: baseline recession probabilities}
+
+NBER recession
+
+\begin{itemize}
+    \item Time span: from Q1 1950 until Q2 2021 (286 quarters in total)
+    \item \# of expansion quarters = 247
+    \item \# of recession quarters = 39
+    \item Unconditional recession probability = $\dfrac{39}{286}=14\%$
+    \item \# of expansion quarters that are followed by a recession = 11
+    \item Conditional of being in an expansion quarter:
+    \begin{itemize}
+        \item probability of a recession starting next quarter = $\dfrac{11}{247}=4.5\%$
+        \item probability of staying in an expansion = $100-4.5=95.5\%$
+    \end{itemize}
+    \item Conditional on being in an expansion in $t$:
+    \begin{itemize}
+        \item probability of next recession starting sometimes during next 2 quarters ($t+1$ and $t+2$) = $1-0.955\times0.955$
+        \item probability of next recession starting sometimes during next $n$ quarters (between $t+1$ and $t+n$) = $1-0.955^n$
+    \end{itemize}
+\end{itemize}
+
+\section{Welfare Costs of Business Cycles}
+
+
+HP decomposition: $\log C_t=z_t+x_t$ (or equally: $C_t=Z_tX_t$), where $z_t$ is the trend level of consumption and $x_t$ fluctuations around this trend.
+
+The Lucas calculation - approximating the utility function
+
+\[U(C)\simeq U(Z)+U'(Z)(ZX-Z)+\frac{1}{2}U''(Z)(ZX-Z)^2 \]
+
+Calculating expected utility:
+
+\[\mathbf{E}[U(C)]\simeq U(Z)+U'(Z)\mathbf{E}[(ZX-Z)]+\frac{1}{2}U''(Z)\mathbf{E}\left[(ZX-Z)^2 \right] \]
+
+Rewriting:
+
+\[\mathbf{E}[U(C)]\simeq U(Z)+\frac{1}{2}U''(Z)\mathbf{E}\left[(X-1)^2 \right]Z^2 \]
+
+Utility function:
+
+\[U(C)=\frac{C_{1-\sigma}}{1-\sigma} \]
+
+Hence,
+
+\[\mathbf{E}[U(C)]\simeq\frac{Z^{1-\sigma}}{1-\sigma}-\frac{\sigma}{2}Z^{-\sigma-1}\mathbf{E}\left[(\underbrace{X-1}_{\simeq\log X=x})^2 \right]Z^2 \]
+
+\[\mathbf{E}[U(C)]\simeq\frac{Z_{1-\sigma}}{1-\sigma}-\frac{\sigma}{2}Z^{1-\sigma}\mathbf{E}[x^2] \]
+
+\begin{itemize}
+    \item $\mathbf{E}[x^2]$ is the variance of log-difference ($\simeq$ percentage deviation) of consumption from its trend level
+    \item The higher the variance, the lower expected utility
+    \item The higher risk aversion, $sigma$, the more costly are fluctuations
+\end{itemize}
+
+Certainty equivalence
+
+Let us scale trend level of consumption by $\delta$ and offer $\delta Z$ with certainty to the representative consumer
+
+\[\frac{(\delta Z)^{1-\sigma}}{1-\sigma}=\frac{Z_{1-\sigma}}{1-\sigma}-\frac{\sigma}{2}Z^{1-\sigma}\mathbf{E}[x^2] \]
+
+Rearrange:
+
+\[\delta=\left(1-(1-\sigma)\frac{\sigma}{2}\mathbf{E}[x^2] \right)^{\frac{1}{1-\sigma}} \]
+
+The resulting estimate for the costs of economic fluctuations is tiny, but why should we care about business cycles?
+
+\begin{itemize}
+    \item Observed fluctuations are the ones resulting despite macroeconomic stabilization policies (might be much larger without stabilization)
+    \item Cost of business cycles are not equally distributed over population (some become unemployed, some not; not everyone becomes 4\% unemployed, i.e. can work 4\% fewer hours)
+    \item Direct costs of unemployment
+    \item Persistent effects of economic fluctuations
+\end{itemize}
+
+\section{Comovement}
+
+\textbf{Principal Component Analysis}
+
+\[y_{it}=\lambda_i f_t+\varepsilon_{it} \]
+
+\begin{itemize}
+    \item $y_{it}$: the standardized value of the indicator $i$ at time $t$
+    \item $f_t$: the underlying force that drives the common variation in the dataset
+    \item $\lambda_i$: the ``loading'' of indicator $i$ on $f_t$
+\end{itemize}
+
+Assume that we know the loadings $\lambda_i$:
+
+\[y_t=
+\begin{bmatrix}
+    y_{1t} \\ \vdots \\ y_{Nt}
+\end{bmatrix}=
+\begin{bmatrix}
+    \lambda_1 \\ \vdots \\ \lambda_N
+\end{bmatrix}f_t + 
+\begin{bmatrix}
+    \varepsilon_{1t} \\ \vdots \\ \varepsilon_{Nt}
+\end{bmatrix}
+\]
+
+For given loadings $\lambda$, we can obtain $f_t$ by simply running a regression in each time period $t$
+
+\[\hat{f}_t=(\lambda'\lambda)^{-1}\lambda'y_t \]
+
+\[\hat{\varepsilon}_t=y_t-\lambda(\lambda'\lambda)^{-1}\lambda'y_t \]
+
+The sum of squared errors:
+
+\[\sum_t\hat{\varepsilon}_t'\hat{\varepsilon}_t=
+\sum_t\left(y_t-\lambda(\lambda'\lambda)^{-1}\lambda'y_t\right)'\left(y_t-\lambda(\lambda'\lambda)^{-1}\lambda'y_t\right)
+\]
+
+\section{Swiss GDP}
+
+\textbf{How to estimate Swiss GDP}
+\begin{itemize}
+    \item Annual GDP adds up the value added according to firm survey
+    \item Value added is estimated from the production side
+    \item Demand side: inventories as residual
+    \item Income side: profits as residual
+    \item First estimate published 8 months after the end of reference year
+    \item i.e. first estimate for 2021 will be published at the end of August 2022
+\end{itemize}
+
+\textbf{Quarterly GDP is an intra- and extra-polation of annual GDP}
+\begin{itemize}
+    \item Regress annual value added of a sector $y_t^A$ on indicators
+    \[y_t^A=\beta_0+\beta_1 x_t^A+\varepsilon_t \]
+\end{itemize}
+
+\section{Introduction to Theory}
+
+\textbf{IS curve}: goods \& services market equilibrium
+
+Aggregate demand equals investment, private consumption and government spending (closed economy):
+
+\[Y^D = I + C + G \]
+
+Aggregate demand depends on aggregate income $Y^I$, interest rate, $r$, and other factors, $v_D$
+
+\[Y^D = f(\underset{+}{Y^I}, \underset{-}{r}) + v_D \]
+
+In equilibrium: 
+
+\[\underbrace{\textrm{aggregate demand}}_{Y^D}=\underbrace{\textrm{aggregate income}}_{Y^I}=\underbrace{\textrm{aggregate production}}_{Y^P} \]
+
+\textbf{LM curve}: money market
+
+Monetary policy rule (MP-rule)
+
+\[r=\rho+\theta_{\pi}\pi+v_{MP} \]
+
+\begin{itemize}
+    \item $\pi$: inflation
+    \item $v_{MP}$: monetary policy shock
+\end{itemize}
+
+The IS-LM model provides the equilibrium combination of interest rate and inflation for a given demand and monetary policy shock.
+
+\begin{itemize}
+    \item The IS-LM model describes goods and money market equilibrium in the short-term
+    \item Inflation is assumed to be constant
+\end{itemize}
+
+\textbf{AS-AD model}:
+
+\begin{itemize}
+    \item The AS-AD model is an extension of the IS-LM framework
+    \item It describes the relationship between aggregate output and prices
+\end{itemize}
+
+\textbf{AD curve}: aggregate demand
+
+\begin{itemize}
+    \item The AD curve is defined by the IS-LM equilibrium
+    \item For given inflation rate, $\pi$, the MP rule describes, what interest rate, $r$, should be chosen by the central bank
+    \item From IS curve, we can get the resulting aggregate demand, $Y$
+    \item The AD curve describes the resulting aggregate demand for each inflation rate
+    \item The monetary policy shock and the demand shock shift the AD curve
+\end{itemize}
+
+\textbf{AS curve}
+
+\begin{itemize}
+    \item The inflation rate follows from the pricing decisions of producers
+    \item The AS curve describes the change in prices (i.e., inflation)
+    \item Prices $\to$ aggregate output of $Y$ produced by firms
+    \item If firms produce a lot relative to some benchmark level of output ($\bar{Y}$), they tend to raise prices
+    \[\pi = \bar{\pi} + \kappa(Y - \bar{Y}) \]
+\end{itemize}
+
+\textbf{Assessing the Economic Effects of the Coronavirus with the AS-AD Model}
+
+Split the economy into 2 groups:
+
+\begin{itemize}
+    \item directly affected sectors: businesses that are directly affected by containment measures (e.g., restaurants)
+    \item non-affected sectors: all other businesses (e.g., universities can switch to online education, insurances to home office)
+\end{itemize}
+
+
+\section{New Keynesian IS Curve}
+
+\textbf{Household utility maximization problem:}
+\begin{align*}
+    & \max_{\{C_{t+j},B_{t+j},N_{t+j} \}_{j=0}^{\infty}} \quad 
+    \mathbb{E}_t\left[
+    \sum_{j=0}^{\infty}\beta^j Z_{t+j}
+    \left(
+    \frac{ C_{t+j}^{1-\sigma} }{1-\sigma} -
+    \frac{ N_{t+j}^{1+\phi} }{1+\phi} 
+    \right) \right] \\
+    & \textrm{s.t.} \quad 
+    P_{t+j}C_{t+j}+Q_{t+j}B_{t+j}\leq B_{t-1+j}+W_{t+j}N_{t+j}+D_{t+j} 
+\end{align*}
+
+\begin{itemize}
+    \item $Z_t$: preference shifter
+    \item $Q_t$: Bond price in $t$, pays 1 in $t+1$
+    \item $B_t$: quantity of bonds purchased in $t$
+    \item $N_t$: labor supply
+    \item $W_t$: hourly wage payment
+    \item $P_t$: the price of a consumption bundle $C_t$
+    \item $D_t$: dividends paid by firms to households
+\end{itemize}
+
+Optimal consumption:
+\begin{equation*}
+    C_t^{-\sigma}=\mathbb{E}_t\left[
+    \beta(1+i_t)\frac{Z_{t+1}}{Z_t}\frac{1}{1+\pi_{t+1}}C_{t+1}^{-\sigma} 
+    \right] \quad
+    \textrm{Euler equation}
+\end{equation*}
+
+\begin{itemize}
+    \item $\beta$ low: impatient, higher consumption today.
+    \item $\frac{Z_{t+1}}{Z_t}$ high: assign a lot to today's utility relative to tomorrow.
+    \item $i_t$ high: less consumption and more saving today.
+    \item $\pi_{t+1}$ high: tomorrow's prices high, more consumption today.
+    \item $\sigma$ low: households substitute consumption today more strongly with consumption tomorrow when the interest rate is raised ($\sigma$ equals the inverse elasticity of substitution).
+\end{itemize}
+
+Optimal labor:
+\begin{equation*}
+    \frac{N_t^{\phi}}{C_t^{-\sigma}}=\frac{W_t}{P_t}
+\end{equation*}
+
+Log-linear form of Euler equation (using first-order Taylor approximation and defining $\log\beta\equiv\rho$):
+\begin{equation*}
+    c_t\simeq \mathbb{E}_tc_{t+1} - \frac{1}{\sigma}(i_t-\mathbb{E}_t\pi_{t+1}-\rho)+\frac{1-\rho_z}{\sigma}z_t \quad
+    \textrm{NKIS}
+\end{equation*}
+
+\section{New Keynesian Phillips Curve}
+
+%\textbf{Firm profit maximization problem:}
+
+Optimal allocation of spending across varieties:
+\begin{align*}
+    \max_{C_t(i)} & \quad C_t=\left(\int_{i=0}^1 C_t(i)^{\frac{\varepsilon-1}{\varepsilon}} \textrm{d}i \right)^{\frac{\varepsilon}{\varepsilon-1}} \\
+    \textrm{s.t.} & \quad 
+    \int_{i=0}^{1}P_t(i)C_t(i)\textrm{d}i\leq S_t
+\end{align*}
+Optimal consumption of good $i$:
+\begin{equation*}
+    C_t(i)=C_t\left(\frac{P_t(i)}{P_t} \right)^{-\varepsilon}
+\end{equation*}
+where
+\begin{equation*}
+    P_t\equiv\left(\int_{i=0}^{1}P_t(i)^{1-\varepsilon}\textrm{d}i \right)^{\frac{1}{1-\varepsilon}}
+\end{equation*}
+
+Good market clearing: $Y_t(i)=C_t(i)$, $Y_t=C_t$
+\begin{equation*}
+    Y_t(i)=Y_t\left(\frac{P_t(i)}{P_t} \right)^{-\varepsilon}
+    \quad \textrm{Demand function}
+\end{equation*}
+
+\begin{equation*}
+    Y_t(i)=A_tL_t(i)
+    \quad \textrm{Production function}
+\end{equation*}
+
+\textbf{Profit maximization under flexible prices:}
+\begin{align*}
+    \max_{P_t(i)} & \quad \Pi_t(i)=P_t(i)Y_t(i) - W_t L_t(i) \\
+     \max_{P_t(i)} & \quad P_t(i)Y_t\left(\frac{P_t(i)}{P_t} \right)^{-\varepsilon} -
+     \frac{W_t}{A_t}Y_t\left(\frac{P_t(i)}{P_t} \right)^{-\varepsilon}
+\end{align*}
+Profit-maximizing price:
+\begin{equation*}
+    P_t^*(i)=\frac{\varepsilon}{\varepsilon-1}\frac{W_t}{A_t}
+\end{equation*}
+Aggregate production under flexible prices:
+\begin{equation*}
+    Y_t=A_tL_t
+\end{equation*}
+
+\textbf{Labor market equilibrium:} $L_t=N_t$, $Y_t=C_t$
+
+\begin{equation*}
+    \begin{cases}
+        \dfrac{N_t^{\varphi}}{C_t^{-\sigma}}=\dfrac{W_t}{P_t} \\
+        P_t^*(i)=\dfrac{\varepsilon}{\varepsilon-1}\dfrac{W_t}{A_t} \\
+        Y_t=A_tL_t
+    \end{cases}\implies
+    \begin{cases}
+        L_t=\left(A_t^{1-\sigma}\dfrac{\varepsilon-1}{\varepsilon} \right)^{\frac{1}{\varphi+\sigma}} \\
+        Y_t=A_t^{\frac{1+\varphi}{\varphi+\sigma}}\left(\dfrac{\varepsilon-1}{\varepsilon} \right)^{\frac{1}{\varphi+\sigma}}
+    \end{cases}
+\end{equation*}
+\textbf{Key insight:} Equilibrium production does not depend on prices.
+
+\textbf{Profit maximization under sticky prices:}
+\begin{equation*}
+    \max_{P_i(i)} \quad PV=\mathbb{E}_t\left[
+    \sum_{j=0}^{\infty}\frac{\theta^j}{R_{t+j}}
+    \left(
+    P_t(i)Y_{t+j}\left(\frac{P_t(i)}{P_{t+j}} \right)^{-\varepsilon} -
+    \frac{W_{t+j}}{A_{t+j}}Y_{t+j}\left(\frac{P_t(i)}{P_{t+j}} \right)^{-\varepsilon}
+    \right)
+    \right]
+\end{equation*}
+where
+\begin{equation*}
+    R_{t+j}=\prod_{\tau=1}^{j}(1+i_{t+\tau}-\mathbb{E}_t\pi_{t+\tau})
+\end{equation*}
+Optimal price under sticky prices:
+\begin{equation*}
+    O_t=\mathbb{E}_t\left[\sum_{j=0}^{\infty}\omega_jP_{t+j}^* \right]
+\end{equation*}
+where
+\begin{equation*}
+    \omega_j=\frac{\frac{\theta^j}{R_{t+j}}Y_{t+j}P_{t+j}^{\varepsilon}}{\sum_{j=0}^{\infty}\frac{\theta^j}{R_{t+j}}Y_{t+j}P_{t+j}^{\varepsilon}}
+\end{equation*}
+\begin{itemize}
+    \item $\theta^j$: probability that price is still in place in $t+j$
+    \item $\frac{1}{R_{t+j}}$: the present value of the profit that is generated in $t+j$
+    \item $Y_{t+j}P_{t+j}^{\varepsilon}$: how many units a firm can sell for a given price in $t+j$
+\end{itemize}
+
+
+Log-linear approximation of the optimal price:
+\begin{equation*}
+    o_t\simeq\sum_{j=0}^{\infty}\frac{(\beta\theta)^j}{\sum_{k=0}^{\infty}(\beta\theta)^k}\mathbb{E}_tp_{t+j}^*
+\end{equation*}
+
+\begin{equation*}
+    \frac{\frac{\theta^j}{R_{t+j}}Y_{t+j}P_{t+j}^{\varepsilon}}{\sum_{j=0}^{\infty}\frac{\theta^j}{R_{t+j}}Y_{t+j}P_{t+j}^{\varepsilon}}
+    \implies
+    \frac{(\beta\theta)^j}{\sum_{k=0}^{\infty}(\beta\theta)^k}
+\end{equation*}
+\begin{itemize}
+    \item In steady state $Y_{t+j}P_{t+j}^{\varepsilon}$ is constant and therefore cancels out
+    \item In steady state we have $i=-\log\beta=\log\frac{1}{\beta}\simeq\frac{1}{\beta}-1$ and $\pi=0$, hence $1+i=\frac{1}{\beta}$
+    \[R_{t+j}=\prod_{\tau=1}^{j}(1+i-\pi)=\prod_{\tau=1}^{j}\frac{1}{\beta}=\left(\frac{1}{\beta}\right)^j
+    \Longleftrightarrow \frac{1}{R_{t+j}}=\beta^j \]
+    \item $\theta^j$: probability that price is still in place after $j$ periods
+    
+\end{itemize}
+
+\begin{align*}
+    o_t&\simeq\sum_{j=0}^{\infty}\frac{(\beta\theta)^j}{\sum_{k=0}^{\infty}(\beta\theta)^k}\mathbb{E}_tp_{t+j}^* \\
+    &=(1-\beta\theta) \sum_{k=0}^{\infty}(\beta\theta)^k\mathbb{E}_tp_{t+j}^* \\
+    &=(1-\beta\theta)p_t^*+
+    \underbrace{(1-\beta\theta) \sum_{k=1}^{\infty}(\beta\theta)^k\mathbb{E}_tp_{t+j}^*}_{\beta\theta\mathbb{E}_to_{t+1}} \\
+    &=(1-\beta\theta)p_t^* + \beta\theta\mathbb{E}_to_{t+1}
+\end{align*}
+\begin{itemize}
+    \item The optimal price today is a weighted average of today's flexible price and tomorrow's optimal price
+    \item Higher discounting ($\beta\downarrow$) and more often firms adjust ($\theta\downarrow$), the larger weight on today's flexible price
+\end{itemize}
+
+
+\textbf{Aggregate price dynamics:}
+
+The price index in $t$ is a weighted average between the price chosen by the adjusting firms ($o_t$) and last period's price index ($p_{t-1}$)
+\begin{align*}
+    p_t &\simeq (1-\theta)o_t + \theta p_{t-1} \\
+    \underbrace{p_t - p_{t-1}}_{\pi_t} &\simeq (1-\theta)(o_t-p_{t-1}) \\
+    \pi_t & \simeq (1-\theta)(o_t-p_{t-1})
+\end{align*}
+\textbf{Intuition:} inflation is driven by
+\begin{itemize}
+    \item $1-\theta$: how many adjusting firms reset prices
+    \item $o_t-p_{t-1}$: how much adjusting firms change prices
+\end{itemize}
+Iterate above equation one period forward:
+\begin{equation*}
+    \mathbb{E}_t\pi_{t+1}=(1-\theta)(\mathbb{E}_to_{t+1}-p_t)
+\end{equation*}
+
+\begin{equation*}
+    \begin{cases}
+        o_t=(1-\beta\theta)p_t^* + \beta\theta\mathbb{E}_to_{t+1} \\
+        \pi_t = (1-\theta)(o_t-p_{t-1}) \\
+        \mathbb{E}_t\pi_{t+1}=(1-\theta)(\mathbb{E}_to_{t+1}-p_t)
+    \end{cases}
+    \implies
+    \pi_t=\frac{1-\theta}{\theta}(1-\beta\theta)(p_t^*-p_t)+\beta\mathbb{E}_t\pi_{t+1}
+\end{equation*}
+Inflation is high whenever
+\begin{itemize}
+    \item expected inflation is high (comes from adjusting firms choosing high $o_t$ because they expect high $\mathbb{E}_t o_{t+1}$)
+    \item current flexible prices are high relative to the price level ($p_t^*-p_t$) (comes from adjusting firms choosing high $o_t$ because $p_t^*$ is high)
+\end{itemize}
+
+\textbf{Labor market equilibrium:} $L_t=N_t$, $Y_t=C_t$
+\begin{equation*}
+    \begin{cases}
+        \dfrac{N_t^{\varphi}}{C_t^{-\sigma}}=\dfrac{W_t}{P_t} \\
+        P_t^*(i)=\dfrac{\varepsilon}{\varepsilon-1}\dfrac{W_t}{A_t}
+    \end{cases}
+    \implies
+    \begin{cases}
+        \dfrac{P_t^*}{P_t}=\dfrac{\varepsilon}{\varepsilon-1}A_t^{-\varphi-1}Y_t^{\varphi+\sigma} \\
+        1=\dfrac{\varepsilon}{\varepsilon-1}A_t^{-\varphi-1}(Y_t^n)^{\varphi+\sigma}
+    \end{cases}
+    \implies
+    \frac{P_t^*}{P_t}=\left(\frac{Y_t}{Y_t^n}\right)^{\varphi+\sigma}
+\end{equation*}
+Log-linearize above equation:
+\begin{equation*}
+    p^*-p_t=(\varphi+\sigma)\underbrace{(y_t-y_t^n)}_{\widetilde{y}_t}
+\end{equation*}
+
+\begin{equation*}
+    \pi_t=\kappa\widetilde{y}_t + \beta\mathbb{E}_t\pi_{t+1}\quad \textrm{NKPK}
+\end{equation*}
+where
+\begin{equation*}
+    \kappa=\frac{1-\theta}{\theta}(1-\beta\theta)(\varphi+\sigma)
+\end{equation*}
+
+
+\end{document}

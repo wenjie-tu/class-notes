@@ -1,0 +1,456 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+%\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{setspace}
+% \usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[top=2.0cm, left=2.0cm, right=2.0cm, bottom=3.0cm]{geometry}
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\title{%
+    Applied Statistical Regression
+}
+\author{Wenjie Tu}
+\date{Fall Semester 2021}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+%\onehalfspacing
+\begin{document}
+
+%\maketitle
+
+\section{Simple Linear Regression}
+
+\textbf{Properties of the Least Square Estimates}
+\begin{itemize}
+    \item $E[\hat{\beta}_0]=\beta_0$ and $E[\hat{\beta}_1]=\beta_1$
+    \item Variances of the estimates
+    \[Var(\hat{\beta}_0)=\sigma_E^2\left(\frac{1}{n}+\frac{\overline{x}^2}{\sum_{i=1}^n(x_i-\overline{x})^2} \right) \]
+    \[Var(\hat{\beta}_1)=\frac{\sigma_E^2}{\sum_{i=1}^n(x_i-\overline{x})^2} \]
+    \item Precise estimates are obtained with
+    \begin{itemize}
+        \item a large number of observations $n$
+        \item a good scatter in the predictor $x_i$
+        \item an informative/useful predictor, making $\sigma_E^2$ small
+    \end{itemize}
+\end{itemize}
+
+\textbf{Simple Regression}
+\begin{itemize}
+    \item Residual squared error:
+    \[\hat{\sigma}_E^2=\frac{1}{n-2}\cdot\sum_{i=1}^n(y_i-\hat{y}_i)^2=\frac{1}{n-2}\cdot\sum_{i=1}^n r_i^2 \]
+    \item Coefficient of Determination
+    \[R^2=1-\frac{\sum_{i=1}^n(y_i-\hat{y}_i)^2}{\sum_{i=1}^n(y_i-\overline{y})^2} \]
+    \item Confidence interval for the slope
+    \[\hat{\beta}_1\pm qt_{0.975;n-2}\cdot\hat{\sigma}_{\hat{\beta}_1}\Longleftrightarrow \hat{\beta}_1\pm qt_{0.975;n-2}\cdot\sqrt{\frac{\hat{\sigma}_E^2}{\sum_{i=1}^n(x_i-\overline{x})^2}} \]
+    \item Confidence interval for $E[y\mid x]$
+    \[\hat{\beta}_0+\hat{\beta}_1x\pm qt_{0.975;n-2}\cdot\hat{\sigma}_E\cdot\sqrt{\frac{1}{n}+\frac{(x-\overline{x})^2}{\sum_{i=1}^n(x_i-\overline{x})^2}} \]
+    \item Prediction interval for $y$
+    \[\hat{\beta}_0+\hat{\beta}_1x\pm qt_{0.975;n-2}\cdot\hat{\sigma}_E\cdot\sqrt{1+\frac{1}{n}+\frac{(x-\overline{x})^2}{\sum_{i=1}^n(x_i-\overline{x})^2}} \]
+\end{itemize}
+
+\textbf{Log-Transformation}
+\begin{itemize}
+    \item For a simple prediction of the y-value on the original scale, we can exponentiate to invert the log-transformation.
+    \item This is an estimate for the median of the conditional distribution $y\mid x$, but not the conditional mean $E[y\mid x]$. If we require unbiased fitted values on the original scale, applying a correction factor is required
+    \begin{itemize}
+        \item The link between Gaussian and lognormal distribution
+        \[\hat{y}=\exp(\hat{y}'+\frac{\hat{\sigma}_E^2}{2}) \]
+        \item The smearing estimator proposed by Duan
+        \[\hat{y}=\exp(\hat{y}')\cdot\frac{1}{n}\sum_{i=1}^n\exp(r_i') \]
+    \end{itemize}
+    \item Confidence intervals for the median and prediction intervals by simple transformation:
+    \[[lo, up]\to [\exp(lo), \exp(up)] \]
+    \item If one needs a confidence interval for the mean, the theoretical or Duan's smearing correction has to be used
+\end{itemize}
+
+
+%----------------------------------------------------------
+
+\section{Multiple Linear Regression}
+
+% \subsection{Data Preparation: Transformation}
+
+\textbf{When to transform?}
+\begin{itemize}
+    \item If on a relative scale, meaning that an increase from $10\to11$ is not identical to $100\to101$
+    \item Left-closed (with 0 as the smallest possible value), and right-open variables are often relative and require transformation
+    \item If the scatter (i.e. the magnitude of the uncertainty) increases with increasing value, as is often the case for relative scales
+    \item If marginal distribution of the variable (as observed in a histogram) is clearly right-skewed (i.e. extreme values exist)
+\end{itemize}
+
+\textbf{Estimating the Error Variance}
+\[\hat{\sigma}_E^2=\frac{1}{n-(p+1)}\sum_{i=1}^n r_i^2 \]
+
+\textbf{Assumptions on the Error Term}
+\begin{itemize}
+    \item $E[E_i]=0$: the hyperplane is correct, no systematic error
+    \item $Var(E_i)=\sigma_E^2$: constant scatter for the error term
+    \item $Cov(E_i,E_j)=0$: uncorrelated errors
+    \item $E_i\sim\mathcal{N}(0,\sigma_E^2)$: the errors are normally distributed
+\end{itemize}
+
+\textbf{Coefficient of Determination}
+\[R^2=1-\frac{\sum_{i=1}^n(y_i-\hat{y}_i)^2}{\sum_{i=1}^n(y_i-\overline{y})^2} \]
+
+\textbf{Adjusted Coefficient of Determination}
+\[adjR^2=1-\frac{n-1}{n-(p+1)}\cdot(1-R^2) \]
+
+\textbf{Confidence Interval for Coefficient $\beta_j$}
+\[\hat{\beta}_j\pm qt_{0.975;n-(p+1)}\cdot\hat{\sigma}_{\hat{\beta}_j} \]
+
+\textbf{Individual Parameter Tests}
+\begin{itemize}
+    \item The $p$-values of the individual hypothesis tests are based on the assumption that the other predictors remain in the model and do not change. Therefore, you must not drop more than one single non-significant predictor at a time.
+    \item It can happen that all individual tests do not reject the null hypothesis, although some predictors have a significant effect on the response. Reason: correlated predictors!
+    \item The multiple testing problem: when doing many tests, the total type I error increases and we may observe spuriously significant predictors. (Overall type I error: $1-(1-p)^m$)
+\end{itemize}
+
+\textbf{Comparing Hierarchical Models}
+\begin{itemize}
+    \item The big model must contain all the predictors from small model, otherwise they are not hierarchical and the test does not apply
+    \item $F$ test
+    \[F=\frac{n-(p+1)}{p-q}\cdot\frac{RSS_{Small}-RSS_{Big}}{RSS_{Big}}\sim F_{p-q,n-(p+1)} \]
+    \item Global $F$-test
+    \[F=\frac{R^2}{1-R^2}\times\frac{\mathrm{df_2}}{\mathrm{df_1}} \]
+\end{itemize}
+
+\textbf{Prediction}
+\begin{itemize}
+    \item Only interpolation. Prediction within the range of observed y-values works well. Extrapolation yields non-reliable results
+\end{itemize}
+
+\textbf{Categorical Predictors}
+\begin{itemize}
+    \item Categorical predictors are often called factor variables. In a linear regression, each level of such a variable is encoded by a dummy variable, so that $(\ell-1)$ degrees of freedom are spent
+\end{itemize}
+
+\textbf{Inference with Factor Variable}
+\begin{itemize}
+    \item In a regression model where factor variables that have more than 2 levels and/or interaction terms are present, the \texttt{summary()} function does not provide useful information for variable selection. We have to work with \texttt{drop1()} instead!
+    \item \texttt{drop1()} performs correct model comparisons and respects the model hierarchy.
+    \item Do not perform individual hypothesis tests on factors that have more than  2 levels, they are meaningless!
+\end{itemize}
+
+\textbf{Residuals vs. Error}
+\begin{itemize}
+    \item The residual random variables $R_i$ share some properties of the errors $E_i$, but not all - there are important differences.
+    \item Even in cases where the $E_i$ are uncorrelated and have constant variance, the residuals $R_i$ feature some estimation-related correlation and non-constant variance.
+    \item The estimation-induced correlation and heteroskedasticity in the residuals $R_i$ is usually very small. Thus, residual analysis using the raw residuals $r_i$ is both useful and sensible.
+    \item One can try to improve the raw residual $r_i$ with dividing it by an estimate of its standard deviation (i.e. standardized)
+    \[\tilde{r}_i=\frac{r_i}{\hat{\sigma}_E\cdot\sqrt{1-H_{ii}}} \]
+    \begin{itemize}
+        \item $H_{ii}$ is the diagonal element of hat matrix
+        \item $\hat{\sigma}_E$ is the residual standard error
+        \item Studentized Residuals: $\hat{\sigma}_E$ was estimated by ignoring the $i$-th data point
+    \end{itemize}
+\end{itemize}
+
+\textbf{Unusual Observations}
+\begin{itemize}
+    \item There can be observations which do not fit well with a particular model. These are called outliers. The property of being an outlier strongly depends on the model used.
+    \item There can be data points which have strong impact on fitting of the model. These are called influential observations.
+    \item A leverage point is an observation that lies at a different spot in predictor space. This is potentially dangerous because it can have strong influence on the fit.
+\end{itemize}
+
+\textbf{Leverage}
+\begin{itemize}
+    \item Leverage points are different from the bulk of data
+    \item The average value for leverage is given by $\dfrac{p+1}{n}$
+    \item We say a data point has high leverage if $H_{ii}>\dfrac{2(p+1)}{n}$
+\end{itemize}
+
+\textbf{Cook's Distance}
+\[D_i=\frac{\sum(\hat{y}_k^{[-i]}-\hat{y}_k )^2}{(p+1)\sigma_E^2}=\frac{H_{ii}}{1-H_{ii}}\cdot\frac{\tilde{r}_i^2}{p+1} \]
+\begin{itemize}
+    \item Cook's Distance can be computed directly without fitting regression $n$ times
+    \item It measures the influence of a data point and depends on leverage and standardized residual
+    \item Data points with $D_i>0.5$ are called influential. If $D_i>1$, the data point is potentially damaging to the regression line
+\end{itemize}
+
+\textbf{Partial Residual Plots}
+\begin{itemize}
+    \item The plot of response $y$ vs. predictor $x_k$ can be deceiving
+    \item The reason is that other predictors also influence the response and blur our impression
+    \item We require a plot which only shows the ``isolated'' influence of predictor $x_k$ on the response $y$
+    \item We remove the estimated effect of all the other predictors from the response and plot this versus the predictor $x_k$
+    \[y-\sum_{k\neq j}x_j\hat{\beta}_j=\hat{y}+r-\sum_{k\neq j}x_j\hat{\beta}_j=x_k\hat{\beta}_k+r \]
+    \item Partial residual plots show the marginal relation between a predictor $x_k$ and the response $y$ after the effect of other variables is accounted for
+\end{itemize}
+
+\textbf{Checking for Correlated Errors}
+\begin{itemize}
+    \item If the errors/residuals are correlated, the OLS procedure still results in unbiased estimates of both the regression coefficients and fitted values
+    \item But the OLS estimator is no longer efficient (i.e. there are alternative regression estimators that yield more precise results)
+    \item The standard errors for the coefficients are biased and will inevitably lead to flawed inference results (i.e. tests and confidence intervals). The standard errors can be either too small (majority of cases) or too large
+    \item Durbin-Watson Test
+    \[DW=\frac{\sum_{i=2}^n(r_i-r_{i-1})^2}{\sum_{i=1}^n r_i^2}\sim \chi^2 \]
+    \begin{itemize}
+        \item Problem: the DW-test only detects simple correlation. When more complex dependency exists, it has very low power
+    \end{itemize}
+\end{itemize}
+
+\textbf{Residuals vs. Time/Index}
+
+When is the plot OK?
+\begin{itemize}
+    \item There is no systematic structure present
+    \item There are no longer sequences of pos./neg. residuals
+    \item There is no back-and-forth between pos./neg. residuals
+    \item The $p$-value in the Durbin-Watson test is $>0.05$
+\end{itemize}
+
+\textbf{Multicollinearity}
+\begin{itemize}
+    \item If the columns of $X$ are linearly dependent, then $X^TX$ does not have full rank and its inverse does not exist
+    \item Multicollinearity means that there is not perfect dependence among the columns of $X$ but still the columns show strong correlation
+    \item In these cases, there is a (technically) unique solution but it is often highly variable and poorly suited for practice
+    \item The estimated coefficients feature large or even very large standard errors. Hence, they are imprecisely estimated with huge confidence intervals
+    \item Typical case: the global $F$-test turns out to be significant, but none of the individual predictors is significant
+    \item Extrapolation may yield extremely poor results
+\end{itemize}
+
+\textbf{Variance Inflation Factor}
+\[Var(\hat{\beta}_k)=\sigma_E^2\cdot\frac{1}{1-R_k^2}\cdot\frac{1}{\sum_{i=1}^n(x_{ik}-\overline{x}_k)^2} \]
+\begin{itemize}
+    \item $\sigma_E^2$: error variance
+    \item $\dfrac{1}{1-R_k^2}$: variance inflator factor is obtained by determining R-Squared in a regression, where $x_k$ is the response variable and all other predictors main their role
+    \item $VIF\geq 5$ corresponds to a $R_k^2\geq0.8$ and has to be seen as a critical multicollinearity
+    \item $VIF\geq 10$ means that $R_k^2\geq0.9$ and hence that dangerous multicollinearity is present 
+\end{itemize}
+
+\textbf{Dealing with Multicollinearity}
+\begin{itemize}
+    \item Amputation: drop all collinear predictors except one
+    \item Generate new variables
+\end{itemize}
+
+\textbf{Ridge Regression}
+\begin{itemize}
+    \item Ridge regression requires centered and standardized predictors as the solution is sensitive to location and scale. Furthermore, it is important not to penalize the intercept
+\end{itemize}
+
+\textbf{Backward Elimination with $p$-Values}
+\begin{itemize}
+    \item The removed variables can still be related to the response. If we run a simple linear regression, they can even be significant. In the multiple linear model however, there are other, better, more informative predictors.
+    \item In a step-by-step backward elimination, the best model is often missed. Evaluating more models can be very beneficial for finding the best one.
+\end{itemize}
+
+\textbf{AIC/BIC Criteria}
+\begin{itemize}
+    \item $AIC=-2\max(\log likelihood)+2q=const+n\log(RSS/n)+2q$
+    \item $BIC=-2\max(\log likelihood)+\log n\cdot q=const+n\log(RSS/n)+\log n\cdot q$
+    \item AIC/BIC allow for comparison of models that are not hierarchical, but they need to be fitted on exactly the same data points and the response variable needs to be identical
+    \item BIC penalizes bigger models harder, with factor $\log n$ instead of factor 2
+\end{itemize}
+
+\textbf{Variable Selection with AIC/BIC}
+\begin{itemize}
+    \item Backward Selection
+    \begin{itemize}
+        \item The selection stops when AIC/BIC cannot be improved anymore. Predictors do not need to be significant.
+    \end{itemize}
+    \item Forward Selection
+    \begin{itemize}
+        \item Forward selection is used with big datasets, where there are too many predictors for the number of observations.
+    \end{itemize}
+    \item Stepwise Model Search
+    \begin{itemize}
+        \item Not much more time consuming but more exhaustive.
+    \end{itemize}
+    \item Exhaustive Search
+    \begin{itemize}
+        \item It may happen that the AIC-based model search ends at a local AIC-minimum, rather than the global optimum over all models that exist.
+        \item For finding the model that globally minimizes AIC, a complete search over all $2^p$ models is required. Depending on $n$ and computing speed, this is feasible for $p\approx15-20$.
+        \item R function \texttt{regsubsets()} of \texttt{library(leaps} does the job, but it cannot deal with factor variables correctly.
+    \end{itemize}
+    \item Summary
+    \begin{itemize}
+        \item Factor variables either remain with all their dummies, or are entirely removed. There is no in-between solution.
+        \item If interaction terms are present, then the main effects for these variables must be in the model as well.
+        \item In case of polynomial terms, all lower order terms must be used as well.
+    \end{itemize}
+\end{itemize}
+
+\textbf{LASSO}
+\begin{itemize}
+    \item In contrast to the OLS and Ridge estimators, there is no explicit solution to Lasso.
+    \item Using the Coordinate Descent procedure in R allows for finding the solution up to problem size around $np\approx10^6$.
+    \item In contrast to the OLS and Ridge estimators, Lasso is not a linear estimator. There is no hat matrix $H$ such that $\hat{y}=Hy$.
+    \item As a consequence, the concept of degrees of freedom does not exist for Lasso and there is no trivial procedure for choosing the optimal penalty parameter$\lambda$.
+    \item Due to the built-in shrinkage property, Lasso is much less susceptible to multicollinearity. However, too many collinear predictors can still hamper model interpretation in practice.
+    \item Inference on the fitted model is at best difficult, or even close to impossible. One can compare standardized coefficients.
+    \item The standard Lasso only works with numerical predictors. Extension to factor variables exist, see Group Lasso.
+\end{itemize}
+
+\textbf{Cross Validation}
+\begin{itemize}
+    \item The same response variable is predicted.
+    \item We can perform cross validation on datasets with different number of observations, or even on different datasets.
+    \item The models which are considered in a comparison need not to be hierarchical, and can be arbitrarily different.
+    \item It is possible to infer the effect of response variable transformations, Lasso, Ridge, robust procedures
+    \item Cross Validation should be used if AIC/BIC and Adjusted R-Squared do not work
+    \begin{itemize}
+        \item The response variable is transformed: for investigating whether we obtain better predictions from a model with transformed response or not, cross validation is a must.
+        \item The sample is not identical: if we need to check whether excluding data points from the fit yields better predictions for the entire sample, we require cross validation.
+        \item For model comparison, neither tests nor AIC-comparison can serve
+    \end{itemize}
+\end{itemize}
+
+\textbf{Significance vs. Relevance}
+\begin{itemize}
+    \item The larger a sample, the smaller the p-values for the very same predictor effect. Thus do not confuse small p-values with an important predictor effect!
+    \item With large datasets, we can have statistically significant results which are practically useless.
+    \item Most predictors have influence, thus $\beta_j=0$ hardly ever holds. The point null hypothesis is thus ususally wrong in practice. We just need enough data so that we are able to reject it.
+    \item Absence of Evidence $\neq$ Evidence of Absence
+    \item Measuring the relevance of predictors
+    \begin{itemize}
+        \item maximum effect of a predictor variable on the response
+        \[\lvert \beta_j\cdot(\max_i x_{ij}-\min_i x_{ij})\rvert \]
+        \item this can be compared to the total span in the response, or it can be plotted vs. the (logarithmic) $p$-value
+    \end{itemize}
+    \item Another way of quantifying the impact of a particular predictor is by standardizing all predictors to mean zero and unit variance. This makes the coefficients $\beta_j$ directly comparable.
+\end{itemize}
+
+
+%--------------------------------------------------------------------------------
+\section{Extending the Linear Regression}
+
+\subsection{Generalized Additive Modelling (GAM)}
+
+\textbf{Polynomial Basis Functions}
+\begin{itemize}
+    \item Allows for a flexible and data-adaptive fit
+    \item Demonstrates some erratic behavior at boundaries
+\end{itemize}
+
+\textbf{Cubic Regression Splines}
+\begin{itemize}
+    \item Space knots evenly
+    \item Set knots at quantiles of unique $x$ values (e.g. 10\%,20\%, $\cdots$)
+    \item Start with a large enough number and do backward selection, eliminating knots that seem unnecessary
+\end{itemize}
+
+\textbf{Penalized Regression Splines}
+\begin{itemize}
+    \item Generalized Ridge Regression: $\hat{\gamma}=(H^{T}H+\lambda P)^{-1}H^{T}y$
+    \item Fitted values: $\hat{y}=H(H^{T}H+\lambda P)^{-1}H^{T}y=S_{\lambda}y$
+    \item Empirical Degrees of Freedom: $df=trace(S_{\lambda})$
+    \item Generalized Cross Validation Score: $GCV(\hat{f}_{\lambda})=n\cdot(trace(I-S_{\lambda}))^2\cdot\sum_{i=1}^{n}(y_i-\hat{f}_{\lambda}(x))^2$
+\end{itemize}
+
+\textbf{Smoothing Splines}
+
+\texttt{smooth.spline()}
+\begin{itemize}
+    \item Uses all knots (if \texttt{all.knots=TRUE})
+    \item Spends more degrees of freedom for the fit
+    \item Only works with one single predictor variable
+\end{itemize}
+
+\texttt{mgcv::gam()}
+\begin{itemize}
+    \item By default uses thin plate regression splines
+    \item Method can be adjusted by \texttt{s(xx, "cr")}, not recommended
+    \item By default does not use all knots (i.e. uses a basis that has a limited dimension for saving computing time for obtaining good performance in multiple predictor settings)
+\end{itemize}
+
+\textbf{Fitting Multiple Additive Models}
+\[y=\beta_0+f_1(x_1)+f_2(x_2)+E \]
+\begin{itemize}
+    \item Note that there is an identification problem. We either require that $f_1(x_1)+f_2(x_2)=0$ or need to omit the intercept $\beta_0$, otherwise there is no unique solution
+\end{itemize}
+
+\textbf{Comparing GAMs}
+\begin{itemize}
+    \item We can directly compare the GCV scores of different models
+    \item AIC (because of the penalized likehood and the smoothing parameter estimation)
+    \item Statistical testing with hierarchical model comparison
+    \begin{itemize}
+        \item Comparing GAM against a parametric model via a hierarchical model comparison is \underline{not feasible}
+    \end{itemize}
+\end{itemize}
+
+\textbf{Variable Selection: Overview}
+
+For \texttt{gam()}, there is no \texttt{step()} function, we thus cannot perform variable selection in the usual manner. The following alternatives exist:
+\begin{itemize}
+    \item Manual Backward Elimination, either by analyzing $p$-values or using the AIC criterion
+    \item Shrinkage Smoother: using basis functions (\texttt{bs="ts"} or \texttt{bs="cs"}), where by construction also zero degrees of freedom can be awarded (i.e. terms can be eliminated from the model)
+    \item Nullspace Penalization: using argument \texttt{select=TRUE}, which means that also parametric, non-smooth terms will be penalized. This works with all basis functions and performs automatic variable selection
+\end{itemize}
+
+\textbf{Variable Selection: Shrinkage Smoothers}
+
+A fundamental drawback of both \underline{Shrinkage Smoothers} and \underline{Nullspace Penalization} is that no selection over the parametric terms is possible
+\begin{itemize}
+    \item It is possible to automatically select the flexible terms. But this is of limited use as long as unnecessary parametric terms are part of the model – they interfere with the selection
+    \item Performing manual backward elimination on $p$-values for the parametric terms and later automatic selection for the flexible terms is not really a coherent procedure
+    \item Hence, the overall best procedure for variable selection in GAM is backward elimination based on p-values or AIC
+\end{itemize}
+
+\subsection{Generalized Linear Modelling (GLM)}
+
+\textbf{Logistic Regression}
+\begin{itemize}
+    \item Log-likelihood: $l(\beta)=\sum_{i=1}^{n}\left( y_i\log(p_i)+(1-y_i)\log(1-p_i)\right)$ where $p=\dfrac{\exp(\beta_0+\beta_1x_{i1}+\cdots)}{1+\exp(\beta_0+\beta_1x_{i1}+\cdots)}$
+    \item Under mild conditions, the solution exists, but it cannot be written in closed form. Usually, the IRLS algorithm is employed
+    \item Residual Deviance: $D(y,\hat{p})=-2\sum_{i=1}^{n}\left(y_i\log(\hat{p}_i)+(1-y_i)\log(1-\hat{p}_i) \right)=-2\cdot l(\hat{\beta})$
+    \item Null Deviance: the deviance of the simplest possible model that is built from the intercept term only
+    \item Coefficient of Determination: $R^2=\dfrac{1-\exp(\frac{D_{res}-D_{null}}{n})}{1-\exp(-\frac{D_{null}}{n})}$
+    \item Comparing hierarchical models: $2(ll^{Big}-ll^{Small})=D(y,\hat{p}_{Small})-D(y,\hat{p}_{Big})\sim\chi_{(p-q)}^2$
+    \item If $D(y,\hat{p}_{Null})-D(y,\hat{p}_{Big})\gg(p-q)$, then reject $H_0$
+    \item Pearson Residuals: $R_i=\dfrac{y_i-\hat{p}_i}{\sqrt{\hat{p}_i(1-\hat{p}_i)}}$
+    \begin{itemize}
+        \item $R_i^2$ is the contribution of the $i$-th observation to the Pearson statistic for model comparison
+        \item Pearson residuals are scale-free
+    \end{itemize}
+    \item Deviance Residuals: $D_i=sign(y_i-\hat{p}_i)\cdot\sqrt{d_i}$ where $d_i=\left(y_i\cdot\log(\hat{p}_i)+(1-y_i)\cdot\log(1-\hat{p}_i) \right)$
+    \item AIC: $AIC=D(y_i,\hat{p})+2p$
+\end{itemize}
+
+\textbf{Binomial Regression}
+\begin{itemize}
+    \item Log-likelihood: $l(\beta)=\sum_{i=1}^{k}\left[\log \binom{n_i}{y_i}+y_i\log(p_i)+(1-y_i)\log(1-p_i) \right]$
+    \item For the binomial distribution, the mean determines the dispersion
+    \item Goodness of fit: $D(y,\hat{p})=2\sum\limits_{i=1}^k\left[y_i\log\dfrac{y_i}{\hat{y}_i}+(n_i-y_i)\log\dfrac{n_i-y_i}{n_i-\hat{y}_i} \right] $
+    \item Asymptotics: If $Y_i$ is truly binomial and the $n_i$ are large, the residual deviance is approximately $\chi^2$ distributed. The degrees of freedom is $k-(\textit{\# of predictors})-1$
+    \item $Deviance\gg df$: model is not worth much (check $df\pm2\sqrt{df}$ or do the exact computation, only apply this test if $n\geq 5$)
+    \item Overdispersion
+    \[\hat{\phi}=\frac{X^2}{n-q}=\frac{1}{n-q}\cdot\sum_{i=1}^n\frac{(y_i-n_i\hat{p}_i)^2}{n_i\hat{p}_i(1-\hat{p}_i)} \]
+    \begin{itemize}
+        \item regression coefficients remain unchanged
+        \item standard errors will be different: inference
+    \end{itemize}
+\end{itemize}
+
+\textbf{Poisson Regression}
+\begin{itemize}
+    \item Poisson regression is useful when the response variable is a count. However
+    \begin{itemize}
+        \item for bounded counts, the binomial model can be useful
+        \item for large numbers, the normal approximation can serve
+    \end{itemize}
+    \item Poisson regression is a must if
+    \begin{itemize}
+        \item the counts are small and/or population size is unknown
+        \item the population size is big and hard to come by, and the probability of an event, and thus the expected counts are small
+    \end{itemize}
+    \item Link function: $\log(\lambda_i)=\beta_0+\beta_1x_{i1}+\cdots+\beta_px_{ip}$
+    \item Log-likelihood: $l(\beta)=\sum\limits_{i=1}^n\left(y_i\cdot\log(\lambda_i)-\lambda_i-\log(y_i!) \right)$
+    \item There is no closed form solution and we have to resort to the IRLS approach for approximation
+    \item Residual Deviance: $D=2\sum\limits_{i=1}^n\left[y_i\log\frac{y_i}{\hat{\lambda}_i}-(y_i-\hat{\lambda}_i) \right]\sim\chi_{n-(p+1)}^2$
+    \item Quick check: $\textit{residual deviance}\gg df$
+    \item Pearson residual: $P_i=\dfrac{y_i-\hat{\lambda}_i}{\sqrt{\hat{\lambda}_i}}\quad\textrm{approx.}\sim\mathcal{N}(0,1)$
+    \item Overdispersion: estimates are unbiased but standard errors are wrong
+    \begin{itemize}
+        \item Dispersion parameter: $\hat{\phi}=\dfrac{\sum_i(y_i-\hat{\lambda}_i)^2/\hat{\lambda}_i}{n-(p+1)}$
+    \end{itemize}
+    \item Hierarchical model comparison in GLMs with an additional dispersion parameter need to be carried out using $F$ tests, but not via the $\chi^2$-distribution or $z$ tests
+\end{itemize}
+
+
+\end{document}

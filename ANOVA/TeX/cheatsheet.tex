@@ -1,0 +1,762 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+%\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{setspace}
+% \usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[top=1.0cm, left=1.0cm, right=0.5cm, bottom=1.0cm]{geometry}
+\usepackage{multirow}
+\usepackage{comment}
+\renewcommand{\familydefault}{\sfdefault}
+
+\usepackage{nopageno}
+
+
+
+\title{%
+    Applied Analysis of Variance and Experimental Design
+}
+\author{Wenjie Tu}
+\date{Fall Semester 2021}
+
+\setlength{\parindent}{0pt}
+%\setlength{\parskip}{1em}
+%\onehalfspacing
+\begin{document}
+
+%\maketitle
+
+%\section{Introduction}
+\thispagestyle{empty}
+\section{Completely Randomized Designs (CRD)}
+
+\textbf{Setup}
+\begin{itemize}
+    \item $g$: the number of treatment group
+    \item $N$: the number of experimental units
+    \item $n_i$: the number of observations in each treatment group
+    \begin{itemize}
+        \item $i=1,\cdots,g$
+        \item $n_1+n_2+\cdots+n_g=N$
+    \end{itemize}
+\end{itemize}
+
+
+\textbf{Notation}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|c}
+    Symbol & Meaning & Formula \\
+    \hline
+    $y_{i\cdot}$ & Sum of all values in group $i$ & $y_{i\cdot}=\sum\limits_{j=1}^{n_i}y_{ij}$ \\
+    \hline 
+    $\overline{y}_{i\cdot}$ & Mean of group $i$ & $\overline{y}_{i\cdot}=\dfrac{1}{n_i}\sum\limits_{j=1}^{n_{i\cdot}}y_{ij}=\dfrac{1}{n_i}y_{i\cdot}$ \\
+    \hline 
+    $y_{\cdot\cdot}$ & Sum of all observations & $y_{\cdot\cdot}=\sum\limits_{i=1}^{g}\sum\limits_{j=1}^{n_i}y_{ij}$ \\
+    \hline 
+    $\overline{y}_{\cdot\cdot}$ & Overall mean & $\overline{y}_{\cdot\cdot}=\dfrac{y_{\cdot\cdot}}{N}$
+    \end{tabular}
+%    \caption{Caption}
+%    \label{tab:my_label}
+\end{table}
+
+\textbf{Parameter Estimation}
+\begin{itemize}
+    \item Residual/error sum of squares
+    \[SS_E=\sum_{i=1}^{g}\sum_{j=1}^{n_i}(y_{ij}-\overline{y}_{i\cdot} )^2 \]
+    \item Mean squared error
+    \[\hat{\sigma}^2=MS_E=\frac{1}{N-g}SS_E=\frac{1}{N-g}\sum_{i=1}^{g}(n_i-1)s_i^2 \]
+    \begin{itemize}
+        \item $s_i^2$: empirical variance in group $i$
+        \item This is an unbiased estimator for $\sigma^2$ ($N-g$ instead of $N$ in the denominator)
+        \item The error estimate has $N-g$ degrees of freedom ($N$ observations, $g$ parameters)
+        \[N-g=\sum_{i=1}^g(n_i-1) \]
+    \end{itemize}
+\end{itemize}
+
+
+\textbf{Estimation Accuracy}
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|c}
+    \textbf{Parameter} & \textbf{Estimator} & \textbf{Standard Error}  \\
+    \hline
+    $\mu$ & $\overline{y}_{\cdot\cdot}$ & $\sigma\sqrt{\dfrac{1}{N}}$ \\
+    \hline
+    $\mu_i$ & $\overline{y}_{i\cdot}$ & $\sigma\sqrt{\dfrac{1}{n_i}}$ \\
+    \hline 
+    $\alpha_i$ & $\overline{y}_{i\cdot}-\overline{y}_{\cdot\cdot}$ & $\sigma\sqrt{\dfrac{1}{n_i}-\dfrac{1}{N}}$ \\
+    \hline 
+    $\mu_i-\mu_j=\alpha_i-\alpha_j$ & $\overline{y}_{i\cdot}-\overline{y}_{j\cdot}$ & $\sigma\sqrt{\dfrac{1}{n_i}-\dfrac{1}{n_j}}$
+    \end{tabular}
+%    \caption{Caption}
+%    \label{tab:my_label}
+\end{table}
+\begin{itemize}
+    \item 95\% confidence interval for $\alpha_i$ is given by
+    \[\hat{\alpha}_i\pm qt_{0.975;N-g}\cdot\hat{\sigma}\sqrt{\frac{1}{n_i}-\frac{1}{N}} \]
+\end{itemize}
+
+\textbf{One-Way ANOVA Table}
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|c|c|c}
+    \textbf{Source} & \textbf{df} & \textbf{Sum of squares (SS)} & \textbf{Mean squares (MS)} & \textbf{F-ratio} \\
+    \hline
+    Treatment & $g-1$ & $SS_{Trt}$ & $MS_{Trt}=\dfrac{SS_{Trt}}{g-1}$ & $\dfrac{MS_{Trt}}{MS_E}$ \\
+    \hline 
+    Error & $N-g$ & $SE_E$ & $MS_E=\dfrac{SS_E}{N-g}$ \\
+    \end{tabular}
+\end{table}
+\begin{itemize}
+    \item $E[MS_{Trt}]=\sigma^2+\sum_{i=1}^g n_i \alpha_i/(g-1)$
+    \item $F$ follows an $F$-distribution with $g-1$ and $N-g$ degrees of freedom: $F_{g-1,N-g}$
+\end{itemize}
+
+\textbf{$F$-Distribution}
+\begin{itemize}
+    \item The $F$-distribution has two degrees of freedom parameters: One from the numerator and one from the denominator mean square (treatment and error)
+    \[F_{n,m}=\frac{\frac{1}{n}(X_1^2+\cdots+X_n^2)}{\frac{1}{m}(Y_1^2+\cdots+Y_m^2)}\quad\textrm{where $X_i, Y_j$ are i.i.d. $\mathcal{N}(0,1)$}  \]
+    \item It holds that $F_{1,n}=t_n^2$ (= the square of a $t_n$-distribution). $F$-test for the case $g=2$ is nothing else than the squared $t$-test
+\end{itemize}
+
+
+\section{Specific Differences and Multiple Testing}
+
+\textbf{Sum of Squares a Contrast}
+\begin{itemize}
+    \item Associate sum of squares
+    \[SS_c=\frac{(\sum_{i=1}^gc_i\overline{y}_{i\cdot})^2}{\sum_{i=1}^g\frac{c_i^2}{n_i}} \]
+    \begin{itemize}
+        \item $SS_C$ has one degree of freedom, hence $MS_c=SS_c$
+        \item This is nothing else than the square of the $t$-statistic of our null hypothesis $H_0: \sum_{i=1}^gc_i\cdot\mu_i=0$ (without the $MS_E$ factor)
+        \item $H_0: \dfrac{MS_c}{MS_E}\sim F_{1,N-g}$
+    \end{itemize}
+\end{itemize}
+
+\textbf{Orthogonal Contrasts}
+\begin{itemize}
+    \item Two contrasts $c$ and $c^*$ are called orthogonal, if $\sum_{i=1}^g c_i\cdot c_i^* / n_i=0$
+    \item Orthogonal contrasts contain independent information
+    \item If there are $g$ groups, one can find $g-1$ different orthogonal contrasts (1 dimension already used by global mean $(1,\cdots,1)$)
+    \item Decomposition of Sum of Squares
+    \[SS_{c^{(1)}}+SS_{c^{(2)}}+\cdots+SS_{c^{(g-1)}}=SS_{Trt} \]
+\end{itemize}
+
+\textbf{Multiple Comparisons}
+\begin{itemize}
+    \item Type I error: falsely rejecting $H_0$
+    \item Perform $m$ tests $H_{0,j}$ where $j=1,\cdots,m$
+    \item If all $H_{0,j}$ are true and if all tests are independent, the probability of making at least one false rejection is given by
+    \[1-(1-\alpha)^m \]
+    \begin{itemize}
+        \item where $\alpha$ is the individual significance level
+    \end{itemize}
+    \item The more tests we perform, the more likely we are getting some significant result
+\end{itemize}
+
+\textbf{Different Error Rates}
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|c|c}
+         & $H_0$ true & $H_0$ false & Total \\
+    \hline
+    Significant & $V$ & $S$ & $R$ \\
+    \hline
+    Not significant & $U$ & $T$ & $m-R$ \\
+    \hline
+    Total & $m_0$ & $m-m_0$ & $m$
+    \end{tabular}
+    %\caption{Caption}
+    %\label{tab:my_label}
+\end{table}
+\begin{itemize}
+    \item Consider testing $m$ hypotheses, whereof $m_0$ are true
+    \begin{itemize}
+        \item $V$: Type I errors
+        \item $T$: Type II errors
+        \item $R$: Discoveries
+    \end{itemize}
+    \item Comparison-wise error rate is type I error rate of an individual test
+    \item Family-wise error rate is the probability of rejecting at least one of the true $H_0$'s
+    \[\textrm{FWER}=P(V\geq 1) \]
+    \item The false discovery rate (FDR) is the expected fraction of false discoveries
+    \[\textrm{FDR}=E\left[\frac{V}{R} \right] \]
+\end{itemize}
+
+\textbf{Confidence Intervals}
+\begin{itemize}
+    \item Typically, each $H_0$ corresponds to a parameter
+    \item We can construct confidence intervals for each of them
+    \item We call these confidence intervals simultaneous at level $(1-\alpha)$ if the probability that all intervals cover the corresponding true parameter is $1-\alpha$
+\end{itemize}
+
+\textbf{Scheffe}
+\begin{itemize}
+    \item A method which controls for the search over any possible contrast
+    \item These $p$-values are honest
+    \item Theory
+    \begin{itemize}
+        \item $SS_c\leq (g-1)MS_{Trt}$ for any contrast $c$ (because $SS_{Trt}=SS_c+\cdots$)
+        \item $\dfrac{SS_c}{MS_E}\leq(g-1)\dfrac{MS_{Trt}}{MS_E}$
+        \item $\max_{c}\dfrac{SS_c/(g-1)}{MS_E}\leq\dfrac{MS_{Trt}}{MS_E}\sim F_{g-1,N-g}$
+        \item The price for the nice properties are low power (meaning: test will not reject often when $H_0$ is not true)
+    \end{itemize}
+    \item If $F$-test is not significant: Don't even have to start searching
+    \item R
+    \begin{itemize}
+        \item Calculate $F$-ratio $\dfrac{MS_c}{MS_E}$ as if ``ordinary'' contrast
+        \item Use $(g-1)\cdot F_{g-1,N-g,1-\alpha}$ as critical value (instead of $F_{1,N-g,1-\alpha}$)
+    \end{itemize}
+\end{itemize}
+
+\textbf{Pairwise Comparison}
+\begin{itemize}
+    \item A pairwise comparison is nothing else than comparing two specific treatments
+    \item This is a multiple testing problem because there are $g\cdot\frac{g-1}{2}$ possible comparisons (basically a lot of two-sample $t$-tests)
+    \begin{itemize}
+        \item Simplest solution: apply Bonferroni correction
+        \item Better (more powerful): Tukey Honest Significant Difference
+    \end{itemize}
+\end{itemize}
+
+\textbf{HSD}
+\begin{itemize}
+    \item Tukey HSD is better (more powerful) than Bonferroni if all pairwise comparisons are of interest
+    \item Re-consider Bonferroni if only a subset of comparisons are of interest
+\end{itemize}
+
+\textbf{Multiple Comparison with a Control (MCC)}
+\begin{itemize}
+    \item Do $g-1$ (pairwise) comparisons with the control group
+    \item Dunnett procedure constructs simultaneous confidence intervals for differences $\mu_i-\mu_g$, $i=1,\cdots,g-1$ (assuming group $g$ is control group)
+\end{itemize}
+
+\section{Factorial Treatment Structure}
+
+\textbf{Setup}
+\begin{itemize}
+    \item Factor $A$ with $a$ levels
+    \item Factor $B$ with $b$ levels
+    \item $n>1$ replicates for every combination (i.e. balanced design)
+    \item Total of $N=a\cdot b\cdot n$ observations
+\end{itemize}
+
+\textbf{Factorial Model}
+
+The two-way ANOVA model with interaction
+\[Y_{ijk}=\mu+\alpha_i+\beta_j+(\alpha\beta)_{ij}+\epsilon_{ijk} \]
+\begin{itemize}
+    \item $\alpha_i$ is the main effect of factor $A$ at level $i$
+    \item $\beta_j$ is the main effect of factor $B$ at level $j$
+    \item $(\alpha\beta)_{ij}$ is the interaction effect between $A$ and $B$ (not the product $\alpha_i\beta_j$)
+    \item $\epsilon_{ijk}$ are i.i.d. $\mathcal{N}(0,\sigma)$ errors
+    \item Typically, sum-to-zero constraints are used
+    \begin{itemize}
+        \item $\sum_{i=1}^a\alpha_i=0,\sum_{j=1}^b\beta_i=0 \implies$ $a-1$ and $b-1$ degrees of freedom
+        \item $\sum_{i=1}^a(\alpha\beta)_{ij}=0, \sum_{j=1}^b(\alpha\beta)_{ij}=0 \implies$ $(a-1)\cdot(b-1)$ degrees of freedom 
+    \end{itemize}
+\end{itemize}
+
+\textbf{Parameter Estimates}
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c}
+    \textbf{Parameter} & \textbf{Estimator} \\
+    \hline
+    $\mu$ & $\hat{\mu}=\overline{y}_{\cdots}$ \\
+    \hline 
+    $\alpha_i$ & $\hat{\alpha}_i=\overline{y}_{i\cdot\cdot}-\overline{y}_{\cdots}$ \\
+    \hline
+    $\beta_j$ & $\hat{\beta}_j=\overline{y}_{\cdot j\cdot}-\overline{y}_{\cdots}$ \\
+    \hline
+    $(\alpha\beta)_{ij}$ & $\widehat{(\alpha\beta)}_{ij}=\overline{y}_{ij\cdot}-\hat{\mu}-\hat{\alpha}_i-\hat{\beta}_j$
+    \end{tabular}
+    %\caption{Caption}
+    %\label{tab:my_label}
+\end{table}
+
+\textbf{Sum of Squares}
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|c}
+    \textbf{Source} & \textbf{df} & \textbf{Sum of squares}  \\
+    \hline
+    $A$ & $a-1$ & $\sum\limits_{i=1}^{a}b\cdot n\cdot\hat{\alpha}_i^2$ \\
+    \hline
+    $B$ & $b-1$ & $\sum\limits_{j=1}^{b}a\cdot n\cdot\hat{\beta}_j^2$ \\
+    \hline
+    $AB$ & $(a-1)\cdot(b-1)$ & $\sum\limits_{i=1}^a\sum\limits_{j=1}^b n\cdot\widehat{(\alpha\beta)}_{ij}^2$ \\
+    \hline
+    Error & $(n-1)\cdot ab$ & $\sum\limits_{i=1}^a\sum\limits_{j=1}^b\sum\limits_{k=1}^n(y_{ijk}-\overline{y}_{ij\cdot})^2$ \\
+    \hline
+    Total & $abn-1$ & $\sum\limits_{i=1}^a\sum\limits_{j=1}^b\sum\limits_{k=1}^n(y_{ijk}-\overline{y}_{\cdots})^2$
+    \end{tabular}
+    %\caption{Caption}
+    %\label{tab:my_label}
+\end{table}
+
+\textbf{ANOVA Table}
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|c|c|c}
+    \textbf{Source} & \textbf{df} & \textbf{SS} & \textbf{MS} & \textbf{F} \\
+    \hline
+    $A$ & $a-1$ & $SS_A$ & $\dfrac{SS_A}{a-1}$ & $\dfrac{MS_A}{MS_E}$ \\
+    \hline
+    $B$ & $b-1$ & $SS_B$ & $\dfrac{SS_B}{b-1}$ & $\dfrac{MS_B}{MS_E}$ \\
+    \hline
+    $AB$ & $(a-1)\cdot(b-1)$ & $SS_{AB}$ & $\dfrac{SS_{AB}}{(a-1)(b-1)}$ & $\dfrac{MS_{AB}}{MS_E}$ \\
+    \hline
+    Error & $ab\cdot(n-1)$ & $SS_E$ & $\dfrac{SS_E}{(n-1)ab}$
+    \end{tabular}
+    %\caption{Caption}
+    %\label{tab:my_label}
+\end{table}
+
+\textbf{Single Replicates}
+\begin{itemize}
+    \item If we have a factorial experiment with only one observation per factor-level combination, we cannot fit a full model anymore
+    \item Reason: Perfect fit! All residuals are zero (i.e. \# parameters = \# observations)
+    \[Y_{ij}=\mu+\alpha_i+\beta_j+(\alpha\beta)_{ij}+\epsilon_{ij} \]
+    \begin{itemize}
+        \item cannot distinguish between $(\alpha\beta)_{ij}$ and $\epsilon_{ij}$ in $n=1$ situation
+    \end{itemize}
+    \item We can still fit a model without interaction term, i.e. main effects only (= additive effects)
+    \item If there is an underlying interaction term, we get an error estimate that is biased upwards (because it contains the error and the interaction term)
+    \item Tests will be conservative ($p$-values will be too large), which is OK
+\end{itemize}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|c}
+    \textbf{Source} & \textbf{df} & \textbf{Sum of squares (SS)}  \\
+    \hline
+    $A$ & $a-1$ & $\sum\limits_{i=1}^a b\cdot\hat{\alpha}_i^2$ \\ 
+    \hline 
+    $B$ & $b-1$ & $\sum\limits_{j=1}^b a\cdot\hat{\beta}_j^2$ \\
+    \hline
+    Error & $(a-1)\cdot(b-1)$ & $\sum\limits_{i=1}^a\sum\limits_{j=1}^b(y_{ij}-(\hat{\mu}+\hat{\alpha}_i+\hat{\beta}_j))^2$ \\
+    \hline 
+    Total & $ab-1$ & $\sum\limits_{i=1}^a\sum_{j=1}^b(y_{ij}-\overline{y}_{\cdot\cdot})^2$
+    \end{tabular}
+    %\caption{Caption}
+    %\label{tab:my_label}
+\end{table}
+\begin{itemize}
+    \item If we have no replicates and more than two factors, we would typically remove some of the higher-order interaction terms.
+    \item This means: we put them into the error term (the df's of the error term will thus increase)
+    \item Often: transformations of the response help getting rid of interactions
+    \item Alternative: Tukey one degree of freedom model for interaction
+    \[Y_{ij}=\mu+\alpha_i+\beta_j+\lambda\alpha_i\beta_j+\epsilon_{ij} \]
+    \begin{itemize}
+        \item interaction is actually the product of the main effects
+        \item $H_0:\lambda=0$
+    \end{itemize}
+\end{itemize}
+
+\textbf{Unbalanced Data}
+\begin{itemize}
+    \item We cannot estimate the parameters one at a time anymore
+    \item Parameters have to be estimated simultaneously using the principle of least squares
+    \item Sum of squares cannot be uniquely partitioned into different sources anymore
+    \item Alternative to decomposition of sum of squares: using model comparison approach
+\end{itemize}
+
+\textbf{Different Types of Sum of Squares}
+
+Notation: $SS(B\mid 1,A)$ is the reduction of the residual sum of squares when comparing the models $(1,A,B)$ with $(1,A)$
+\begin{itemize}
+    \item Type I: Sequential sum of squares
+    \begin{itemize}
+        \item Sequentially build up model
+        \item $SS(A\mid 1)\implies (1) \textrm{ vs. } (1,A)$
+        \item $SS(B\mid 1,A)\implies (1,A) \textrm{ vs. } (1,A,B)$
+        \item $SS(AB\mid 1,A,B)\implies (1,A,B) \textrm{ vs. } (1,A,B,AB)$
+        \item Depends on ordering of factors
+        \item R: \texttt{aov}
+    \end{itemize}
+    \item Type II: Hierarchical/partially sequential approach
+    \begin{itemize}
+        \item Control for the influence of the largest hierarchical model not including the term of interest
+        \item $SS(A\mid 1,B)\implies (1,B) \textrm{ vs. } (1,A,B)$
+        \item $SS(B\mid 1,A)\implies (1,A) \textrm{ vs. } (1,A,B)$
+        \item $SS(AB\mid 1,A,B)\implies (1,A,B) \textrm{ vs. } (1,A,B,AB)$
+        \item R: Function \texttt{Anova} in package \texttt{car}
+    \end{itemize}
+    \item Type III: Fully adjusted/marginal approach
+    \begin{itemize}
+        \item Control for all other terms
+        \item $SS(A\mid 1,B,AB)\implies (1,B,AB) \textrm{ vs. } (1,A,B,AB)$
+        \item $SS(B\mid 1,A,AB)\implies (1,A,AB) \textrm{ vs. } (1,A,B,AB)$
+        \item $SS(AB\mid 1,A,B)\implies (1,A,B) \textrm{ vs. } (1,A,B,AB)$
+        \item R: \texttt{drop1}
+    \end{itemize}
+\end{itemize}
+
+\textbf{Comments}
+\begin{itemize}
+    \item With balanced data, we always get the same result, no matter what type we use.
+    \item For main effects only models, Type II and Type III coincide.
+    \item If there is a significant interaction, tests of the corresponding main effects are typically difficult to interpret (better to use individual models)
+\end{itemize}
+
+\section{Randomized Complete Block Designs (RCBD)}
+
+\textbf{Paired $t$-Test}
+\begin{itemize}
+    \item Compare two different eye-drops
+    \item Every subject gets both treatments (meaning: one per eye at the same time)
+    \item At the end, measure redness on quantitative scale in every eye
+    \item For every patient, calculate the difference
+    \item Perform standard one-sample $t$-test with these differences
+\end{itemize}
+
+\textbf{Setup}
+\[Y_{ij}=\mu+\alpha_i+\beta_j+\epsilon_{ij} \]
+\begin{itemize}
+    \item $\alpha_i$: treatment effect
+    \item $\beta_j$: block effect
+    \item By only using main effects, we implicitly assume that the effects are additive
+    \item Due to the balanced design, we can use our standard estimates (one at a time) and sums of squares
+\end{itemize}
+
+\textbf{Randomized Complete Block Designs (RCB)}
+\begin{itemize}
+    \item A blocking design uses a restricted randomization scheme. Each block gets its own randomization
+    \item Blocking exists at the time of randomization
+    \item We call a blocking design complete if every treatment is used in every block (every block contains all treatments)
+    \item In the standard setup, we observe every treatment only once in every block, hence we have a total of $r$ (the number of blocks) observations per treatment
+    \item Therefore, we have no replicates (every combination of treatment and block is only observed once)
+    \item If we only have one observation per treatment and block combination, we could only detect interaction effects having the form of Tukey's one degree of freedom interaction
+\end{itemize}
+
+\textbf{Factorials in Complete Block Designs}
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c}
+    \textbf{Source} & \textbf{df} \\
+    \hline
+    Block & $r-1$ \\
+    \hline
+    $A$ & $a-1$ \\
+    \hline
+    $B$ & $b-1$ \\
+    \hline
+    $AB$ & $(a-1)\cdot(b-1)$ \\
+    \hline
+    Error & $(ab-1)\cdot(r-1)$ \\
+    \hline
+    Total & $rab-1$
+    \end{tabular}
+    %\caption{Caption}
+    %\label{tab:my_label}
+\end{table}
+\begin{itemize}
+    \item We can test the interaction $AB$ even if we only have one replicate per $AB$ combination per block
+\end{itemize}
+
+\textbf{How Much Does Blocking Increase Precision}
+\begin{itemize}
+    \item Squared standard errors for treatment means are
+    \begin{itemize}
+        \item Randomized Complete Block Design (RCB): $\dfrac{\sigma_{RCB}^2}{r}$
+        \item Completely Randomized Design (CRD): $\dfrac{\sigma_{CRD}^2}{n}$
+    \end{itemize}
+    \item If we want to have the same precision, we have to ensure that
+    \[\dfrac{\sigma_{RCB}^2}{r}=\dfrac{\sigma_{CRD}^2}{n} \]
+    \item If we knew $\sigma_{RCB}$ and $\sigma_{CRD}$, we would have to use a ratio of
+    \[\frac{n}{r}=\frac{\sigma_{CRD}^2}{\sigma_{RCB}^2} \]
+    \item $\sigma_{RCB}^2$ is estimated by $MS_E$ of our RCB
+    \item CRD can be estimated using a properly weighted average of $MS_E$ and $MS_{Block}$
+    \[\hat{\sigma}_{CRD}^2=w\cdot MS_{Block}+(1-w)\cdot MS_E \]
+    \item Relative efficiency is defined as
+    \[RE=\frac{\hat{\sigma}_{CRD}^2}{\hat{\sigma}_{RCB}^2}=\frac{n}{r} \]
+    \begin{itemize}
+        \item Sometimes multiply with correction factor for df's, only relevant for small samples
+        \item A CRD would need $\frac{n}{r}$ as many experimental units to achieve the same efficiency 
+    \end{itemize}
+\end{itemize}
+
+\textbf{Latin Squares}
+\begin{itemize}
+    \item A Latin Square needs to have
+    \begin{itemize}
+        \item $g$ treatments
+        \item two block factors having $g$ levels each (the rows and the columns)
+        \item a total of $g^2$ experimental units
+    \end{itemize}
+    \item Each treatment appears exactly once in each row and exactly once in each column
+    \begin{itemize}
+        \item A Latin Square is nothing else than an assignment of treatments to units with the side constraints
+    \end{itemize}
+    \item We see only $g^2$ out of $g^3$ possible combinations (but the subset is selected in a smart, balanced way)
+\end{itemize}
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c}
+    \textbf{Source} & \textbf{df} \\
+    \hline
+    Rows & $g-1$ \\
+    \hline 
+    Columns & $g-1$ \\
+    \hline 
+    Treatments & $g-1$ \\
+    \hline 
+    Error & $(g-1)(g-2)$ \\
+    \hline
+    Total & $g^2-1$
+    \end{tabular}
+    %\caption{Caption}
+    %\label{tab:my_label}
+\end{table}
+
+
+\section{Random Effects}
+
+\textbf{Random Effects Model}
+\[Y_{ij}=\mu+\alpha_i+\epsilon_{ij} \]
+\begin{itemize}
+    \item $\alpha_i$ i.i.d.$\sim\mathcal{N}(0,\sigma_{\alpha}^2)$
+    \item $\epsilon_{ij}$ i.i.d.$\sim\mathcal{N}(0,\sigma^2)$
+    \item $\mathrm{Var}(Y_{ij})=\sigma_{\alpha}^2+\sigma^2$
+    \item $
+    \mathrm{Cor}(Y_{ij},Y_{kl})=
+    \begin{cases}
+    0 & i\neq k \quad\quad\quad\textrm{different machines} \\
+    \sigma_{\alpha}^2/(\sigma_{\alpha}^2+\sigma^2) & i=k,j\neq l \quad\textrm{same machine, intraclass correlation} \\
+    1 & i=k,j=l \quad\textrm{same machine}
+    \end{cases}$
+    \begin{itemize}
+        \item Reason: Observations from the same machine ``share'' the same random value $\alpha_i$ and are therefore correlated
+    \end{itemize}
+    \item Conceptually, we could also put all the correlation structure into the error term and forget about the $\alpha_i$'s, i.e. $Y_{ij}=\mu+\epsilon_{ij}$
+\end{itemize}
+
+\textbf{Random vs. Fixed Models}
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|c}
+    \textbf{Term} & \textbf{Fixed effects model} & \textbf{Random effects model} \\
+    \hline
+    $\alpha_i$ & fixed, unknown constant & $\alpha_i$ i.i.d.$\sim\mathcal{N}(0,\sigma_{\alpha}^2)$ \\
+    \hline
+    Side constraint on $\alpha_i$ & needed & not needed \\
+    \hline
+    $E[Y_{ij}]$ & $\mu+\alpha_i$ & $\mu$, but $E[Y_{ij}\mid\alpha_i]=\mu+\alpha_i$ \\
+    \hline
+    $\mathrm{Var}(Y_{ij})$ & $\sigma^2$ & $\sigma_{\alpha}^2+\sigma^2$ \\
+    \hline
+     \multirow{ 2}{*}{$\mathrm{Corr}(Y_{ij},Y_{kl})$} & $0$ if $i\neq k$ or $j\neq l$ &  \\ & $1$ if $i=k$ or $j=l$
+    \end{tabular}
+    %\caption{Caption}
+    %\label{tab:my_label}
+\end{table}
+\begin{itemize}
+    \item A note on the sampling mechanism
+    \begin{itemize}
+        \item Fixed: Draw new random errors only, everything else is kept constant
+        \item Random: Draw new ``treatment effects'' and new random errors
+    \end{itemize}
+\end{itemize}
+
+Notes:
+\begin{itemize}
+    \item Hierarchy is typically less problematic in random effects model
+    \item More modern and flexible approach for estimating variance: Restricted Maximum-Likelihood estimator (REML)
+    \item General rule: Variances are difficult to estimate in the sense that you will need a lot of observations to have some reasonable accuracy
+    \\item Approximate confidence intervals (or tests) can be obtained by calling the function \texttt{confint}
+    \item Exact tests (simulation based) for variance components can be found in the package \texttt{RLRsim}
+    \item Typically, we are more interested in the accuracy of the variance component estimates (confidence intervals) than in tests of the form ($H_0:\sigma_{\alpha}^2=0$ vs. $H_A:\sigma_{\alpha}^2>0$) 
+    \item We can also get ``estimates'' (more precisely: conditional means) of the random effects $\alpha_i$ with the function \texttt{ranef}
+    \item As a new addition, we can also do QQ-plots of the $\alpha_i$'s (not only of the residuals)
+\end{itemize}
+
+\textbf{ANOVA for Random Effects Models}
+
+One-way ANOVA ($A$ random, $n$ observations per cell)
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|c|c|c}
+    \textbf{Source} & \textbf{df} & \textbf{SS} & \textbf{MS} & \textbf{E[MS]} \\
+    \hline
+    $A$ & $g-1$ & $\cdots$ & $\cdots$ & $\sigma^2+n\sigma_{\alpha}^2$  \\
+    \hline
+    Error & $N-g$ & $\cdots$ & $\cdots$ & $\sigma^2$ 
+    \end{tabular}
+    %\caption{Caption}
+    %\label{tab:my_label}
+\end{table}
+
+Two-way ANOVA ($A, B, AB$ random, $n$ observations per cell)
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|c|c|c}
+    \textbf{Source} & \textbf{df} & \textbf{SS} & \textbf{MS} & \textbf{E[MS]} \\
+    \hline
+    $A$ & $a-1$ & $\cdots$ & $\cdots$ & $\sigma^2+b\cdot n\cdot\sigma_{\alpha}^2+n\cdot\sigma_{\alpha\beta}^2$  \\
+    \hline
+    $B$ & $b-1$ & $\cdots$ & $\cdots$ & $\sigma^2+a\cdot n\cdot\sigma_{\beta}^2+n\cdot\sigma_{\alpha\beta}^2$  \\
+    \hline
+    $AB$ & $(a-1)(b-1)$ & $\cdots$ & $\cdots$ & $\sigma^2+n\cdot\sigma_{\alpha\beta}^2$  \\
+    \hline
+    Error & $ab(n-1)$ & $\cdots$ & $\cdots$ & $\sigma^2$ 
+    \end{tabular}
+    %\caption{Caption}
+    %\label{tab:my_label}
+\end{table}
+
+\begin{itemize}
+    \item In a fixed effects model, the sum (or mean) of these interaction terms is zero by definition.
+    \item In the random effects model, this is only true for the expected value, but not for an individual realization!
+    \item We can test the interaction $AB$ even if we only have one replicate per $AB$ combination per block. Why?
+\end{itemize}
+
+\section{Nested and Mixed Effects}
+\textbf{Fully Nested Design}
+\[Y_{ijklm}=\mu+\alpha_i+\beta_{j(i)}+\gamma_{k(ij)}+\delta_{l(ijk)}+\epsilon_{m(ijkl)} \]
+\textbf{ANOVA Table for Fully Nested Design (Balanced Design)}
+\[SS_{Total}=SS_A+SS_{B(A)}+SS_{C(AB)}+SS_{D(ABC)}+SS_E \]
+Random effects and a balanced design
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|c}
+    \textbf{Source} & \textbf{df} & \textbf{E[MS]} \\
+    \hline
+    $A$ & $a-1$ & $\sigma+n\sigma_{\delta}^2+nd\sigma_{\gamma}^2+ncd\sigma_{\beta}^2+nbcd\sigma_{\alpha}^2$ \\
+    \hline
+    $B(A)$ & $a(b-1)$ & $\sigma+n\sigma_{\delta}^2+nd\sigma_{\gamma}^2+ncd\sigma_{\beta}^2$ \\
+    \hline
+    $C(AB)$ & $ab(c-1)$ & $\sigma+n\sigma_{\delta}^2+nd\sigma_{\gamma}^2$ \\
+    \hline 
+    $D(ABC)$ & $abc(d-1)$ & $\sigma+n\sigma_{\delta}^2$ \\
+    \hline
+    Error & $abcd(n-1)$ & $\sigma$
+    \end{tabular}
+    %\caption{Caption}
+    %\label{tab:my_label}
+\end{table}
+
+\section{Split-Plot Designs}
+\begin{itemize}
+    \item A split-plot design is a special case of a design with factorial treatment structure.
+    \item The standard split-plot design consists of two experiments with different experimental units of different ``size''.
+    \begin{itemize}
+        \item In the split-plot would, whole plots act as blocks
+        \item Each experiment has its own randomization
+        \item Each experiment has its own idea of experimental unit
+    \end{itemize}
+    \item Split-plot designs can arise in more complicated forms
+    \begin{itemize}
+        \item There can be more than one whole-plot factor
+        \item There can be more than one factor on the split-plot level
+        \item For each level (whole plot or split plot) of the experiment, we have to introduce a corresponding random effect which acts as the experimental error on that level
+    \end{itemize}
+    \item The main effect of the whole-plot factor is estimated less precisely, and the test is less powerful (compared to the split-plot level)
+    \begin{itemize}
+        \item Price for laziness on the whole-plot level (only a few observations)
+    \end{itemize}
+\end{itemize}
+
+\section{Incomplete Block Designs}
+\begin{itemize}
+    \item In a complete block design, we could estimate the difference in each block with the same precision
+    \item We call a design disconnected if we can build two groups of treatments such that it never happens that we see members of both groups together in the same block
+    \begin{itemize}
+        \item In a disconnected design, it is not possible to estimate all treatment differences (with a fixed effects model)
+    \end{itemize}
+\end{itemize}
+\textbf{Balanced Incomplete Block Designs (BIBDs)}
+\begin{itemize}
+    \item BIBD: all treatment pairs occur together in the same block equally often (we denote this number by $\lambda$).
+    \item The precision (variance) of the estimated treatment differences $\alpha_i-\alpha_j$ is the same no matter what combination of $i$ and $j$ we are considering.
+    \begin{itemize}
+        \item We can estimate all treatment differences with the same accuracy!
+    \end{itemize}
+    \item Setup:
+    \begin{itemize}
+        \item $g$: number of treatments
+        \item $b$: number of blocks
+        \item $k$: number of units per block with $k<g$ (i.e. block size)
+        \item $r$: number of replicates per treatment
+        \item $N$: total number of units
+    \end{itemize}
+    \[N=b\cdot k=g\cdot r \]
+    \item A necessary but not sufficient condition for a BIBD to exist
+    \[\lambda\overset{?}{=} \frac{r\cdot(k-1)}{g-1} \]
+    \begin{itemize}
+        \item $\frac{r\cdot(k-1)}{g-1}$ must be a whole number
+        \item Even if the condition is fulfilled, it might be the case that you cannot find a BIBD
+    \end{itemize}
+\end{itemize}
+\textbf{Unreduced BIBDs}
+\begin{itemize}
+    \item We can always find a BIBD for every setting of $k<g$
+    \item Unreduced BIBD
+    \begin{itemize}
+        \item The number of combinations is $\binom{g}{k}$ (i.e. $\frac{g!}{k!(g-k)!}$)
+    \end{itemize}
+\end{itemize}
+\textbf{(B)IBD: Intra-Block Analysis}
+\begin{itemize}
+    \item We do not observe all treatment$\times$block combinations, the ``usual'' estimates are not working, and we need computer to find the least squares estimates
+    \item We use Type III sum of squares to test treatment effects adjusted for block effects
+\end{itemize}
+
+\textbf{(B)IBD: Inter-Block Analysis}
+\begin{itemize}
+    \item It is possible to recover some information about the treatment by comparing different blocks
+    \item The analysis when treating the block factor as random
+\end{itemize}
+
+\textbf{Partially Balanced Incomplete Block Designs}
+\begin{itemize}
+    \item Some treatment Paris occur together more often than other pairs
+\end{itemize}
+
+\textbf{Row-Column Incomplete Block Designs}
+\begin{itemize}
+    \item A row-column incomplete block design is a design where we block on rows and columns and one or both are incomplete blocks.
+\end{itemize}
+
+\textbf{Row-Orthogonal Design}
+\begin{itemize}
+    \item The rows are complete blocks,while the columns form a BIBD.
+\end{itemize}
+
+\textbf{Youden Square}
+\begin{itemize}
+    \item A Youden Square is rectangular such that
+    \begin{itemize}
+        \item columns (rows) form a BIBD
+        \item rows (columns): each treatment appears equally often in each row (column)
+    \end{itemize}
+    \item Columns form a BIBD, while rows form an RCBD
+\end{itemize}
+
+\section{Power}
+\begin{itemize}
+    \item Error rates
+    \begin{itemize}
+        \item Type I error: Reject $H_0$ even though it is true
+        \item Type II error: Fail to reject $H_0$ even though $H_A$ holds
+        \item The probability of a type I error is controlled by the significance level $\alpha$
+        \item The probability of a type II error is denoted by $\beta$ (it is not being controlled)
+    \end{itemize}
+    \item The power of a statistical test is defined as
+    \[P[\textrm{reject $H_0$ given that a certain setting in the alternative $H_A$ holds}]=1-\beta \]
+    \item Calculating power is like a ``thought experiment'': We do not need data, but a precise specification of the parameter setting under $H_A$ that we believe in
+    \item General rule: The more observations you have, the larger the power
+\end{itemize}
+
+\section{Exams}
+\begin{itemize}
+    \item In an RCB, we can never test interactions between block and treatment. (False)
+    \item Blocking can increase precision, even if the p-value corresponding to the block factor is not significant. (True)
+    \item If we change the (family-wise) significance level from 5\% to 10\%, all the confidence intervals would be shorter and thus some treatment differences that were not significant may become significant.
+    \item Type I sum of squares and Type II sum of squares of the main effects do typically not coincide for one main effect if the design is unbalanced.
+\end{itemize}
+
+\end{document}

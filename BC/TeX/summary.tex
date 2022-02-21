@@ -1,0 +1,273 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+%\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{setspace}
+% \usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[top=2.0cm, left=2.0cm, right=2.0cm, bottom=3.0cm]{geometry}
+
+\title{%
+     Business Cycles: Empirics and Theory
+}
+\author{Wenjie Tu}
+\date{Fall Semester 2021}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+%\onehalfspacing
+\begin{document}
+
+%\maketitle
+
+\section{Trend vs. Cycle}
+\textbf{Trend vs. Cycle}
+\begin{itemize}
+    \item Trend: growth rate
+    \item Cycle: deviations from the trend
+\end{itemize}
+\textbf{The role of $\lambda$ in HP filter}
+\begin{itemize}
+    \item $\lambda$ captures how much one cares about the smoothness of the trend
+    \item $\lambda\to0$: time-varying trend and there is no cycle
+    \item $\lambda\to\infty$: trend growth is constant
+\end{itemize}
+\textbf{Problems with HP filters}
+\begin{itemize}
+    \item Instability of the HP trend at the margin.
+    \item HP filter cannot separate demand from supply shocks (i.e., a slowdown in trend growth will be identified during a long-lasting recession).
+    \item What is the right $\lambda$ for HP filter?
+\end{itemize}
+\textbf{Kalman filter}
+\begin{itemize}
+    \item The Kalman filter can easily handle missing data
+    \item Future is a special case of missing data
+\end{itemize}
+
+\section{Recessions vs. Expansions}
+\textbf{Recessions}
+\begin{itemize}
+    \item Periods with contracting economic activity
+    \item Two consecutive quarters of negative real GDP growth
+\end{itemize}
+\textbf{Forecasting indicator: the yield curve}
+\begin{itemize}
+    \item Yield curve slope is historically one of the best predictors for upcoming recessions (especially in the US)
+    \item All recessions were preceded by an inverted (negatively sloped) yield curves; yield curve was rarely inverted without a recession following 
+\end{itemize}
+\textbf{Forecast vs. Nowcast}
+\begin{itemize}
+    \item Forecast = is a recession going to start during the next 12 months?
+    \item Nowcast = is an economy in a recession right now?
+    \item Good rule of thumb: a recession has started if 3-month change of the 3-month moving average of seasonally adjusted unemployment rate rises above 0.3 pp
+\end{itemize}
+
+\section{Welfare Costs}
+\textbf{Lucas calibration}
+
+The resulting estimate for costs of economic fluctuations is tiny! Why should anyone care about business cycles?
+\begin{itemize}
+    \item observed fluctuations are the ones resulting despite macroeconomic stabilization policies (could have been even larger without stabilization)
+    \item cost of business cycles are not equally distributed over population
+    \item direct costs of unemployment (negative impact on life satisfaction)
+    \item persistent effects of economic fluctuations (recessions lead to a permanent level shift in the trend)
+\end{itemize}
+
+\section{Comovement}
+\textbf{DFM}
+\begin{itemize}
+    \item Summarize the data and extract a signal for the current underlying dynamic in an economy
+    \item Essential toolkit for all CBs
+    \item Useful to monitor incoming data
+    \item Good for nowcasts, but not helpful for medium-term forecasts
+\end{itemize}
+\textbf{What is the first principal component doing intuitively?}
+\begin{itemize}
+    \item The first principal component of a dataset corresponds to $f_t$, which is an underlying force driving the common variation in the dataset
+\end{itemize}
+\textbf{Why is the DFM useful for monitoring the business cycle?}
+\begin{itemize}
+    \item can be updated in realtime, allows us to consider all the data simultaneously instead of just focusing on one individual time series
+\end{itemize}
+\textbf{Conclusion}
+\begin{itemize}
+    \item The business cycle affects many aspects of the economy
+    \item Therefore, it can be seen in many time series (e.g. GDP, unemployment, productivity)
+    \item DFM is very useful if you want to have a more timely and broad-based measure of current dynamics
+\end{itemize}
+
+\section{Computing Swiss GDP}
+\begin{itemize}
+    \item Estimation
+    \begin{itemize}
+        \item annual GDP adds up value added according to firm survey
+        \item is estimated from production side
+        \item first estimate published 8 months after the end of reference year (i.e. first estimate for 2021 will be published at the end of August 2022)
+    \end{itemize}
+    \item Quarterly GDP is an inter- and extra-polation of annual GDP
+    \begin{itemize}
+        \item The preliminary estimate does not typically add up to observed annual GDP
+        \item Chow-Lin approach
+    \end{itemize}
+    \item Interpolation vs. Extrapolation
+    \begin{itemize}
+        \item The quarterly series is an interpolation for the years for which there is an annual estimate available (e.g. 2020)
+        \item It is an extrapolation for the latest quarters
+    \end{itemize}
+    \item GDP is continuously revised
+    \begin{itemize}
+        \item Indicators are revised
+        \item Annual estimates are revised
+        \item Benchmark revisions
+        \item Quarterization revisions: new indicators, new sa methods
+        \item Changes in estimated Chow-Lin coefficients
+    \end{itemize}
+\end{itemize}
+
+\section{New Keynesian Model}
+\begin{itemize}
+    \item NKIS curve
+    \[c_t\simeq \mathbb{E}_t c_{t+1} - \frac{1}{\sigma}(i_t-\mathbb{E}_t\pi_{t+1}-\rho)+\frac{1-\rho_z}{\sigma}z_t \]
+    \begin{itemize}
+        \item IS curve describes current aggregate demand as a function of endogenous variables (future demand, inflation), the interest rate, and an exogenous shock
+    \end{itemize}
+    \item Monetary policy rate
+    \[i_t=MP\left(\underset{+}{\pi_t} \right) + v_t \]
+    \begin{itemize}
+        \item Monetary policy reacts to higher inflation by raising the interest rate
+    \end{itemize}
+    \item Monopolistic competition
+    \begin{itemize}
+        \item Because each firm produces a differentiated good that is not perfectly substitutable, each firm has some monopoly power
+    \end{itemize}
+    \item Profit maximizing price under flex prices
+    \[P_t^*(i)=\frac{\varepsilon}{\varepsilon-1}\frac{W_t}{A_t} \]
+    \begin{itemize}
+        \item Profit-maximizing price is the same for all firms, $P_t^*(i)=P_t^*$
+        \item Profit-maximizing price does not depend on $YP^{\varepsilon}$ (but total profits do)
+        \item $YP^{\varepsilon}$ is a measure for how many units a firm can sell for any given price
+    \end{itemize}
+    \item Labor market equilibrium under flex price
+    \[Y_t=A^{\frac{1+\varphi}{\varphi+\sigma}}\left(\frac{\varepsilon-1}{\varepsilon} \right)^{\frac{1}{\varphi+\sigma}} \]
+    \begin{itemize}
+        \item Equilibrium production does not depend on prices
+    \end{itemize}
+    \item The trilemma of international finance
+    \begin{itemize}
+        \item A country cannot simultaneously have an independent monetary policy, a fixed exchange rate, and capital mobility
+        \item Reasoning: arbitrage. If interest rates between two countries differ, but the exchange rate is fixed, capital will flow to the country with higher interest rate
+    \end{itemize}
+    \item Profit maximization with sticky prices
+    \[O_t=\mathbb{E}_t\left[\sum_{j=0}^{\infty}\omega_j P_{t+j}^* \right]\quad \textrm{where}\quad 
+    \omega_j=\frac{\frac{\theta^j}{R_{i+j}}Y_{t+j}P_{t+j}^{\varepsilon}}{\sum_{j=0}^{\infty}\frac{\theta^Jj}{R_{i+j}}Y_{t+j}P_{t+j}^{\varepsilon}} \]
+    \begin{itemize}
+        \item The optimal price under sticky prices, $O_t$, is a weighted average of optimal prices under flexibility
+        \item $\theta^j$: the probability that the price is still in place in $t+j$
+        \item $\frac{1}{R_{t+j}}$: the present value of the profit that is generated in $t+j$
+        \item $Y_{t+j}$: aggregate demand in $t+j$ (i.e. how many units are expected to be sold)
+        \item $Y_{t+j}P_{t+j}^{\varepsilon}$: it shifts demand for a given price
+    \end{itemize}
+    \item Log-linear approximation of the optimal price
+    \[o_t\simeq\sum_{j=0}^{\infty}\frac{(\beta\theta)^j}{\sum_{k=0}^{\infty}(\beta\theta)^k}\mathbb{E}_tp_{t+j}^* \]
+    \begin{itemize}
+        \item We did an approximation around steady state
+        \item In steady state $Y_{t+j}P_{t+j}^{\varepsilon}$ is constant and therefore cancels out
+        \item In steady state, $i=-\log\beta=\log\frac{1}{\beta}\simeq\frac{1}{\beta}-1$, $\pi=0$
+    \end{itemize}
+    \item Optimal price under sticky prices
+    \[o_t=(1-\beta\theta)p_t^*+\beta\theta\mathbb{E}_to_{t+1} \]
+    \begin{itemize}
+        \item The optimal price today is a weighted average of today's flexible price and tomorrow's optimal price
+        \item Higher discounting ($\beta\downarrow$) and more often firms adjust ($\theta\downarrow$), the larger weight on today's flexible price
+    \end{itemize}
+    \item Aggregate price dynamics
+    \[\pi_t=(1-\theta)(o_t-p_{t-1}) \]
+    Intuition: inflation is driven by
+    \begin{itemize}
+        \item how much adjusting firms change prices, $o_t-p_{t-1}$
+        \item how many firms can reset prices, $1-\theta$
+        \item adjusting firm choose high $o_t$ if
+        \begin{itemize}
+            \item they expect high optimal price in the future, $\mathbb{E}_to_{t+1}$
+            \item current flex price, $p^*$, is high
+        \end{itemize}
+    \end{itemize}
+    \item Inflation
+    \[\pi_t=\frac{1-\theta}{\theta}(1-\beta\theta)(p_t^*-p_t)+\beta\mathbb{E}_t\pi_{t+1} \]
+    Inflation is high whenever
+    \begin{itemize}
+        \item expected inflation is high (comes from adjusting firms choosing high $o_t$ because they expect high $\mathbb{E}_to_{t+1}$)
+        \item current flex prices are high relative to the price level, $p_t^*-p_t$ (comes from adjusting firms choosing high $o_t$ because $p_t^*$ is high)
+    \end{itemize}
+    \item When is $(p_t^*-p_t)$ high?
+    \[\frac{P_t^*}{P_t}=\frac{\varepsilon}{\varepsilon-1}\frac{1}{A_t}\frac{W_t}{P_t} \]
+    \begin{itemize}
+        \item $p_t^*-p_t$ is high, if real wage $\frac{W_t}{P_t}$ is high (reason: high real wage implies high costs for firms)
+    \end{itemize}
+    \item Natural level of output
+    \[\frac{P_t^*}{P_t}=\left(\frac{Y_t}{Y_t^n} \right)^{\varphi+\sigma} \]
+    \begin{itemize}
+        \item Whenever the output is above natural level, the optimal flex price is above the price index generating upward pressure on inflation
+    \end{itemize}
+    \item NKPK
+    \[\pi_t=\frac{1-\theta}{\theta}(1-\beta\theta)(\varphi+\sigma)(y_t-y_t^n)+\beta\mathbb{E}_t\pi_{t+1} \]
+    \begin{itemize}
+        \item The output gap is proportional to $p_t^*-p_t$
+        \item $p_t^*-p_t$ is high, whenever
+        \begin{itemize}
+            \item production is high, $\frac{P_t^*}{P_t}=\frac{\varepsilon}{\varepsilon-1}A_t^{-\varphi-1}Y_t^{\varphi+\sigma}$
+            \item the output gap is positive, $\frac{P_t^*}{P_t}=\left(\frac{Y_t}{Y_t^n} \right)^{\varphi+\sigma}$
+            \item a high production requires a lot of labor, which can only be drawn into the labor market via high real wages
+            \item high production equals a positive output gap
+        \end{itemize}
+    \end{itemize}
+    \item The natural real interest rate
+    \[r_t^n=\rho+\sigma\mathbb{E}_t[\Delta y_{t+1}^n]+(1-\rho_z)z_t \]
+    \begin{itemize}
+        \item Real natural interest rate is the interest rate if the output gap is closed and inflation is on target in $t$
+        \item The output gap is expected to remain closed in the next period and inflation to remain on target
+        \item $r_t^n$ increases with growth of natural level of output, also depends on shock $z_t$
+    \end{itemize}
+\end{itemize}
+
+\section{Pandenomics}
+\textbf{Drawbacks of SIR model}
+\begin{itemize}
+    \item Behavior does not depend on probability of getting infected (i.e. the number of contacts is given exogenously)
+    \item There exists no interaction with economic decisions
+\end{itemize}
+\textbf{Macro-SIR model}
+\begin{itemize}
+    \item In Macro-SIR model
+    \begin{itemize}
+        \item Stronger recession
+        \item Less deaths
+    \end{itemize}
+    \item Why?
+    \begin{itemize}
+        \item Individuals take into account the risk of getting infected at workplace or shops
+        \item The higher the number of new infections, the larger the risk of getting infected, the more cautious are individuals
+    \end{itemize}
+    \item The decentralized equilibrium can be improved when containment measures are introduced
+    \begin{itemize}
+        \item In decentralized equilibrium, people only take into account the risk of getting infected but they do not consider their effect on the overall spread of the disease (i.e. negative externality)
+    \end{itemize}
+    \item The optimal policy is to immediately introduce severe containment measures
+    \begin{itemize}
+        \item Overall utility increases because of fewer deaths
+        \item Minimizes deaths at the cost of a larger recession in the beginning
+    \end{itemize}
+    \item Limitations
+    \begin{itemize}
+        \item Policies to mitigate economic hardships are not considered
+        \item Financial markets are not included
+        \item Sticky prices
+        \begin{itemize}
+            \item Sticky prices alleviate the impact of a negative supply shift because the pandemic is not only a demand but also a supply shock
+        \end{itemize}
+        \item Vaccine assumed to work perfectly
+        \item Age-dependent health risks are not considered
+    \end{itemize}
+\end{itemize}
+
+\end{document}
