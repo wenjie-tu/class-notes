@@ -1,0 +1,467 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm, mathrsfs}
+%\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{comment}
+\usepackage{multirow}
+% \usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[top=2.0cm, left=2.0cm, right=2.0cm, bottom=3.0cm]{geometry}
+\usepackage[colorlinks = true, linkcolor = cyan, urlcolor  = cyan, citecolor = cyan, anchorcolor = cyan]{hyperref}
+
+%\DeclareSymbolFont{letters}{OT1}{cmtt}{m}{n}
+%\renewcommand{\familydefault}{\sfdefault}
+
+
+\title{%
+%\vspace{1em}
+    \textsc{Exercises} \\
+    \vspace{1mm}
+    \large \textsc{Social Choice Theory}
+}
+\author{Wenjie Tu}
+\date{Spring Semester 2021}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+%\onehalfspacing
+\begin{document}
+
+\maketitle
+
+\section*{Part 1: Preliminaries}
+
+\subsection*{Exercise 1.1}
+
+\subsubsection*{(a)}
+
+Let $X=\{x, y, z\}$. A binary relation $R$ on the set $X$ is as follows:
+\[R=\{(x,y), (y,z), (z,y) \} \]
+
+The asymmetric part is:
+\[P=\{(x,y)\} \]
+
+\begin{itemize}
+    \item The induced asymmetric part $P=\{(x,y)\}$ is transitive, hence $R$ is quasi-transitive.
+    \item $(x,y)\in R$ and $(y,z)\in R$ while $(x,z)\notin R$, a contradiction to transitivity.
+\end{itemize}
+
+Therefore $R=\{(x,y), (y,z), (z,y) \}$ is quasi-transitive but not transitive.
+
+\subsubsection*{(b)}
+
+Let $X=\{x, y, z\}$. A binary relation $R$ on the set $X$ is as follows:
+\[R=\{(x,y), (y,z) \} \]
+
+Its asymmetric part $P$ is:
+\[P=\{(x,y), (y,z) \} \]
+
+\begin{itemize}
+    \item Since $(x,z)\notin P$, $P$ is not transitive and $R$ is not quasi-transitive.
+    \item Since $(z,x)\notin P$, $P$ has no cycle and $R$ is acyclical.
+\end{itemize}
+
+
+\subsubsection*{(c)}
+
+Need to show:
+\[xIy \land yIz \implies xIz \]
+
+Proof:
+
+We can rewrite induced $I$ into binary relation:
+
+\[xIy\implies [xRy \land yRx] \]
+\[yIz\implies [yRz \land zRy] \]
+
+\[xRy \land yRz \implies xRz \quad \text{by transitivity} \]
+\[yRx \land zRy \implies zRx \quad \text{by transitivity} \]
+
+\[xRz \land zRx \implies xIz \]
+
+
+\subsection*{Exercise 1.2}
+
+\subsubsection*{(a)}
+
+$\succeq$ is a preference
+
+\[x\sim y \]
+\[y\succ z \]
+\[z\succ w \]
+
+\[G(\{w,x,y,z\})=\{x,y\} \]
+\[M(\{w,x,y,z\})=\{x,y\} \]
+
+\[R=\{(x,y), (y,x), (y,z), (z,w) \} \]
+
+\subsubsection*{(b)}
+
+\[M(\{x,y,z\}, R)=\{\}=G(\{x,y,z\}) \]
+
+\subsection*{Exercise 1.3}
+
+\subsubsection*{(a)}
+
+We know that $x$ is chosen in the larger set (i.e. $C(\{x,y,z\})=\{x\}$), and we need to check whether $x$ is still chosen from all the possible subset containing $x$.
+
+\[C(\{x,y\})=\{x\} \]
+\[C(\{x,z\})=\{x\} \]
+
+Hence, property $\alpha$ is satisfied.
+
+We cannot find any two alternatives that are generate by the choice function. Hence, we cannot find a counter example that violates property $\beta$ (i.e. $\beta$ is satisfied).
+
+\subsubsection*{(b)}
+
+We know that $z$ is chosen from the larger set (i.e. $C(\{x,y,z\})=\{z\}$), and we need to check whether $z$ is still chosen from all the possible subset containing $z$.
+
+Base relation:
+
+\[C(\{x,z\})=\{x,z\} \]
+\[C(\{y,z\})=\{z\} \]
+
+Preference:
+\[x\sim z \succ y \]
+
+Hence, property $\alpha$ is satisfied.
+
+We see that $\{x,z\}$ is chosen from the smaller set $\{x,z\}$ (i.e. $C(\{x,z\})=\{x,z\}$), and $z$ is chosen from the larger set $\{x,y,z\}$ while $x$ is not, hence a violation of property $\beta$.
+
+\subsubsection*{(c)}
+
+We know that $\{y,z\}$ is chosen from the larger set $\{x,y,z\}$, and we need to check whether $\{y,z\}$ is still chosen from all the possible subset containing $\{y,z\}$.
+
+We see:
+\[C(\{y,z\})=\{y,z\} \]
+
+Hence, property $\alpha$ is satisfied.
+
+We see that $\{y,z\}$ is chosen from the smaller set $\{y,z\}$, and $\{y,z\}$ is chosen from the larger set containing both $y$ and $z$. Hence, property $\beta$ is satisfied.
+
+
+\subsection*{Exercise 1.4}
+
+Shorthands for choices:
+\begin{itemize}
+    \item $P$: peatnuts
+    \item $A$: apple juice
+    \item $M$: mineral water
+    \item $B$: beer
+\end{itemize}
+
+\subsubsection*{(a)}
+
+\[X=\{P,A,M,B \} \]
+
+\[C(\{P,A,M\})=\{P, A\} \]
+
+\[C(\{P,A,M,B\})=\{P, B\} \]
+
+$\beta$ is violated?
+
+Better translation of the information:
+\[X=\{PA, PM, PB \} \]
+
+\[C(\{PA,PM\})=\{PA\} \]
+
+\[C(\{PA,PM,PB\})=\{PB\} \]
+
+$\beta$ is satisfied.
+
+\section*{Part 2: The Problem of Social Choice}
+
+\subsection*{Exercise 2.1}
+
+\subsubsection*{(a)}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        \# & preferences         \\ 
+        \hline
+        1  & $x\: P\: y\: P\: z$ \\
+        1  & $y\: P\: z\: P\: x$ \\
+        1  & $z\: P\: x\: P\: y$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{ccc}
+        \hline
+        Pairwise comparison & Votes               & Social preference  \\ 
+        \hline
+        $x\: \text{vs.} y$  & $2\: \text{vs.} 1$  & $xPy$              \\
+        $x\: \text{vs.} z$  & $1\: \text{vs.} 2$  & $zPx$              \\
+        $y\: \text{vs.} z$  & $2\: \text{vs.} 1$  & $yPz$              \\
+        \hline
+    \end{tabular}
+\end{table}
+
+This leads to an outcome that is not transitive and not acyclical.
+
+There is no Condorcet winner (loser) as each alternative loses in the pairwise voting at once.
+
+\subsubsection*{(b)}
+
+Fix any $R^*\in R$, let $\mathscr{A}=\{(R^*, R^*,\cdots, R^*) \}$. In other words, all individuals share the same preference. In this example, the pairwise majority voting is an SWF.
+
+\subsection*{Exercise 2.2}
+
+When $m=2$, PV, IR, PM, CO, and BC are identical. They all collapse to the majority voting method.
+
+\subsection*{Exercise 2.3}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        \# & preferences         \\ 
+        \hline
+        2  & $x\: P\: w\: P\: y\: P\: z$ \\
+        2  & $y\: P\: w\: P\: z\: P\: x$ \\
+        1  & $w\: P\: z\: P\: x\: P\: y$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsubsection*{PV:}
+
+In plurality voting, we only consider the top-ranked alternatives given by voters.
+\[x\: I\: y\: P\: w\: P\: z  \]
+
+\subsubsection*{IR:}
+
+\begin{itemize}
+    \item Stage 1: $z$ is eliminated
+    \item Stage 2: $w$ is eliminated
+    \item Stage 3: $x$ wins with 3 votes (majority)
+\end{itemize}
+
+\subsubsection*{PM:}
+
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{ccc}
+        pairwise comparison & votes  & binary relation \\
+        \hline 
+        $w:x$  & $3:2$  & $wPx$           \\
+        $w:y$  & $3:2$  & $wPy$           \\
+        $w:z$  & $5:0$  & $wPz$           \\
+        $x:y$  & $3:2$  & $xPy$           \\
+        $x:z$  & $2:3$  & $zPx$           \\
+        $y:z$  & $4:1$  & $yPz$           \\
+        \hline
+    \end{tabular}
+\end{table}
+
+The pairwise majority voting method delivers a Condorcet winner $w$ but there exists a cycle in $x, y, z$.
+
+\subsubsection*{CO:}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|c|c|c|c}
+            & $w$  & $x$  & $y$  & $z$  & $\sum$ \\
+        \hline 
+        $w$ &      & $+1$ & $+1$ & $+1$ & $3$    \\
+        \hline 
+        $x$ & $-1$ &      & $+1$ & $-1$ & $-1$   \\
+        \hline
+        $y$ & $-1$ & $-1$ &      & $+1$ & $-1$   \\
+        \hline
+        $x$ & $-1$ & $+1$ & $-1$ &      & $-1$   \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Copeland method delivers the social preference $w \: P \: x \: I \: y \: I \: z$.
+
+\subsubsection*{BC:}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|cccc|}
+        \# & preferences                  & $w$  & $x$  & $y$  & $z$ \\ 
+        \hline
+        2  & $x\: P\: w\: P\: y\: P\: z$  & $2$  & $3$  & $1$  & $0$ \\
+        2  & $y\: P\: w\: P\: z\: P\: x$  & $2$  & $0$  & $3$  & $1$ \\
+        1  & $w\: P\: z\: P\: x\: P\: y$  & $3$  & $1$  & $0$  & $2$ \\
+        \hline
+           &                              & $11$ & $7$  & $8$  & $4$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Borda Count method delivers the social preference $wPyPxPz$
+
+\subsubsection*{EM:}
+
+There exists at least one individual who ranks $x, y, w$ as his/her top preference, hence the Pareto efficient set is $X^E=\{w, x, y\}$. All individuals strictly prefer $w$ over $z$, hence $z$ is strictly dominated by $w$. $X^I=\{z\}$.
+
+Pareto Efficient Method delivers the social preference $wIxIyPz$.
+
+\subsubsection*{PE:}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{cc}
+        pairwise comparison & Pareto extension rule \\
+        \hline 
+        $w:x$  & $wIx$           \\
+        $w:y$  & $wIy$           \\
+        $w:z$  & $wPz$           \\
+        $x:y$  & $xIy$           \\
+        $x:z$  & $zIx$           \\
+        $y:z$  & $yIz$           \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Pareto Extension Rule delivers an outcome that violates transitivity but is quasi-transitive. This is SDF but not SWF.
+
+\subsection*{Exercise 2.4}
+
+\subsubsection*{(a)}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        \# & preferences         \\ 
+        \hline
+        2  & $x\: P\: z\: P\: y$ \\
+        2  & $y\: P\: z\: P\: x$ \\
+        1  & $z\: P\: y\: P\: x$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Applying IR:
+\begin{itemize}
+    \item Stage 1: $z$ is eliminated.
+    \item Stage 2: $y$ wins with 3 votes (majority).
+\end{itemize}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{ccc}
+        pairwise comparison & votes  & binary relation \\
+        \hline 
+        $x:y$  & $2:3$  & $yPx$           \\
+        $x:z$  & $2:3$  & $zPx$           \\
+        $y:z$  & $2:3$  & $zPy$           \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{itemize}
+    \item $z$ wins all pairwise comparison hence a Condorcet winner.
+    \item IR is not a Condorcet method.
+\end{itemize}
+
+\subsubsection*{(b)}
+
+Proof by contradiction:
+
+No, a Condorcet winner is Pareto efficient, otherwise it would lose at least one pairwise vote.
+
+\subsubsection*{(c)}
+
+We can construct the following example resulting $x$ to be a Condorcet winner:
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        \# & preferences         \\ 
+        \hline
+        2  & $x\: P\: y$ \\
+        1  & $y\: P\: x$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+There is no Pareto dominance between $x$ and $y$ so EM delivers social indifference between $x$ and $y$ (i.e. $xIy$).
+
+Same argument for PE.
+
+\subsection*{Exercise 2.5}
+
+\subsubsection*{(a)}
+
+For arbitrary values of $m$:
+\begin{itemize}
+    \item Anti-plurality voting and rejection voting are equivalent.
+    \item Nameless example I and nameless example II are equivalent.
+\end{itemize}
+
+For $m=3$:
+\begin{itemize}
+    \item Anti-plurality voting and rejection voting are equivalent.
+    \item Borda count, nameless example I, and nameless example II are equivalent.
+\end{itemize}
+
+\subsubsection*{(b)}
+
+\[s=(m, m-1, \cdots, 1) \]
+
+\subsubsection*{(c)}
+
+\[s=(m^2, (m-1)^2, \cdots, 1^2) \]
+
+\subsection*{Exercise 2.6}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|cccc|}
+        \# & preferences                  & $v$  & $x$  & $y$  & $z$ \\ 
+        \hline
+        1  & $x\: P\: z\: P\: v\: P\: y$  & $1$  & $3$  & $0$  & $2$ \\
+        1  & $y\: P\: z\: P\: v\: P\: x$  & $1$  & $0$  & $3$  & $2$ \\
+        1  & $v\: P\: z\: P\: y\: P\: x$  & $3$  & $0$  & $1$  & $2$ \\
+        1  & $x\: P\: y\: P\: v\: P\: z$  & $1$  & $3$  & $2$  & $0$ \\
+        \hline
+           &                              & $6$ & $6$  & $6$  & $6$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+$s^1$ delivers social preference $vIxIyIz$
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|cccc|}
+        \# & preferences                  & $v$  & $x$  & $y$  & $z$ \\ 
+        \hline
+        1  & $x\: P\: z\: P\: v\: P\: y$  & $1/4$  & $1$  & $0$  & $3/4$ \\
+        1  & $y\: P\: z\: P\: v\: P\: x$  & $1/4$  & $0$  & $1$  & $3/4$ \\
+        1  & $v\: P\: z\: P\: y\: P\: x$  & $1$  & $0$  & $1/4$  & $3/4$ \\
+        1  & $x\: P\: y\: P\: v\: P\: z$  & $1/4$  & $1$  & $3/4$  & $0$ \\
+        \hline
+           &                              & $7/4$ & $8/4$  & $8/4$  & $9/4$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+$s^2$ delivers social preference $zPxIyPv$
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|cccc|}
+        \# & preferences                  & $v$  & $x$  & $y$  & $z$ \\ 
+        \hline
+        1  & $x\: P\: z\: P\: v\: P\: y$  & $1/4$  & $1$  & $0$  & $1/2$ \\
+        1  & $y\: P\: z\: P\: v\: P\: x$  & $1/4$  & $0$  & $1$  & $1/2$ \\
+        1  & $v\: P\: z\: P\: y\: P\: x$  & $1$  & $0$  & $1/4$  & $1/2$ \\
+        1  & $x\: P\: y\: P\: v\: P\: z$  & $1/4$  & $1$  & $1/2$  & $0$ \\
+        \hline
+           &                              & $7/4$ & $8/4$  & $7/4$  & $6/4$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+$s^2$ delivers social preference $xPvIyPz$
+
+\end{document}
