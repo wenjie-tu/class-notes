@@ -21,7 +21,7 @@
     \large \textsc{Social Choice Theory}
 }
 \author{Wenjie Tu}
-\date{Spring Semester 2021}
+\date{Spring Semester 2022}
 
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{1em}
@@ -463,5 +463,247 @@ $s^2$ delivers social preference $zPxIyPv$
 \end{table}
 
 $s^3$ delivers social preference $xPvIyPz$
+
+\section*{Part 3: Arrow's Theorem}
+
+\subsection*{Exercise 3.1}
+
+\subsubsection*{(a) Plurality voting (PV)}
+
+\underline{[I] Independence of Irrelevant Alternatives Axiom is violated. }
+
+The counter example is given as follows:
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        $\mathbf{R}$ & preferences         \\ 
+        \hline
+        2  & $x\: P\: y\: P\: z$ \\
+        1  & $y\: P\: x\: P\: z$ \\
+        1  & $x\: P\: z\: P\: y$ \\
+        \hline 
+        $f^{PV}$ & $x\: P\: y\: P\: z$
+    \end{tabular}
+    \qquad $\to$ \qquad
+    \centering
+    \begin{tabular}{c|c|}
+        $\mathbf{R'}$ & preferences         \\ 
+        \hline
+        2  & $z\: P\: x\: P\: y$ \\
+        1  & $y\: P\: x\: P\: z$ \\
+        1  & $x\: P\: z\: P\: y$ \\
+        \hline 
+        $f^{PV}$ & $z\: P\: y\: I\: x$
+    \end{tabular}
+\end{table}
+
+Note: $z$ is the irrelevant alternative. We change the preferences for $z$ for the first two people while maintaining the relative positions for $x$ and $y$ (i.e. $xPy$). From $\mathbf{R}\to\mathbf{R'}$, we see social preference between $x$ and $y$ changes, hence a violation of [I].
+
+\underline{[P] Weak Pareto Principle is violated. }
+
+The counter example is given as follows:
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        $\mathbf{R}$ & preferences         \\ 
+        \hline
+        2  & $z\: P\: x\: P\: y$ \\
+        \hline 
+        $f^{PV}$ & $z\: P\: x\: I\: y$
+    \end{tabular}
+\end{table}
+
+\underline{[U] Universality is satisfied. }
+
+\begin{itemize}
+    \item Plurality voting (PV) is well-defined method and always applicable as there are no constraints in definition/preferences.
+    \item The resulting outcomes are preferences as plurality voting method is a ranking method based on numbers/votes. Numbers are transitive, hence outcomes are transitive (PV is a SWF).
+\end{itemize}
+
+\underline{[D] Non-dictatorship is satisfied.} 
+
+Each individual has only one vote. In order to impose the own preference on the whole society, the dictator must have ``majority'' votes, which is not possible for plurality voting where each individual has one single vote.
+
+Or proof by contradiction.
+
+\subsubsection*{(b) Pairwise majority voting (PM)}
+
+\underline{[I] Independence of Irrelevant Alternatives Axiom is satisfied. }
+
+Pairwise majority voting method is a pairwise method by construction. To determine the ranking between $x$ and $y$, we do pairwise comparison. If preferences between $x$ and $y$ do not change, the outcome does not change.
+
+\underline{[D] Non-dictatorship is satisfied.} 
+
+As long as the majority is against you, you cannot enforce your own preference on the society. This holds for everybody. Nobody can be a dictator.
+
+\underline{[P] Weak Pareto Principle is satisfied.}
+
+If everybody has a strict preference for $x$ over $y$, the outcome will be an unanimous vote for $x$ over $y$ as we only do pairwise comparison, hence a strict preference for $x$ over $y$ for the society.
+
+\underline{[U] Universality is violated.}
+
+A counter example is constructed as follows:
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        \# & preferences         \\ 
+        \hline
+        1  & $x\: P\: y\: P\: z$ \\
+        1  & $y\: P\: z\: P\: x$ \\
+        1  & $z\: P\: x\: P\: y$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+The example given above leads to an acyclical preferences. This is not a SWF on the full domain. We can easily get violations of acyclicity and transitivity.
+
+\subsubsection*{(c) Copeland method (CO)}
+
+\underline{[U] Universality is satisfied.}
+
+Copeland method by definition is a number-based voting method and hence it is always applicable as numbers are always transitive.
+
+\underline{[D] Non-dictatorship is satisfied.} 
+
+As long as the majority is against you, you cannot enforce your own preference on the society. This holds for everybody. Nobody can be a dictator.
+
+\underline{[P] Weak Pareto Principle is satisfied.}
+
+Suppose $x$ strictly Pareto dominates $y$, under Copeland method $y$ loses every pairwise vote that $x$ loses. In other words, whenever $x$ loses, $y$ loses as well. 
+\[CO(x, \mathbf{R}) \geq CO(y,\mathbf{R})+2 \]
+
+\underline{[I] Independence of Irrelevant Alternatives Axiom is violated.}
+
+A counter example is constructed as follows:
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        $\mathbf{R}$ & preferences         \\ 
+        \hline
+        1  & $x\: P\: y\: P\: z$ \\
+        1  & $y\: P\: x\: P\: z$ \\
+        \hline 
+        $f^{CO}$ & $x\: I\: y\: P\: z$
+    \end{tabular}
+    \qquad $\to$ \qquad
+    \centering
+    \begin{tabular}{c|c|}
+        $\mathbf{R'}$ & preferences         \\ 
+        \hline
+        1  & $x\: P\: y\: P\: z$ \\
+        1  & $y\: P\: z\: P\: x$ \\
+        \hline 
+        $f^{CO}$ & $y\: P\: x\: P\: z$
+    \end{tabular}
+\end{table}
+
+Note: $z$ is the irrelevant alternative. We change the preference for $z$ for the second person while maintaining the relative positions for $x$ and $y$ (i.e. $xPy$). From $\mathbf{R}\to\mathbf{R'}$, we see social preference between $x$ and $y$ changes, hence a violation of [I].
+
+\subsubsection*{(d) Borda count (BC)}
+
+\underline{[D] Non-dictatorship is satisfied.} 
+
+Borda count method is formulated in a linear way for scoring vector and all votes use the same scoring vector, hence no dictatorship possible.
+
+\underline{[U] Universality is satisfied.}
+
+Borda count is a number-based voting method so it always leads to transitive preferences. It is applicable to all preference profiles as there are no constraints in definition.
+
+\underline{[P] Weak Pareto Principle is satisfied.}
+
+By definition, if $xP_i y\:\forall i$, 
+\[BC(x, \mathbf{R})\geq BC(x, \mathbf{R}) + n \]
+Hence, the society strictly prefers $x$ over $y$.
+
+\underline{[I] Independence of Irrelevant Alternatives Axiom is violated.}
+
+A counter example is constructed as follows:
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        $\mathbf{R}$ & preferences         \\ 
+        \hline
+        1  & $x\: P\: y\: P\: z$ \\
+        1  & $y\: P\: x\: P\: z$ \\
+        \hline 
+        $f^{BC}$ & $x\: I\: y\: P\: z$
+    \end{tabular}
+    \qquad $\to$ \qquad
+    \centering
+    \begin{tabular}{c|c|}
+        $\mathbf{R'}$ & preferences         \\ 
+        \hline
+        1  & $x\: P\: y\: P\: z$ \\
+        1  & $y\: P\: z\: P\: x$ \\
+        \hline 
+        $f^{BC}$ & $y\: P\: x\: P\: z$
+    \end{tabular}
+\end{table}
+
+Note: $z$ is the irrelevant alternative. We change the preference for $z$ for the second person while maintaining the relative positions for $x$ and $y$ (i.e. $xPy$). From $\mathbf{R}\to\mathbf{R'}$, we see social preference between $x$ and $y$ changes, hence a violation of [I].
+
+\subsubsection*{(d) Pareto Efficiency Method (EM)}
+
+\underline{[D] Non-dictatorship is satisfied.} 
+
+Proof by contradiction: suppose there exists a dictator who strictly prefers $x$ over $y$, the society is supposed to strictly prefer $x$ over $y$. Now there is an individual who strictly prefers $y$ over $x$, by definition of Pareto Efficiency Method, the society should be indifferent between $x$ and $y$ as there is no Pareto dominance between $x$ and $y$.
+
+\underline{[P] Weak Pareto Principle is violated.}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        \# & preferences         \\ 
+        \hline
+        2  & $z\: P\: x\: P\: y$ \\
+        \hline
+        $f^{EM}$ & $z\: P\: x\: I\: y$
+    \end{tabular}
+\end{table}
+
+\begin{itemize}
+    \item $X^E=\{z \}$
+    \item $X^I=\{x,y \}$
+\end{itemize}
+
+All individuals strictly prefer $x$ over $y$ but by applying Pareto Efficiency Method the society is indifferent between $x$ and $y$, hence a violation of Weak Pareto Principle.
+
+\underline{[I] Independence of Irrelevant Alternatives Axiom is violated.}
+
+A counter example is constructed as follows:
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        $\mathbf{R}$ & preferences         \\ 
+        \hline
+        2  & $z\: P\: x\: P\: y$ \\
+        \hline 
+        $f^{EM}$ & $z\: P\: x\: I\: y$
+    \end{tabular}
+    \qquad $\to$ \qquad
+    \centering
+    \begin{tabular}{c|c|}
+        $\mathbf{R'}$ & preferences         \\ 
+        \hline
+        2  & $x\: P\: y\: P\: z$ \\
+        \hline 
+        $f^{EM}$ & $x\: P\: y\: I\: z$
+    \end{tabular}
+\end{table}
+
+Note: $z$ is the irrelevant alternative. We change the preferences for $z$ while maintaining the relative positions for $x$ and $y$ (i.e. $xPy$) for all individuals. From $\mathbf{R}\to\mathbf{R'}$, we see social preference between $x$ and $y$ changes, hence a violation of [I].
+
+\underline{[U] Universality is satisfied.}
+
+\begin{itemize}
+    \item It is well-defined and always applicable.
+    \item It always gives us preferences with at most two indifference classes.
+\end{itemize}
 
 \end{document}
