@@ -647,7 +647,7 @@ A counter example is constructed as follows:
 
 Note: $z$ is the irrelevant alternative. We change the preference for $z$ for the second person while maintaining the relative positions for $x$ and $y$ (i.e. $xPy$). From $\mathbf{R}\to\mathbf{R'}$, we see social preference between $x$ and $y$ changes, hence a violation of [I].
 
-\subsubsection*{(d) Pareto Efficiency Method (EM)}
+\subsubsection*{(e) Pareto Efficiency Method (EM)}
 
 \underline{[D] Non-dictatorship is satisfied.} 
 
@@ -705,5 +705,88 @@ Note: $z$ is the irrelevant alternative. We change the preferences for $z$ while
     \item It is well-defined and always applicable.
     \item It always gives us preferences with at most two indifference classes.
 \end{itemize}
+
+\subsubsection*{(f) The preference of society coincides with the preference of individual $h\in N$}
+
+\underline{[D] Non-dictatorship is violated.} 
+
+By definition, the individual $h$ can always impose the own preference on the whole society and hence a dictator.
+
+\underline{[U] Universality is satisfied.}
+
+\begin{itemize}
+    \item There are obviously no constraints built into the method and it is always applicable no matter how people's preferences look like.
+    \item The dictator's preference is a preference. By definition of this method, the social preference will be a preference.
+\end{itemize}
+
+\underline{[P] Weak Pareto Principle is satisfied.}
+
+If everybody strictly prefers $x$ over $y$, then the dictator also strictly prefers $x$ over $y$ because the dictator is one of those people.
+
+\underline{[I] Independence of Irrelevant Alternatives Axiom is satisfied.}
+
+Social preference is only determined by the dictator's preference. [I] holds for a single individual hence it also holds for the society with dictatorship. 
+
+\subsubsection*{(g) Construct an example where all axioms but [P] are satisfied}
+
+Fix any $R^*\in R$ and define $f(\mathbf{R})=R^*\:\forall\:\mathbf{R}\in\mathscr{R}^{U}$
+\begin{itemize}
+    \item [P] is violated
+    \item [I] is satisfied
+    \item [U] is satisfied. The outcome will be a preference and the method is well-defined on the universal domain
+    \item [D] is satisfied. $R^*$ is arbitrary. Only the rule maker decides the dictator. Voters themselves do not know which one of them will be the dictator.
+\end{itemize}
+
+\subsection*{Exercise 3.2}
+
+[$\mathrm{\bar{M}}$] is violated.
+
+A counter example is constructed as follows:
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        $\mathbf{R}$ & preferences         \\ 
+        \hline
+        2  & $x\: P\: z\: P\: y$ \\
+        2  & $y\: P\: z\: P\: x$ \\
+        1  & $z\: P\: x\: P\: y$ \\
+        \hline 
+           & $x$ wins
+    \end{tabular}
+    \qquad $\to$ \qquad
+    \centering
+    \begin{tabular}{c|c|}
+        $\mathbf{R'}$ & preferences         \\ 
+        \hline
+        2  & $x\: P\: z\: P\: y$ \\
+        2  & $z\: P\: y\: P\: x$ \\
+        1  & $z\: P\: x\: P\: y$ \\
+        \hline 
+           & $z$ wins
+    \end{tabular}
+\end{table}
+
+[$\mathrm{\bar{D}}$] is satisfied.
+
+Proof by contradiction.
+
+[$\mathrm{\bar{U}}$] is satisfied.
+
+\begin{itemize}
+    \item People are allowed to express whatever preferences they have. We have well-specified tie-breaking rules such that at the end there will always be a winner even if we go to the last stage.
+    \item It is a well-specified method on the universal domain.
+\end{itemize}
+
+[$\mathrm{\bar{P}}$] is satisfied.
+
+Suppose $yP_i x\:\forall i$
+\begin{enumerate}
+    \item As long as $y$ is around, $x$ gets zero votes
+    \item $y$ can be eliminated only if it gets zero votes
+    \item Updated votes do not change after elimination of alternatives with zero votes
+    \item Either now or after some steps $x$ will be eliminated
+    \item $x$ cannot be the winner
+\end{enumerate}
 
 \end{document}
