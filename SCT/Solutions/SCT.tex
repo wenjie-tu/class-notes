@@ -9,6 +9,8 @@
 % \usepackage[a4paper, total={6in, 8in}]{geometry}
 \usepackage[top=2.0cm, left=2.0cm, right=2.0cm, bottom=3.0cm]{geometry}
 \usepackage[colorlinks = true, linkcolor = cyan, urlcolor  = cyan, citecolor = cyan, anchorcolor = cyan]{hyperref}
+\usepackage{diagbox}
+
 
 %\DeclareSymbolFont{letters}{OT1}{cmtt}{m}{n}
 %\renewcommand{\familydefault}{\sfdefault}
@@ -788,5 +790,421 @@ Suppose $yP_i x\:\forall i$
     \item Either now or after some steps $x$ will be eliminated
     \item $x$ cannot be the winner
 \end{enumerate}
+
+\subsection*{Exercise 3.3}
+
+\subsubsection*{(a)}
+
+\begin{itemize}
+    \item Consider the case where there is a Pareto ranking between those two alternatives. Everybody weakly prefers $x$ over $y$ and at least one person strictly prefers $x$ over $y$, then we do have a Pareto comparison between those two. In this case, both Pareto efficiency method (EM) and the Pareto extension rule (PE) will deliver the same outcome, which is strict social preference for $x$ over $y$.
+    \item If there is no Pareto ranking between those two alternatives, by Pareto efficiency method (EM), both alternatives are Pareto efficient, which leads to a social indifference between those two alternatives. Pareto extension rule (PE) proceeds in a pairwise fashion, namely comparing alternatives pairwise. If there is no Pareto ranking between those two, we also get social indifference.
+\end{itemize}
+We therefore conclude that both methods are the same if $m=2$.
+
+Both methods under $m=2$ are SWFs. Transitivity is usually the problem when there are more than two alternatives. However, transitivity is no longer a problem with two alternatives. Hence, transitivity is trivially satisfied in this case. It is complete because you can compare these two alternatives one way or the other. PE is always a SWF no matter how many alternatives you have. 
+
+\subsubsection*{(b)}
+
+In previous question, we have argued that both EM and PE are the same when $m=2$ so in this question we will not explicitly state which method.
+
+\underline{[PR] is violated.}
+
+A counter example is constructed as follows:
+\begin{align*}
+    f(+1, +1, -1, -1)&=0 \\
+     & \downarrow        \\
+    f(+1, +1, +1, -1)&=0 
+\end{align*}
+
+\underline{[N] is satisfied.}
+
+There is no bias in favor of any alternatives. In particular, if everybody's preference switches to exactly the opposite, the social preference should also switch to exactly the opposite.
+
+Case 1: $x$ Pareto dominates $y$
+\begin{align*}
+    f(+1, 0, +1, 0, 0) &= +1 \\
+                       & \downarrow \\
+    f(-1, 0, -1, 0, 0) &= -1                   
+\end{align*}
+
+Case 2: no Pareto dominance
+\begin{align*}
+    f(+1, +1, -1, -1) &= 0 \\
+                      & \downarrow \\
+    f(-1, -1, +1, +1) &= 0
+\end{align*}
+
+\underline{[A] is satisfied.}
+
+Reshuffling the positions of the numbers does not change the social ranking. Positions are irrelevant.
+
+\underline{[U] is satisfied.}
+
+There are no constraints built into the method. You can always apply this method.
+
+\subsection*{Exercise 3.4}
+
+\subsubsection*{(a)}
+
+\begin{equation*}
+    f(\boldsymbol{\alpha})=\text{sign}^{+}\left(\sum_{i=1}^{n}\alpha_i \right) \quad 
+    \text{where}\quad 
+    \text{sign}^{+}(z)=
+    \begin{cases}
+        +1 & z\geq 0 \\
+        -1 & z<0
+    \end{cases}
+\end{equation*}
+
+[PR] is satisfied.
+
+By definition, $f(\boldsymbol{\alpha})$ can never be zero so there is nothing to check. In other words, no counter example can be constructed and hence Positive Responsiveness (PR) is trivially satisfied.
+
+[U] is satisfied.
+
+It is a well-defined method on the universal domain.
+
+[A] is satisfied.
+
+By definition of $f(\boldsymbol{x})$, it gives equal weight to each $\alpha_i$ and hence all voters are equally treated so their names do not matter.
+
+[N] is violated.
+
+A counter example is constructed as follows:
+\begin{align*}
+    f(+1, -1) &= +1 \\
+    f(-1, +1) &= +1
+\end{align*}
+
+\subsubsection*{(b)}
+
+EM and PE in Exercise 3.3
+
+\subsubsection*{(c)}
+
+\begin{equation*}
+    f(\boldsymbol{\alpha})=\text{sign}\left(\sum_{i=1}^{n}\beta_i\alpha_i \right)
+    \quad \beta_i>0\quad\forall i, \beta_1>\beta_2
+\end{equation*}
+
+[U] is satisfied. 
+
+It is a well-defined function and it is applicable to all preference profiles (no constraints).
+
+[N] is satisfied.
+\begin{equation*}
+    f(-\boldsymbol{\alpha})=\text{sign}\left(\sum_{i=1}^{n}\beta_i(-\alpha_i) \right)=
+    -\text{sign}\left(\sum_{i=1}^{n}\beta_i\alpha_i \right)=-f(\boldsymbol{\alpha})
+\end{equation*}
+
+[PP] is satisfied.
+
+[A] is violated.
+
+\begin{align*}
+    f(+1, -1, 0, \cdots, 0) &= +1 \quad (\beta_1-\beta_2>0) \\
+                            &\downarrow \\
+    f(-1, +1, 0, \cdots, 0) &= -1 \quad (\beta_2-\beta_1<0)
+\end{align*}
+
+
+\subsection*{Exercise 3.5}
+
+\subsubsection*{(a)}
+
+Consider preference $zPxPyPwIvPu$, is it single-peaked with respect to $w>y>z>x>v>u$?
+
+\begin{center}
+    \includegraphics[scale=0.5]{images/Ex3.5(a)1.pdf}
+\end{center}
+
+Consider preference $zPxPyPwIvPu$, is it single-peaked with respect to $v>w>y>z>x>u$?
+
+\begin{center}
+    \includegraphics[scale=0.5]{images/Ex3.5(a)2.pdf}
+\end{center}
+
+In order to make the preference single-peaked, any indifference between two alternatives must arise across different sides of the peak. Hence, the preference $zPxPyPwIvPu$ is NOT single-peaked with respect to $v>w>y>z>x>u$.
+
+\subsubsection*{(b)}
+
+Consider preference $yPwIzPvIx$, is it single-peaked with respect to some order?
+\begin{center}
+    \includegraphics[scale=0.5]{images/Ex3.5(b)1.pdf}
+\end{center}
+
+There are four different orders that make preference $yPwIzPvIx$ single-peaked:
+\begin{itemize}
+    \item $v>z>y>w>x$
+    \item $x>w>y>z>v$
+    \item $v>w>y>z>x$
+    \item $x>z>y>w>v$
+\end{itemize}
+
+
+Consider preference $yPwIzIvPx$, is it single-peaked with respect to some order?
+\begin{center}
+    \includegraphics[scale=0.5]{images/Ex3.5(b)2.pdf}
+\end{center}
+
+There are three indifferent alternatives. No matter how we allocate these indifferent alternatives across the peak, we are not able to construct the single-peaked preference with respect to any order.
+
+\subsection*{Exercise 3.6}
+
+\subsubsection*{(a)}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        \# & preferences         \\ 
+        \hline
+        1  & $x\: P\: y\: P\: z$ \\
+        1  & $y\: P\: z\: P\: x$ \\
+        1  & $y\: P\: x\: P\: z$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Are these preferences single-peaked with respect to $y>x>z$?
+\begin{center}
+    \includegraphics[scale=0.5]{images/Ex3.6(a)1.pdf}
+\end{center}
+
+As we can see from the graph, Person 2's preference is not single-peaked (there is a dip in the middle).
+
+Is there an order with respect to which they are all single-peaked?
+\begin{center}
+    \includegraphics[scale=0.5]{images/Ex3.6(a)2.pdf}
+\end{center}
+
+Idea: $x$ and $z$ are bottom-ranked by at least one person, so we cannot put these two alternatives in the middle, otherwise we would immediately get a violation of single-peaked preferences. 
+\begin{itemize}
+    \item $z>y>x$
+    \item $x>y>z$
+\end{itemize}
+
+\subsubsection*{(b)}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        \# & preferences         \\ 
+        \hline
+        1  & $x\: P\: y\: P\: z$ \\
+        1  & $y\: P\: z\: P\: x$ \\
+        1  & $z\: P\: x\: P\: y$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Is there an order with respect to which these preferences are single-peaked?
+
+\begin{itemize}
+    \item Each alternative is bottom-ranked at least by one individual. No matter which order we use, there always exist at least one individual whose preference is not single-peaked.
+    \item We can easily see that preferences are cyclical. By the Median Voter Theorem, the median voter (i.e., Condorcet winner) does not exist and the number of voters is odd, hence preferences cannot be single-peaked.
+\end{itemize}
+
+\subsection*{Exercise 3.7}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        \# & preferences         \\ 
+        \hline
+        2  & $w\: P\: x\: P\: y\: P\: z$ \\
+        2  & $x\: P\: y\: P\: z\: P\: w$ \\
+        1  & $y\: P\: z\: P\: x\: P\: w$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsubsection*{(a)}
+
+$z$ and $w$ are bottom-ranked by at least one individual so we cannot order them in the middle. Since there are only four alternatives, we can only put $z$ and $w$ on the two sides of the order. Note that the first two people have exactly the preferences as described before. Hence, we must respect the order of preferences for the first two people, otherwise we would get immediate violation of single-peaked preferences.
+
+\begin{center}
+    \includegraphics[scale=0.5]{images/Ex3.7(a).pdf}
+\end{center}
+
+\begin{itemize}
+    \item $w>x>y>z$
+    \item $z>y>x>w$
+\end{itemize}
+
+\subsubsection*{(b)}
+
+Apply pairwise majority voting. Is there a Condorcet winner/loser?
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{ccc}
+    pairwise comparison & votes & social preference $f^\text{PM}$  \\
+    \hline 
+    $x:w$               & $3:2$ & $xPw$                            \\
+    $y:w$               & $3:2$ & $yPw$                            \\
+    $z:w$               & $3:2$ & $zPw$                            \\
+    $x:y$               & $4:1$ & $xPy$                            \\
+    $x:z$               & $4:1$ & $xPz$                            \\
+    $y:z$               & $5:0$ & $yPz$                            \\
+    \hline
+    \end{tabular}
+\end{table}
+
+Social welfare function: $xPyPzPw$
+\begin{itemize}
+    \item $x$ is the Condorcet winner
+    \item $w$ is the Condorcet loser
+\end{itemize}
+
+\subsubsection*{(c)}
+\begin{itemize}
+    \item $x$ is the median voters' peak
+    \item Median voters are those who choose $x$ as their top rank
+\end{itemize}
+
+\section*{Part 4: Individual Rights}
+
+\subsection*{Exercise 4.1}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|c|}
+    \backslashbox{1}{2} & $C$  & $O$  \\
+    \hline
+    $C$                 & $CC$ & $CO$ \\
+    \hline
+    $O$                 & $OC$ & $OO$ \\
+    \hline
+    \end{tabular}
+\end{table}
+
+\subsubsection*{(a)}
+
+The rights system $\mathbf{D}=(D_1,D_2)$
+\begin{align*}
+    D_1 &= \{(CC, OC), (OC, CC), (CO, OO), (OO, CO) \} \\
+    D_2 &= \{(CC, CO), (CO, CC), (OC, OO), (OO, OC) \}
+\end{align*}
+
+\subsubsection*{(b)}
+
+A preference profile $\mathbf{R}=(R_1, R_2)$
+\begin{align*}
+    & R_1: CO \succ OO \succ CC \succ OC \\
+    & R_2: OC \succ OO \succ CC \succ CO
+\end{align*}
+
+\begin{itemize}
+    \item $CC \succ OC$ because of $D_1$
+    \item $OC \succ OO$ because of $D_2$
+    \item $OO \succ CC$ because of $[\text{P}^*]$
+\end{itemize}
+
+This preference profile $\mathbf{R}$ leads to an outcome that is cyclical (Prisoner's dilemma)
+
+\section*{Part 5: Manipulability}
+
+\subsection*{Exercise 5.1}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|cccc|}
+        \# & true preferences             & $w$  & $x$  & $y$  & $z$ \\ 
+        \hline
+        1  & $x\: P\: y\: P\: z\: P\: w$  & $0$  & $3$  & $2$  & $1$ \\
+        1  & $y\: P\: z\: P\: w\: P\: x$  & $1$  & $0$  & $3$  & $2$ \\
+        1  & $y\: P\: w\: P\: z\: P\: x$  & $2$  & $0$  & $3$  & $1$ \\
+        \hline
+           &                              & $3$ & $3$  & $8$  & $4$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{itemize}
+    \item Person 2 and Person 3 do not benefit from voting non-truthfully
+    \item Person 1 cannot make $x$ win even if he manipulates by dropping $y$ as her bottom rank
+\end{itemize}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|cccc|}
+        \# & true preferences             & $w$  & $x$  & $y$  & $z$ \\ 
+        \hline
+        1  & $y\: P\: z\: P\: x\: P\: w$  & $0$  & $1$  & $3$  & $2$ \\
+        1  & $z\: P\: y\: P\: x\: P\: w$  & $0$  & $1$  & $2$  & $3$ \\
+        1  & $w\: P\: z\: P\: y\: P\: x$  & $3$  & $0$  & $1$  & $2$ \\
+        \hline
+           &                              & $3$ & $2$  & $6$  & $7$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Manipulation:
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|cccc|}
+        \# & ballot                       & $w$  & $x$  & $y$  & $z$ \\ 
+        \hline
+        1  & $y\: P\: x\: P\: w\: P\: z$  & $1$  & $2$  & $3$  & $0$ \\
+        1  & $z\: P\: y\: P\: x\: P\: w$  & $0$  & $1$  & $2$  & $3$ \\
+        1  & $w\: P\: z\: P\: y\: P\: x$  & $3$  & $0$  & $1$  & $2$ \\
+        \hline
+           &                              & $4$ & $3$  & $6$  & $5$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{itemize}
+    \item Person 1 can successfully manipulate by ranking $x$ at the last position while maintaining other alternatives their relative position.
+    \item Person 2 cannot benefit from manipulation and does have any incentive to do so as she gets his top-ranked alternative in truthful voting.
+    \item Person 3 cannot make $w$ win as $w$ is already top-ranked by her.
+\end{itemize}
+
+As a side note:
+
+Person 2 can strengthen her top-ranked alternative by deliberately ranking $y$ as bottom to avoid any potential manipulation from others
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|cccc|}
+        \# & ballot                       & $w$  & $x$  & $y$  & $z$ \\ 
+        \hline
+        1  & $y\: P\: z\: P\: x\: P\: w$  & $0$  & $1$  & $3$  & $2$ \\
+        1  & $z\: P\: x\: P\: w\: P\: y$  & $1$  & $2$  & $0$  & $3$ \\
+        1  & $w\: P\: z\: P\: y\: P\: x$  & $3$  & $0$  & $1$  & $2$ \\
+        \hline
+           &                              & $4$ & $3$  & $4$  & $7$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection*{Exercise 5.3}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        \# & true preferences         \\ 
+        \hline
+        1  & $y\: P\: x\: P\: z$ \\
+        1  & $z\: P\: x\: P\: y$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|}
+        \# & ballot              \\ 
+        \hline
+        1  & $y\: P\: x\: P\: z$ \\
+        1  & $x\: P\: y\: P\: z$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{itemize}
+    \item If everyone votes truthfully, we will get equal votes for $y$ and $z$. According to the tie-breaking rule, $y$ would be preferred by society. 
+    \item However, Person 2 has an incentive to manipulate by ranking $z$ as bottom. If so, there will be a tie between $x$ and $y$. According to the tie-breaking rule, the society would prefer $x$ in this case. For Person 2, $x$ is better than $y$, hence a successful manipulation.
+\end{itemize}
 
 \end{document}
