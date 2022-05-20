@@ -15,6 +15,7 @@ This repository is made to store my class notes and problem-sets solutions.
 | GPED                      | [Global Poverty and Economic Development](GPED/README.md)    |
 | IntMacro                  | [International Macroeconomics](IntMacro/README.md)           |
 | PECI                      | [Program Evaluation and Causal Inference](PECI/README.md)    |
+| SCT                       | [Social Choice Theory](SCT/README.md)                        |
 
 
 
