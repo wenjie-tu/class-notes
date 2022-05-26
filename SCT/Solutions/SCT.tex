@@ -1207,4 +1207,179 @@ Person 2 can strengthen her top-ranked alternative by deliberately ranking $y$ a
     \item However, Person 2 has an incentive to manipulate by ranking $z$ as bottom. If so, there will be a tie between $x$ and $y$. According to the tie-breaking rule, the society would prefer $x$ in this case. For Person 2, $x$ is better than $y$, hence a successful manipulation.
 \end{itemize}
 
+\section*{Part 6: Distributive Justice}
+
+\subsection*{Exercise 6.1}
+
+Overview of Information Structures:
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{l|c|c|c|}
+                               & no comparability & unit comparability & level comparability \\ 
+        \hline
+        ordinal measurability  & OM-NC            &                    & OM-LC               \\
+        \hline
+        cardinal measurability & CM-NC            & CM-UC              & CM-LC               \\
+        \hline
+        ratio measurability    & RM-NC            &                    & RM-LC               \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsubsection*{(a)}
+
+Pareto inefficient set:
+\[X^{I}(\mathbf{U})=\left\{x\in X \mid \exists y\in X \text{ s.t. } U_i(y)\geq U_i(x) \text{ and } U_j(y)>U_j(x) \text{ for some } j \right\} \]
+
+Pareto efficient set:
+\[X^{E}(\mathbf{U})=X\setminus X^{I}(\mathbf{U}) \]
+
+OM-NC:
+
+Suppose $U_i'=\phi_i(U_i)$ where $\phi_i$ is a strictly increasing transformation function, then
+\begin{align*}
+    X^I(\mathbf{U}') &= X^I(\mathbf{U}) \\
+    X^E(\mathbf{U}') &= X^E(\mathbf{U})
+\end{align*}
+Note that Pareto efficiency comparison does not involve any utility comparison across people.
+
+\subsubsection*{(b)}
+
+The Nash SEF $e^{NA}$ that selects the preference represented by
+\[NA(x,\mathbf{U})=\prod_{i=1}^{n} U_i(x), \qquad \forall x\in X, \mathbf{U}\in\mathscr{U}^{n} \]
+
+RM-NC:
+
+Suppose $U_i'=\beta_iU_i$ where $\beta_i>0$,
+\begin{align*}
+    NA(x,\mathbf{U}') &= \prod_{i=1}^{n}U_i'(x) \\
+    &= \prod_{i=1}^{n}\beta_i U_i(x) \\
+    &= \underbrace{\prod_{i=1}^{n}\beta_i}_{\beta>0} \cdot \underbrace{\prod_{i=1}^{n}U_i(x)}_{NA(x,\mathbf{U})} \\
+    &= \beta \cdot NA(x,\mathbf{U})
+\end{align*}
+
+CM-LC:
+
+Common positive affine transformation: $\alpha=3, \beta=1$
+\[U_i'=\alpha + \beta U_i \]
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|cc|}
+        $\mathbf{U}$ & $x$ & $y$              \\ 
+        \hline
+        $U_1$        & $1$ & $2$ \\
+        $U_2$        & $5$ & $3$ \\
+        \hline
+        $NA(x,\mathbf{U})$ & $5$ & $6$ \\
+    \end{tabular}
+    $\qquad\qquad$
+    \begin{tabular}{c|cc|}
+        $\mathbf{U'}$ & $x$ & $y$              \\ 
+        \hline
+        $U_1'$        & $4$ & $5$ \\
+        $U_2'$        & $8$ & $6$ \\
+        \hline
+        $NA(x,\mathbf{U}')$ & $32$ & $30$ \\
+    \end{tabular}
+\end{table}
+
+\subsubsection*{(c)}
+
+The isoelastic SEF $e^{IE}$ that selects the preference represented by
+\[IE(x,\mathbf{U})=\frac{1}{1-\rho}\sum\left(U_i(x) \right)^{1-\rho},\qquad\forall x\in X,\mathbf{X}\in\mathscr{U}^{n} \]
+
+\begin{equation*}
+    \frac{1}{1-\rho}\sum\left(U_i(x) \right)^{1-\rho}=
+    \begin{cases}
+        \sum_{i=1}^{n}U_i(x), & \rho=0 \\
+        \log \left(\prod_{i=1}^{n} U_i(x) \right), & \rho=1 \\
+        \min\left\{U_1(x),\cdots, U_n(x) \right\}, & \rho=\infty
+    \end{cases}
+\end{equation*}
+
+\begin{equation*}
+    IE(x,\mathbf{U})=
+    \begin{cases}
+        UT(x,\mathbf{U}), & \rho=0 \\
+        \log \left(NA(x,\mathbf{U})\right), & \rho=1 \\
+        MM(x,\mathbf{U}), & \rho=\infty
+    \end{cases}
+\end{equation*}
+
+RM-LC:
+
+$U_i'(x)=\beta U_i(x)\quad\forall i$
+\begin{align*}
+    IE(x, \mathbf{U}') &= \frac{1}{1-\rho}\sum_{i=1}^{n}(U_i'(x))^{1-\rho} \\
+    &= \frac{1}{1-\rho}\sum_{i=1}^{n}(\beta U_i(x))^{1-\rho}      \\
+    &= \frac{1}{1-\rho}\sum_{i=1}^{n}\beta^{1-\rho}\cdot (U_i(x))^{1-\rho} \\
+    &= \frac{\beta^{1-\rho}}{1-\rho}\sum_{i=1}^{n}(U_i(x))^{1-\rho} \\
+    &= \underbrace{\beta^{1-\rho}}_{>0}\cdot IE(x,\mathbf{U})
+\end{align*}
+
+RM-NC:
+
+Assume $\rho=\frac{1}{2}$
+\[IE(x,\mathbf{U})=2\sum\sqrt{U_i(x)},\qquad\forall x\in X,\mathbf{X}\in\mathscr{U}^{n} \]
+
+Individual-specific positive linear transformation: $\beta_1=4,\beta_2=25$
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|cc|}
+        $\mathbf{U}$ & $x$ & $y$              \\ 
+        \hline
+        $U_1$        & $4$ & $36$ \\
+        $U_2$        & $25$ & $9$ \\
+        \hline
+        $IE(x,\mathbf{U})$ & $14$ & $18$ \\
+    \end{tabular}
+    $\qquad\qquad$
+    \begin{tabular}{c|cc|}
+        $\mathbf{U'}$ & $x$ & $y$              \\ 
+        \hline
+        $U_1'$        & $4^2$ & $12^2$ \\
+        $U_2'$        & $25^2$ & $15^2$ \\
+        \hline
+        $IE(x,\mathbf{U}')$ & $58$ & $54$ \\
+    \end{tabular}
+\end{table}
+
+CM-LC:
+
+common positive affine transformation: $\alpha=1, \beta=1$
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|cc|}
+        $\mathbf{U}$ & $x$ & $y$              \\ 
+        \hline
+        $U_1$        & $4$ & $16$ \\
+        $U_2$        & $100$ & $64$ \\
+        \hline
+        $IE(x,\mathbf{U})$ & $24$ & $24$ \\
+    \end{tabular}
+    $\qquad\qquad$
+    \begin{tabular}{c|cc|}
+        $\mathbf{U'}$ & $x$ & $y$              \\ 
+        \hline
+        $U_1'$        & $5$ & $17$ \\
+        $U_2'$        & $101$ & $65$ \\
+        \hline
+        $IE(x,\mathbf{U}')$ & $24.57$ & $24.37$ \\
+    \end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{l|c|c|c|}
+                               & no comparability & unit comparability & level comparability \\ 
+        \hline
+        ordinal measurability  & BC, EM           &                    & Maximin             \\
+        \hline
+        cardinal measurability &                  & Utilitarian        &                     \\
+        \hline
+        ratio measurability    & Nash SEF         &                    & Isoelastic SEF      \\
+        \hline
+    \end{tabular}
+\end{table}
+
 \end{document}
