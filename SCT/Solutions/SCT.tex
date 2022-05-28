@@ -36,7 +36,9 @@
 
 \subsection*{Exercise 1.1}
 
-\subsubsection*{(a)}
+\subsubsection*{(a)} 
+
+\textit{Find an example of a binary relation that is quasi-transitive but not transitive.}
 
 Let $X=\{x, y, z\}$. A binary relation $R$ on the set $X$ is as follows:
 \[R=\{(x,y), (y,z), (z,y) \} \]
@@ -53,6 +55,8 @@ Therefore $R=\{(x,y), (y,z), (z,y) \}$ is quasi-transitive but not transitive.
 
 \subsubsection*{(b)}
 
+\textit{Find an example of a binary relation that is acyclical but not quasi-transitive}
+
 Let $X=\{x, y, z\}$. A binary relation $R$ on the set $X$ is as follows:
 \[R=\{(x,y), (y,z) \} \]
 
@@ -66,6 +70,8 @@ Its asymmetric part $P$ is:
 
 
 \subsubsection*{(c)}
+
+\textit{Show that, if $R$ is transitive, then its induced $I$ is also transitive.}
 
 Need to show:
 \[xIy \land yIz \implies xIz \]
@@ -82,6 +88,57 @@ We can rewrite induced $I$ into binary relation:
 
 \[xRz \land zRx \implies xIz \]
 
+\textbf{Extension}
+
+\subsubsection*{(d)}
+
+\textit{Find an example of binary relation that is irreflexive.}
+
+Let $X$ be an arbitrary set. A binary relation $R$ on the set $X$ is given as $\varnothing$ and it is irreflexive.
+
+\subsubsection*{(e)}
+
+\textit{Find an example of binary relation that is both reflexive and irreflexive.}
+
+Let $X=\varnothing$. Any binary relation on the set $X$ is $R=\varnothing$, hence it is both reflexible and irreflexive.
+
+\subsubsection*{(f)}
+
+\textit{Find an example of binary relation that is neither reflexive nor irreflexive.}
+
+Let $X=\{x, y\}$, and a binary relation on $X$ is $R=\{(x, x)\}$.
+\begin{itemize}
+    \item $R$ is not reflexive because $(y,y)\notin R$ (a violation of reflexivity).
+    \item $R$ is not irreflexive because $(x,x)\in R$ (a violation of irreflexivity).
+\end{itemize}
+
+\subsubsection*{(g)}
+
+\textit{Find an example of binary relation that is both symmetric and asymmetric.}
+
+Let $X$ be an arbitrary set and $R$ is an empty set on $X$ (i.e., $R=\varnothing$).
+
+\begin{align*}
+    \text{symmetric:} \qquad & xRy\implies yRx, \quad \forall x, y\in X \\
+    \text{asymmetric:} \qquad & xRy\implies\neg yRx, \quad \forall x, y\in X
+\end{align*}
+
+According to the definitions of symmetry and asymmetry of the binary relation, we are not able to find any counter examples so such a binary relation $R$ is both symmetric and asymmetric.
+
+Note:
+\[\text{asymmetric} \implies \text{irreflexive} \]
+
+\subsubsection*{(g)}
+
+\textit{Find an example of binary relation that is anti-symmetric not but asymmetric.}
+
+Let $X=\{x, y, z\}$ and a binary relation on $X$ is $R=\{(x,x), (y,y), (z,z) \}$
+\begin{align*}
+    \text{asymmetric:}\qquad & xRy \implies \neg yRx,\quad \forall x, y\in X \\
+    \text{anti-symmetric:}\qquad & xRy \implies \neg yRx,\quad \forall x, y\in X \text{ with } x\neq y
+\end{align*}
+
+Note: anti-symmetric is weaker than asymmetric.
 
 \subsection*{Exercise 1.2}
 
@@ -1178,6 +1235,29 @@ Person 2 can strengthen her top-ranked alternative by deliberately ranking $y$ a
     \end{tabular}
 \end{table}
 
+\subsection*{Exercise 5.2}
+
+\textit{Assume $n=2$ and $m=3$. The following table completely specifies an SCF on the domain of strict preferences ($\mathscr{A}=\mathscr{P}^n$)}
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{c|c|c|c|c|c|c|}
+    \backslashbox{$R_1$}{$R_2$} & $xyz$ & $xzy$ & $yxz$ & $yzx$ & $zxy$ & $zyx$ \\
+    \hline
+    $xyz$                       & $x$   & $x$   & $x$   & $x$   & $x$   & $x$   \\
+    \hline
+    $xzy$                       & $x$   & $x$   & $x$   & $x$   & $x$   & $x$   \\
+    \hline
+    $yxz$                       & $x$   & $x$   & $y$   & $y$   & $x$   & $y$   \\
+    \hline
+    $yzx$                       & $x$   & $x$   & $y$   & $y$   & $y$   & $y$   \\
+    \hline
+    $zxy$                       & $x$   & $x$   & $x$   & $y$   & $z$   & $z$   \\
+    \hline
+    $zyx$                       & $x$   & $x$   & $y$   & $y$   & $z$   & $z$   \\
+    \hline
+    \end{tabular}
+\end{table}
+
 \subsection*{Exercise 5.3}
 
 \begin{table}[!htbp]
@@ -1316,6 +1396,8 @@ $U_i'(x)=\beta U_i(x)\quad\forall i$
     &= \frac{\beta^{1-\rho}}{1-\rho}\sum_{i=1}^{n}(U_i(x))^{1-\rho} \\
     &= \underbrace{\beta^{1-\rho}}_{>0}\cdot IE(x,\mathbf{U})
 \end{align*}
+
+\newpage
 
 RM-NC:
 
