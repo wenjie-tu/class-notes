@@ -1,0 +1,14 @@
+model{
+  for (i in 1:length(y)) {
+    y[i] ~ dnorm(theta[i], prec_s[i]); 
+    theta[i] ~ dnorm(mu, prec_tau); 
+  }
+  
+  theta_new ~ dnorm(mu, prec_tau); # predictive distribution for theta
+  
+  # predictive distribution at the probability scale
+  p_new <- exp(theta_new) / (1 + exp(theta_new)); 
+  
+  mu ~ dnorm(0.0, 1.0E-4); 
+  prec_tau ~ dgamma(1.0E-3, 1.0E-3); # just our assumption
+}

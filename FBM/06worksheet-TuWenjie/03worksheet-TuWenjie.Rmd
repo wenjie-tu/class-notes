@@ -1,0 +1,296 @@
+# Posterior probability of superiority
+
+In this chapter, we conduct Monte Carlo simulations to estimate the posterior probability of superiority (PPS) and the Monte Carlo standard error based on the response rate difference (RRD). We next extend the response rate difference to response ratio (RR) and odds ratio (OR) to estimate PPS and corresponding Monte Carlo standard error.
+
+<!-- ## Exercise 1 (Individual project (Part 3A)) -->
+
+## Posterior probability of superiority based on difference
+
+\begin{table}[!htbp]
+    \centering
+    \caption{ASAS20 responders at week 6}
+    \begin{tabular}{lccccccc}
+    \hline
+    Group       & $n$  & Responders     & Posterior     & Difference & 95\% CrI      & PPS      & MCse (PPS)\\
+                &      & $x\:(\%)$      & Response rate & (S-P)      &               &          &           \\
+    \hline
+    Secukinumab & $23$ & $14\:(60.9\%)$ & $59.5\%$      & $34.7\%$   & $11.5-56.4\%$ & $99.8\%$ & ?         \\
+                &      &                &               &            &               &          &           \\
+    Placebo     & $6$  & $1\:(16.7\%)$  & $24.5\%$      &            &               &          &           \\
+    \hline
+    \end{tabular}
+    \label{tab:asas20}
+\end{table}
+
+Provide the estimate of the posterior probability of superiority (PPS) in Table \ref{tab:asas20} and its Monte Carlo standard error.
+
+**1 Draw MC samples from posteriors for Secukinumab and placebo**
+
+Given the posterior distribution $\text{Beta}(14.5,10)$ of secukinumab group and the posterior distribution $\text{Beta}(12,37)$ of placebo group, we would like to investigate by how much these two distributions differ. 
+
+We first run Monte Carlo simulation from the known posterior distributions of both groups. The simulation proceeds as follows:
+
+* Generate a MC sample with a size of 1000000 from the posterior distribution of Secukinumab group
+* Generate a MC sample with a size of 1000000 from the posterior distribution of Placebo group
+* Take the difference in samples (i.e. response rate) between two groups
+* Plot the distribution of the response rate difference
+* Compute the mean and the standard error of the distribution of the response rate difference
+
+We then construct a response rate difference (RRD) based on both MC samples simulated above: 
+$$
+RRD=\theta_\text{S}-\theta_\text{P}
+$$
+
+* $\theta_\text{S}$: sample response rate in Secukinumab group
+* $\theta_\text{P}$: sample response rate in Placebo group
+
+```{r simulation}
+## Set the seed for reproducible results
+set.seed(44566)
+
+## MC sample size
+M <- 1000000
+
+## Generate random numbers from posterior distribution in Secukinumab group
+mc.secukin <- rbeta(M, shape1=14.5, shape2=10)
+
+## Generate random numbers from posterior distribution in Placebo group
+mc.placebo <- rbeta(M, shape1=12, shape2=37)
+```
+
+**2 Compute and plot the response rate difference (RRD)**
+
+```{r libraries}
+## Load libraries
+library(ggplot2)
+```
+
+```{r}
+## Construct the response rate difference
+mc.rrd <- mc.secukin - mc.placebo
+
+## Generate a dataframe for histograms in ggplot
+d.hist <- data.frame(
+  ResponseRate = c(mc.secukin, mc.placebo, mc.rrd), 
+  Group = rep(c("Secukinumab", "Placebo", "RRD"), each=M)
+)
+```
+
+```{r, fig.show="hold", out.width="50%"}
+ggplot(d.hist, aes(x=ResponseRate, y=..density.., color=Group, fill=Group)) + 
+  geom_histogram(position="identity", bins=50, alpha=0.2) + 
+  labs(title="Histograms of MC samples", 
+       x="Response rate (difference)", y="Density") + theme_minimal()
+
+ggplot(d.hist, aes(x=ResponseRate, color=Group, fill=Group)) + 
+  geom_density(alpha=0.2) + 
+  labs(title="Density plots of MC samples", 
+       x="Response rate (difference)", y="Density") + theme_minimal()
+```
+
+**3 Compute and interpret the median and the 95% CrI of RDD**
+
+```{r}
+## Compute 2.5%, 50%, 97.5% quantitles
+rrd.qtl <- quantile(mc.rrd, probs=c(0.025, 0.5, 0.975)); rrd.qtl
+```
+
+Interpretation:
+
+When we draw a MC sample (size=1000000) from posterior distribution $\text{Beta}(14.5, 10)$ in Secukinumab group and a MC sample (size=1000000) from the posterior distribution $\text{Beta}(12, 37)$ in the placebo group, we can construct an empirical density of response rate difference (RRD) by simply taking the difference based on the two MC samples generated. All the following interpretations are based on the empirical density of RRD constructed above:
+
+* The median $0.3495868$ corresponds to the 50% probability of the sample density of RRD
+* The equi-tailed credible interval $(0.1156575, 0.5627693)$ corresponds to the 95% probability of the sample density of RRD with equal tails (each tail corresponds to 2.5% probability)
+
+**4 Compute the posterior probability of superiority**
+
+PPS under RRD measure is defined as:
+$$
+P(\theta_\text{S}-\theta_\text{P}>0)\equiv P(RRD>0)
+$$
+
+```{r}
+## Posterior probability of superiority
+rrd.pps <- mean(mc.rrd > 0); rrd.pps
+```
+
+The estimate of PPS is 99.83%, which is larger than the threshold of 95%.
+
+**5 Compute the MC standard error**
+
+MC standard error of PPS:
+
+```{r}
+## MC standard error of PPS
+rrd.se <- sqrt(var(mc.rrd > 0)/M); rrd.se
+```
+
+```{r, out.width="75%", fig.align='center'}
+d.rrd <- with(density(mc.rrd), data.frame(x, y))
+ggplot(data=d.rrd, mapping=aes(x=x, y=y)) +
+  geom_area(aes(x=ifelse(x>rrd.qtl[1] & x<rrd.qtl[3], x, 0), y=y), 
+            fill="lightblue", alpha=0.5) + 
+  geom_area(aes(x=ifelse(x<0, x, 0), y=y), fill="red", alpha=0.5) + 
+  geom_line(color="darkblue") + geom_vline(xintercept=0, color="red") + 
+  labs(title="Density of RRD samples with equi-tailed 95% CrI", 
+       x="Response rate difference", y="Density") + 
+  ylim(0, 4) + theme_minimal()
+```
+
+The figure above displays the density of difference of MC samples between Secukinumab and placebo groups with equi-tailed 95% credible interval. The red vertical line corresponds to the baseline (i.e. $RRD=0$). The red shaded area corresponds to the probability of $RRD\leq0$. The blue shaded area corresponds to the equi-tailed 95% credible probability. We can clearly see that the red vertical line lies outside the equi-tailed 95% credible interval. We can also get a numerical sense of how likely $RRD\leq0$ is:
+
+```{r}
+## P[RDD <= 0]
+p.rrd <- mean(mc.rrd <= 0); p.rrd
+```
+
+$~$
+
+## Extension of posterior probability of superiority to ratio and odds ratio
+
+Extend the response rate difference (RRD) argument outlined in Exercise 1 (Table 1) to response ratio (RR) and odds ratio (OR). 
+
+Response ratio (RR)
+
+* Construct the response ratio based on the MC samples
+* Compute the median and the equi-tailed 95% credible interval
+* Visualize the distribution of the response ratio
+* Interpret the results
+
+```{r}
+## Construct the response ratio
+mc.rr <- mc.secukin/mc.placebo
+
+## Compute 2.5%, 50%, 97.5% quantitles
+rr.qtl <- quantile(mc.rr, probs=c(0.025, 0.5, 0.975)); rr.qtl
+```
+
+```{r, fig.show="hold", out.width="50%"}
+ggplot(data.frame(ResponseRatio=mc.rr), aes(x=ResponseRatio, y=..density..)) + 
+  geom_histogram(position="identity", bins=50, alpha=0.2, fill=5, color=5) + 
+  geom_density(color=5) + 
+  labs(title="Distribution of response ratio based on MC samples", 
+       x="Response Ratio", y="Density") + 
+  theme_minimal()
+
+d.rr <- with(density(mc.rr), data.frame(x, y))
+ggplot(data=d.rr, mapping=aes(x=x, y=y)) +
+  geom_area(aes(x=ifelse(x>rr.qtl[1] & x<rr.qtl[3], x, 0), y=y), 
+            fill="lightblue", alpha=0.5) +
+  geom_area(aes(x=ifelse(x<1, x, 0), y=y), fill="red", alpha=0.5) +
+  geom_line(color="darkblue") + geom_vline(xintercept=1, color="red") + 
+  labs(title="Density of RR samples with equi-tailed 95% CrI", 
+       x="Response rate ratio", y="Density") + 
+  ylim(0, 0.6) + theme_minimal()
+```
+
+PPS under RR measure is defined as:
+$$
+P\left(\frac{\theta_\text{S}}{\theta_\text{P}}>1\right) \equiv P(RR>0)
+$$
+
+```{r}
+## Compute the PPS under response ratio measure
+rr.pps <- mean(mc.rr > 1); rr.pps
+
+## Compute the MC standard error
+rr.se <- sqrt(var(mc.rr > 1)/M); rr.se
+```
+
+
+Odds ratio (OR)
+
+* Construct the odds ratio based on the MC samples
+* Compute the median and the equi-tailed 95% credible interval
+* Visualize the distribution of the odds ratio
+* Interpret the results
+
+
+```{r}
+## Construct the response ratio
+mc.or <- (mc.secukin/(1-mc.secukin)) / (mc.placebo/(1-mc.placebo))
+
+## Compute the MC standard error
+or.qtl <- quantile(mc.or, probs=c(0.025, 0.5, 0.975)); or.qtl
+```
+
+```{r, fig.show="hold", out.width="50%"}
+ggplot(data.frame(OddsRatio=mc.or), aes(x=OddsRatio, y=..density..)) + 
+  geom_histogram(position="identity", bins=50, alpha=0.2, fill=6, color=6) + 
+  geom_density(color=6) + 
+  labs(title="Distribution of odds ratio based on MC samples", 
+       x="Odds Ratio", y="Density") + 
+  theme_minimal()
+
+d.or <- with(density(mc.or), data.frame(x, y))
+ggplot(data=d.or, mapping=aes(x=x, y=y)) +
+  geom_area(aes(x=ifelse(x>or.qtl[1] & x<or.qtl[3], x, 0), y=y), 
+            fill="lightblue", alpha=0.5) + 
+  geom_area(aes(x=ifelse(x<1, x, 0), y=y), fill="red", alpha=0.5) + 
+  geom_line(color="darkblue") + 
+  geom_vline(xintercept=or.qtl[2], color="darkblue") + 
+  geom_vline(xintercept=1, color="red") + 
+  labs(title="Density of OR samples with equi-tailed 95% CrI", 
+       x="Response rate odds ratio", y="Density") + 
+  ylim(0, 0.2) + theme_minimal()
+```
+
+PPS under OR measure is defined as:
+
+$$
+P\left(\frac{\theta_\text{S}}{1-\theta_\text{S}}
+\Big/ \frac{\theta_\text{P}}{1-\theta_\text{P}}>1\right)\equiv
+P(OR>1)
+$$
+
+```{r}
+## Compute the PPS under odds ratio measure
+or.pps <- mean(mc.or > 1); or.pps
+
+## Compute the MC standard error
+or.se <- sqrt(var(mc.or > 1)/M); or.se
+```
+
+Summary:
+
+We construct three types of effect size in order to compute the posterior probability of superiority of Secukinumab (S) over Placebo (P):
+
+$$
+\text{PPS}=P(\theta_\text{S}>\theta_\text{P})=
+\begin{cases}
+P(\text{RRD}>0) & \text{RRD}=\theta_\text{S}-\theta_\text{P} \\
+P(\text{RR}>1) & \text{RR}=\frac{\theta_\text{S}}{\theta_\text{P}} \\
+P(\text{OR}>1) & \text{OR}=\frac{\theta_\text{S}}{1-\theta_\text{S}}
+\Big/ \frac{\theta_\text{P}}{1-\theta_\text{P}}
+\end{cases}
+$$
+
+```{r}
+## Compute the means for RRD, RR, OR
+rrd.m <- mean(mc.rrd)
+rr.m <- mean(mc.rr)
+or.m <- mean(mc.or)
+
+## Print the results
+cat(sprintf(
+  "Mean of RDD: %.4f\nMean of RR: %.4f\nMean of OR: %.4f", 
+  rrd.m, rr.m, or.m
+))
+```
+
+```{r}
+## Generate a table for summary statistics
+d.summary <- data.frame(
+  rbind(rrd.qtl, rr.qtl, or.qtl), 
+  c(rrd.m, rr.m, or.m), 
+  c(rrd.pps, rr.pps, or.pps), 
+  c(rrd.se, rr.se, or.se)
+)
+colnames(d.summary) <- c("2.5% Quantile", "Median", "97.5% Quantile", 
+                         "Mean", "PPS", "MCse(PPS)")
+rownames(d.summary) <- c("RRD", "RR", "OR")
+knitr::kable(d.summary, align="c", caption="Summary statistics")
+```
+
+Unsurprisingly we obtain the same PPS for three types of effect size (RDD, RR, OR) as these three in essence measure the same posterior probability (i.e. $P(\theta_\text{S}>\theta_\text{P})$).
+

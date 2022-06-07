@@ -1,0 +1,38 @@
+---
+title: "Final Report"
+author: "Wenje Tu"
+date: "Zurich, May 2022"
+# documentclass: book
+output: 
+  pdf_document:
+    toc: true
+    number_sections: true
+subtitle: "STA421: Foundations of Bayesian Methodology"
+papersize: a4
+fontsize: 10pt
+---
+
+\newpage
+
+```{r child='01worksheet-TuWenjie.Rmd'}
+```
+
+$~$
+
+```{r child='02worksheet-TuWenjie.Rmd'}
+```
+
+$~$
+
+```{r child='03worksheet-TuWenjie.Rmd'}
+```
+
+$~$
+
+```{r child='04worksheet-TuWenjie.Rmd'}
+```
+
+$~$
+
+```{r child='05worksheet-TuWenjie.Rmd'}
+```

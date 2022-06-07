@@ -1,0 +1,196 @@
+# Classical analysis and sample size computation
+
+In this chapter, we first explain the main goal of the study by Baeten et al. (2013), on which this report is based. We then provide preliminary analyses on the data using classical statistical methods. We next compute the optimal sample size to obtain a target power.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+Sys.setenv(lang="us_en")
+rm(list = ls())
+```
+
+<!-- ## Exercise 1 (Individual project (Part 1)) -->
+
+## Classical analysis and sample size computation
+
+**1(a) Explain the main goal of the study**
+
+The main goal of the scientific article by Baeten et al. (2013) is to assess the efficacy and safety of the anti-IL-17A monoclonal antibody secukinumab in treating patients with active ankylosing spondylitis. A randomized double-blind proof-of-concept study was conducted and the randomization was done with a computer-generated block randomization list without a stratification process. The primary efficacy endpoint was the percentage of patients with a 20% response, and safety was assessed up to week 28.
+
+**1(b) Apply classical methods to the data**
+
+```{r table, echo=FALSE}
+df <- data.frame(matrix(c(5, 1, 6, 9, 14, 23, 14, 15, 29), nrow=3, byrow=TRUE))
+colnames(df) <- c("Non-responders", "Responders", "Total")
+rownames(df) <- c("Placebo", "Secukinumab", "Total")
+knitr::kable(df, "pandoc", align="c", caption="Contingency table \\label{tab:tab1}")
+```
+
+```{r}
+d.baeten <- data.frame(Group = rep(c("Placebo", "Secukinumab"), c(6, 23)), 
+                       Response = rep(c("No", "Yes", "No", "Yes"), c(5, 1, 9, 14)))
+table(d.baeten)
+```
+
+```{r data visualization, fig.show="hold", out.width="75%", fig.align='center'}
+## Data Visualization
+library(ggplot2)
+ggplot(d.baeten, aes(x=Group, fill=Response, color=Response)) + 
+  geom_bar(stat="count", position=position_dodge2(preserve="single"), alpha=0.2) + 
+  labs(title="Grouped bar plot", y="Frequency") + theme_minimal()
+```
+
+
+From Table \ref{tab:tab1} (the contingency table), we see that the sample size for some cells is small (i.e. below 5). As a rule of thumb, we use the Fisher's exact test here as the Chi-square test might be unreliable with small sample size.
+
+\begin{table}[!htbp]
+    \centering
+    \caption{Chi-squared test vs Fisher's exact test}
+    \begin{tabular}{rll}
+    \toprule
+    \textbf{Criterion} & \textbf{Chi-squared test} & \textbf{Fisher's exact test}  \\
+    \midrule
+    Minimal sample size & Large               & Small \\
+    Accuracy            & Approximate         & Exact \\
+    Contingency table   & Arbitrary dimension & Usually $2\times2$ \\
+    Interpretation      & Pearson residuals   & Odds ratio \\
+    \bottomrule
+    \end{tabular} \\
+    \vspace{1em}
+    \small{Source: \textit{ \href{https://www.datascienceblog.net/post/statistical_test/contingency_table_tests/}{Testing Independence: Chi-Squared vs Fisher's Exact Test}}}
+    \label{tab:tab2}
+\end{table}
+
+*Fisher's Exact Test*
+
+```{r}
+## Fisher's exact test
+fisher.test(table(d.baeten), conf.level=0.95)
+```
+The odds ratio in our context represents that the odds that the patient responded in Secukinumab group, compared to the odds of the response in the Placebo group. We obtain a $p$-value of 0.08 and it can be interpreted that the odds ratio is equal to 1 with the probability of ($1-0.08$) 92% and that the odds ratio is not equal to 1 with the probability of 8%. We set the confidence level at 95% and 0.08 is larger than 0.05. We can also see that 1 falls within the 95% confidence interval (0.657, 392.53). We thus cannot reject the null hypothesis that the true odds ratio is not equal to 1 with 95% confidence level. 
+
+*Fitting Models with Disaggregate Data*
+
+```{r}
+d.baeten <- data.frame(group = rep(c(0, 1), c(6, 23)), 
+                       response = rep(c(0, 1, 0, 1), c(5, 1, 9, 14)))
+table(d.baeten)
+```
+Logistic regression:
+
+$$
+log\left(\frac{p_i}{1-p_i}\right)=\beta_0+\beta_1 x_i
+$$
+
+* $y_i$: 1 if the patient responded, 0 otherwise
+* $x_i$: 1 if the patient was in Secukinumab group, 0 if in Placebo group
+* $p_i=P(y_i=1\mid x_i)=\mathbb{E}[y_i\mid x_i]=\mu_i$
+
+```{r}
+## Logistic regression
+logistic.reg <- glm(response ~ group, data=d.baeten, family=binomial)
+summary(logistic.reg)
+```
+
+Global test: $H_0: \beta_1=0$, $D(y,\hat{p}_{Null})-D(y,\hat{p}_{Null})\sim\chi^2$
+
+```{r}
+1 - pchisq((logistic.reg$null.deviance - logistic.reg$deviance), 
+           df=(logistic.reg$df.null - logistic.reg$df.residual))
+```
+
+The $p$-value is 0.046, hence the null hypothesis is reject. There is a significant effect of $group$ on the odds of $response$. The coefficient can be interpreted as the treatment effect (Secukinumab vs. Placebo) on the log odds ratio of response.
+
+```{r, out.width="50%"}
+## Residual analysis
+plot(logistic.reg)
+```
+
+* There seems to be a violation of assumption of constant variance.
+* There is a potential influential data point with index 6.
+
+Poisson regression:
+
+$$
+\log(\lambda_i)=\beta_0+\beta_1x_i
+$$
+
+* $y_i$: 1 if the patient responded, 0 otherwise
+* $x_i$: 1 if the patient was in Secukinumab group, 0 if in Placebo group
+* $\lambda_i=\mathbb{E}[y_i\mid x_i]$
+
+
+```{r}
+## Poisson regression
+poisson.reg <- glm(response ~ group, data=d.baeten, family=poisson(link="log"))
+summary(poisson.reg)
+```
+
+*Does the Model Fit?*
+
+Null hypothesis: "The model fits well"
+
+* Quick check: $residual\:deviance\gg df$?
+  + From the output, we see that $17.484\gg 27$ does not hold so it seems that we do not have overdispersion issue.
+
+```{r}
+pchisq(17.484, 27, lower.tail=FALSE)
+```
+* More exact test: 
+  + Null hypothesis: "The model fits well"
+  + We obtain a $p$-value of 0.92 and we cannot reject the null hypothesis. The model fits OK.
+
+```{r, out.width="50%"}
+## Residual analysis
+plot(poisson.reg)
+```
+
+* Diagnostic plots look OK but we have too few data so these plots may be unreliable.
+
+**1(c) Compute the optimal sample size**
+
+* Design: 1:1 (i.e. equal size for both treatment and control groups)
+* Response rate in Secukinumab group: 60%
+* Response rate in Placebo group: 25%
+* Power: $1-\beta=80\%$ ($\beta$ is the Type II error probability)
+* Significance level: $\alpha$ ($\alpha$ is the Type I error probability)
+
+```{r}
+## Compute the optimal sample size for a 1:1 design
+power.prop.test(power=0.8, p1=0.6, p2=0.25, sig.level=0.05)
+```
+
+The above output can be read off that the optimal sample size for a 1:1 design for comparision of 60% (Secukinumab) and 25% (Placebo) with power 80% and significance level 5% is 60 (i.e. a sample size of 30 for each group).
+
+$~$
+
+<!-- ## Exercise 2 (Individual task: elicitation of your personal opinion) -->
+
+## Elicitation of your personal opinion
+
+Without any further research from the Internet, my personal opinion about the height of adult Swiss females is that it follows a normal distribution with a mean of 170 cm and a standard deviation of 5 cm. 
+
+This guess has already been adjusted from the way of Bayesian thinking. If I had never been to Switzerland, my prior guess would have been based on the height of adult Chinese females. However, my prior gets updated and becomes a posterior after I come to Switzerland. From the course, we also learned that the posterior can serve as a prior again and it can be updated sequentially.
+
+$~$
+
+<!-- ## Exercise 3 (Individual task: installation of programs) -->
+
+## Installation of programs
+
+```{r, echo=FALSE,out.width="49%", out.height="20%",fig.cap="Screenshots",fig.show='hold',fig.align='center'}
+knitr::include_graphics(c("images/warning.jpeg","images/installation.jpeg"))
+```
+
+I have installed `R` and `RStudio` so there is no issue in this regard. Concerning the installation of JAGS, I got the error that *"JAGS-4.3.0.mpkg" cannot be opened because it is from an unidentified developer* (because I am a Mac user). I followed the Solution 4 given by this [article](https://support.ebooks.com/hc/en-gb/articles/360000116876-ADE-Installer-can-t-be-opened-because-it-is-from-an-unidentified-developer#:~:text=pkg\%20can't\%20be\%20opened,sometimes\%20cause\%20issues\%20like\%20this.) and then the issue was resolved. With all the programs/softwares successfully installed, I simply ran the command `install.packages(c("rjags", "coda", "bayesmeta"))` in `R` console and all packages specified were successfully downloaded with a message that `also installing the dependency packages`.
+
+```{r, eval=FALSE}
+## Install packages
+install.packages(c("rjags", "coda", "bayesmeta"))
+```
+
+```{r}
+## Check whether the packages are successfully installed
+library(rjags)
+library(coda)
+library(bayesmeta)
+```

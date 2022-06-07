@@ -1,0 +1,318 @@
+# Priori elicitation using moment matching
+
+In this chapter, we first provide classical and Bayesian analyses for Secukinumab and placebo separately. We next implement a moment-matching function that computes $\alpha$ and $\beta$ shape parameters of a Beta distribution with known mean and variance.
+
+<!-- Priori elicitation for placebo and treatment groups -->
+
+<!-- ## Exercise 1 (Individual project (Part 2A)) -->
+
+## Classical and Bayesian analyses
+
+\begin{table}[!htbp]
+    \centering
+    \caption{ASAS20 responders at week 6}
+    \begin{tabular}{lccc}
+    \hline
+    Group            & $n$    & Responders     & Posterior     \\
+                     &        & $x\:(\%)$      & response rate \\
+    \hline
+    Secukinumab      & $23$   & $14\:(60.9\%)$ & $59.5\%$      \\
+                     &        &                &               \\
+    Placebo          & $6$    & $1\:(16.7\%)$  & $24.5\%$      \\
+    \hline
+    \end{tabular}
+    \label{tab:tab1}
+\end{table}
+
+**1(a) Compute 95% CIs for the true probability of response**
+
+```{r, warning=FALSE, message=FALSE}
+library(DescTools)
+
+## Secukinumab group
+BinomCI(x=14, n=23, conf.level=0.95, method="wilson")
+
+## Placebo group
+BinomCI(x=1, n=6, conf.level=0.95, method="wilson")
+```
+
+Interpretation of CIs:
+
+* The 95% confidence interval for _Secukinumab_ group is $(0.4079, 0.7784)$ and it means that for repeated samples from a binomial distribution with unknown parameter $p$, the 95% confidence interval will cover the true probability $p$ in 95% of the cases.
+* The 95% confidence interval for _Placebo_ group is $(0.0301, 0.5635)$ and it means that for repeated samples from a binomial distribution with unknown parameter $p$, the 95% confidence interval will cover the true probability $p$ in 95% of the cases.
+
+<!-- * In _Secukinumab_ group, for repeated random samples from a binomial distribution with unknown but fixed parameters (i.e. the number of subjects and the response rate), the 95% confidence interval $(0.4079, 0.7784)$ will cover the response rate in 95% of all cases. -->
+<!-- * In _Placebo_ group, for repeated random samples from a binomial distribution with unknown but fixed parameters (i.e. the number of subjects and the response rate), the 95% confidence interval $(0.0301, 0.5635)$ will cover the response rate in 95% of all cases. -->
+
+Held and Sabanes Bove (2020, p116-119) demonstrate that the Wilson approach is superior to other approaches. Hence, Wilson method is used to compute the 95% CIs for the true probability of response in Secukinumab and in the placebo groups as it does not suffer from problems of overshoot and zero-width intervals that afflict the normal interval and it can also be safely used with small samples and skewed observations. To show the difference among CIs computed from other methods, the proportion test and the exact binomial test are conducted for comparison.
+
+```{r}
+## Comparison
+
+## Proportion test
+prop.test(x=14, n=23, conf.level=0.95, correct=TRUE)
+
+## Exact binomial test
+binom.test(x=14, n=23)
+```
+
+**1(b) Plot and summarize priors**
+
+```{r, fig.show="hold", out.width="50%", fig.align='center'}
+## Define range
+p <- seq(1e-3,1, length=200)
+
+## Plot several Beta distributions
+plot(p, dbeta(p, 0.5, 1), ylab="density", type="l", col="red", lwd=2, 
+     ylim=c(0, 8), main="Plot of priors for both Secukinumab and placebo")
+lines(p, dbeta(p, 11, 32), col="red", lwd=2, lty=2) 
+
+## Add legend
+legend("topright", col="red", lwd=2, lty=c(1, 2), cex=.8, 
+       legend=c("Secukinumab prior: B(0.5, 1)", "Placebo prior: B(11, 32)"))
+```
+
+
+```{r}
+## 2.5%, 50%, 97.5% quantiles of Beta(0.5, 1)
+qbeta(c(0.025, 0.5, 0.975), 0.5, 1)
+
+## 2.5%, 50%, 97.5% quantiles of Beta(11, 32)
+qbeta(c(0.025, 0.5, 0.975), 11, 32)
+```
+
+We know that if $X\sim \textrm{Beta}(\alpha, \beta)$, then the expectation is given by:
+$$
+\mathbb{E}X=\frac{\alpha}{\alpha+\beta}
+$$
+
+We can apply this formula to obtain the prior means:
+
+* Prior mean for $\textrm{Beta}(0.5,1)$: 0.3334
+* Prior mean for $\textrm{Beta}(11,32)$: 0.2558
+
+```{r, echo=FALSE, include=FALSE}
+df <- data.frame(matrix(c("0.3334", "0.2500", "(0.0006250, 0.9506250)", 
+                          "0.2558", "0.2520", "(0.1386101, 0.3945024)"), 
+                        nrow=2, byrow=TRUE))
+colnames(df) <- c("Mean", "Median", "Equi-tailed 95% interval")
+rownames(df) <- c("Beta(0.5,1)", "Beta(11,32)")
+knitr::kable(df, "pandoc", align="c", caption="Summary statistics of the prior distribution")
+```
+
+\begin{table}[!htbp]
+    \centering
+    \caption{Summary statistics of the prior distributions}
+    \begin{tabular}{llccc}
+    \hline
+                &             & Mean       & Median   & Equi-tailed $95\%$ interval        \\
+    Group       & Prior       &            &          &                    \\
+    \hline
+    Secukinumab & $B(0.5,1)$  & $0.3334$   & $0.2500$ & $(0.0006,0.9506)$  \\
+                &             &            &          &                    \\
+    Placebo     & $B(11,32)$  & $0.2558$   & $0.2520$ & $(0.1386,0.3945)$  \\
+    \hline
+    \end{tabular}
+    \label{tab:tab2}
+\end{table}
+
+**1(c) & 1(d) Plot and summarize posteriors**
+
+Prior distribution:
+$$
+p\sim \textrm{Beta}(\alpha,\beta)
+$$
+
+Posterior distribution:
+$$
+p\mid y_1,\cdots,y_n \sim \textrm{Beta}(\alpha+n\bar{y},\beta+n-n\bar{y})
+$$
+
+Since $y_i$ is a binary variable and only takes 0 or 1, $\bar{y}$ corresponds to the proportion of the responders (i.e. response rate). 
+
+* $n\bar{y}$ corresponds to the number of responders (i.e. $\sum_{i=1}^{n}\pmb{1}[y_i=1]$)
+* $n-n\bar{y}$ corresponds to the number of non-responders (i.e. $n-\sum_{i=1}^{n}\pmb{1}[y_i=1]$)
+
+\begin{table}[!htbp]
+    \centering
+    \caption{Prior vs. Posterior}
+    \begin{tabular}{lcccc}
+    \hline
+                & Prior                         & \# of Subjects & \# of Responders & Posterior                           \\
+    Group       & $\textrm{Beta}(\alpha,\beta)$ & $n$            & $x$              & $\textrm{Beta}(\alpha+x,\beta+n-x)$ \\
+    \hline
+    Secukinumab & $\textrm{Beta}(0.5,1)$        & $23$           & $14$             & $\textrm{Beta}(14.5,10)$            \\
+                &                               &                &                  &                                     \\
+    Placebo     & $\textrm{Beta}(11,32)$        & $6$            & $1$              & $\textrm{Beta}(12,37)$              \\
+    \hline
+    \end{tabular}
+    \label{tab:tab3}
+\end{table}
+
+```{r, figures-side, fig.show="hold", out.width="50%"}
+p <- seq(1e-3,1, length=200)
+
+plot(p, dbeta(p, 0.5, 1), type="l", ylab="density", col="red", 
+     lwd=2, ylim=c(0,8), main="Secukinumab group")
+lines(p, dbeta(p, 14.5,10), ylab="density", col="blue", lwd=2)
+
+legend("topright", legend=c("prior: B(0.5,1)", "posterior: B(14.5,10)"), 
+       col=c("red", "blue"), lwd=2)
+
+plot(p, dbeta(p, 11, 32), type="l", ylab="density", col="red", 
+     lwd=2, ylim=c(0, 8), main="Placebo group")
+lines(p, dbeta(p, 12, 37), ylab="density", col="blue", lwd=2)
+
+legend("topright", legend=c("prior: B(11,32)", "posterior: B(12,37)"), 
+       col=c("red", "blue"), lwd=2)
+```
+
+```{r}
+# Secukinumab group
+## 2.5%, 50%, 97.5% quantiles of Beta(14.5, 10)
+qbeta(c(0.025, 0.5, 0.975), 14.5, 10)
+
+# Placebo group
+## 2.5%, 50%, 97.5% quantiles of Beta(12, 37)
+qbeta(c(0.025, 0.5, 0.975), 12, 37)
+```
+
+\begin{table}[!htbp]
+    \centering
+    \caption{Summary statistics of the posterior distributions}
+    \begin{tabular}{llccc}
+    \hline
+                &               & Mean       & Median   & $95\%$ CrI         \\
+    Group       & Posterior     &            &          &                    \\
+    \hline
+    Secukinumab & $B(14.5,10)$  & $0.5918$   & $0.5944$ & $(0.3958,0.7736)$  \\
+                &               &            &          &                    \\
+    Placebo     & $B(12,37)$    & $0.2449$   & $0.2414$ & $(0.1364,0.3731)$  \\
+    \hline
+    \end{tabular}
+    \label{tab:tab4}
+\end{table}
+
+**(e) Interpret 95% CrIs**
+
+Interpretation:
+
+* In Secukinumab group, the posterior probability of the response rate lies between 0.3958 and 0.7736 with probability 95%, when a $\textrm{Beta}(0.5, 1)$ prior is assumed.
+* In Placebo group, the posterior probability of the response rate lies between 0.1364 and 0.3731 with probability 95%, when a $\textrm{Beta}(11,32)$ prior is assumed.
+
+$~$
+
+<!-- ## Exercise 2 (Individual project (Part 2B)) -->
+
+## Priori elicitation for Secukinumab group using moment matching
+
+**2(a) Derive moment matching formula for Beta distribution**
+
+Beta distribution:
+$$
+X\sim \textrm{Beta}(\alpha, \beta)
+$$
+
+Density function of Beta distribution:
+$$
+f(x)=\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}
+$$
+
+Expectation of $X$:
+$$
+\begin{aligned}
+\mathbb{E}X
+&= \int_{0}^{1}xf(x)\textrm{d}x \\
+&= \int_{0}^{1}x\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}\textrm{d}x \\
+&= \frac{1}{B(\alpha,\beta)} \int_{0}^{1}x^{\alpha}(1-x)^{\beta-1}\textrm{d}x \\
+&= \frac{B(\alpha+1,\beta)}{B(\alpha,\beta)} \\
+&= \frac{\Gamma(\alpha+1)\Gamma(\beta)}{\Gamma(\alpha+\beta+1)}\cdot
+\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)} \\
+&= \frac{\alpha!(\beta-1)!}{(\alpha+\beta)!}\cdot\frac{(\alpha+\beta-1)!}{(\alpha-1)!(\beta-1)!} \\
+&= \frac{\alpha}{\alpha+\beta}
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\mathbb{E}[X^2]
+&= \int_{0}^{1}x^2f(x)\textrm{d}x \\
+&= \int_{0}^{1}x^2\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}\textrm{d}x \\
+&= \frac{1}{B(\alpha,\beta)} \int_{0}^{1}x^{\alpha+1}(1-x)^{\beta-1}\textrm{d}x \\
+&= \frac{B(\alpha+2,\beta)}{B(\alpha,\beta)} \\
+&= \frac{\Gamma(\alpha+2)\Gamma(\beta)}{\Gamma(\alpha+\beta+2)}\cdot
+\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)} \\
+&= \frac{(\alpha+1)!(\beta-1)!}{(\alpha+\beta+1)!}\cdot\frac{(\alpha+\beta-1)!}{(\alpha-1)!(\beta-1)!} \\
+&= \frac{(\alpha+1)\alpha}{(\alpha+\beta+1)(\alpha+\beta)}
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\textrm{Var}X
+&= \mathbb{E}\left[[X-\mathbb{E}X]^2\right] \\
+&= \mathbb{E}[X^2]-[\mathbb{E}X]^2 \\
+&= \frac{(\alpha+1)\alpha}{(\alpha+\beta+1)(\alpha+\beta)}-\left(\frac{\alpha}{\alpha+\beta}\right)^2 \\
+&= \frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}
+\end{aligned}
+$$
+
+We know that:
+$$
+\begin{cases}
+\mu=\frac{\alpha}{\alpha+\beta} \\
+\sigma^2=\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}
+\end{cases}
+$$
+
+$$
+\mu=\frac{\alpha}{\alpha+\beta}\implies
+\beta=\frac{\alpha}{\mu}-\alpha
+$$
+
+Plug $\beta=\frac{\alpha}{\mu}-\alpha$ into $\sigma^2=\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$:
+$$
+\begin{aligned}
+\sigma^2
+&= \frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)} \\
+&= \frac{\alpha\left(\frac{\alpha}{\mu}-\alpha\right)}{\left(\frac{\alpha}{\mu}\right)^2\left(\frac{\alpha}{\mu}+1\right)} \\
+&= \frac{\mu^2(1-\mu)}{\alpha+\mu}
+\end{aligned}
+$$
+
+Rearranging above equation yields:
+$$
+\begin{cases}
+\alpha=\left(\frac{1-\mu}{\sigma^2}-\frac{1}{\mu} \right)\mu^2 \\
+\beta=\alpha\left(\frac{1}{\mu}-1 \right)
+\end{cases}
+$$
+
+**2(b) Implement moment matching formula in a function in \texttt{R}**
+
+Implementation:
+
+* Input: sample mean and sample variance of a Beta distribution
+* Output: $\alpha$ and $\beta$ shape parameters of the Beta distribution
+
+```{r}
+## Define a function
+## Args: mean, var
+estBetaParams <- function(mean, var) {
+  alpha <- ((1 - mean) / var - 1 /mean) * mean ^ 2
+  beta <- alpha * (1 / mean - 1)
+  return(params = c(alpha=alpha, beta=beta))
+}
+```
+
+**2(c) Apply the function**
+
+Input:
+
+* $\textrm{mean}=0.255814$
+* $\textrm{variance}=0.004326663$
+
+```{r}
+params <- estBetaParams(0.255814, 0.004326663); params
+```
+The resulting values of $\alpha$ and $\beta$ parameters of the Beta distribution are 11 and 32 respectively.
