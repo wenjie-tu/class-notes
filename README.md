@@ -1,6 +1,6 @@
 # Class Notes
 
-This repository is made to store my class notes and problem-sets solutions.
+This repository is made for my class notes and problem-sets solutions.
 
 **Table of Content**
 
@@ -12,14 +12,9 @@ This repository is made to store my class notes and problem-sets solutions.
 | BC                        | [Business Cycles: Empirics and Theory](BC/README.md)         |
 | CompStats                 | [Computational Statistics](CompStats/README.md)              |
 | EM                        | [Empirical Methods](EM/README.md)                            |
+| FBM                       | [Foundations of Bayesian Methodology](FBM/README.md)         |
 | GPED                      | [Global Poverty and Economic Development](GPED/README.md)    |
 | IntMacro                  | [International Macroeconomics](IntMacro/README.md)           |
 | PECI                      | [Program Evaluation and Causal Inference](PECI/README.md)    |
 | SCT                       | [Social Choice Theory](SCT/README.md)                        |
-
-
-
-
-
-
 
