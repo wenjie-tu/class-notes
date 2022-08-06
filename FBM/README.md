@@ -14,3 +14,4 @@ This directory is made for the course *Foundations of Bayesian Methodology*
 Note:
 
 * [Syllabus](Info/syllabus_STA421_FBM_FS22.pdf)
+* [Cheatsheet](Cheatsheet/bayes_summary2.pdf) (by [@Jerome Sepin](https://github.com/jsepin))

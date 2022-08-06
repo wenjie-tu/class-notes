@@ -1,0 +1,13 @@
+model{
+  # likelihood
+  for (i in 1:length(y)){ 
+  # 1. Calculating likelihood for each observation
+  #    given the proposed parameter
+	y[i] ~ dbin(p[i],n[i]);
+	p[i] <- ilogit(alpha + beta * x[i])
+	
+  }
+  # 2. Prior for parameter alpha
+  alpha ~ dnorm(0, 1.0E-04)
+  beta  ~ dnorm(0, 1.0E-04)
+}
