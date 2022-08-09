@@ -1,0 +1,836 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+%\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{setspace}
+% \usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[top=2.0cm, left=2.0cm, right=2.0cm, bottom=3.0cm]{geometry}
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\title{%
+    Applied Statistical Regression
+}
+\author{Wenjie Tu}
+\date{Fall Semester 2021}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+%\onehalfspacing
+\begin{document}
+
+%\maketitle
+
+\section{Introduction \& Visualization}
+
+\subsection{Introduction}
+
+Possible research questions:
+\begin{itemize}
+    \item How are the different variables related? 
+    \textbf{correlation}
+    \item Can we describe the variation of the variables by a smaller set of variables? 
+    \textbf{principal component analysis, factor analysis}
+    \item Can we project the data into a lower dimensional space while preserving the original distances between data points as well as possible? 
+    \textbf{multidimensional scaling}
+    \item Can we identify groups of units with similar characteristics?
+    \textbf{clustering}
+\end{itemize}
+
+\subsection{Summary Statistics}
+
+Important summary statistics to describe the distribution of a random variable:
+\begin{itemize}
+    \item Measure of location
+    \begin{itemize}
+        \item ``center'' of the distribution: mean, median, mode
+    \end{itemize}
+    \item Measure of variation
+    \begin{itemize}
+        \item ``width'' of the distribution: standard deviation, interquartile-range, median absolute deviation (MAD)
+    \end{itemize}
+    \item Measure of (linear) dependency (for multivariate data)
+    \begin{itemize}
+        \item Covariance and correlation
+        \item Test for zero correlation: Fisher's $z$-test
+    \end{itemize}
+\end{itemize}
+
+\subsection{Visualization of Multivariate Data}
+
+Visualization of multivariate data:
+\begin{itemize}
+    \item Continuous data
+    \begin{itemize}
+        \item Scatterplot matrix
+        \item Glyph plots (e.g., bubble plot), star plot, Chernoff faces
+        \item Parallel coordinates plot
+        \item Conditioning plot
+    \end{itemize}
+    \item Categorical data: mosaic plots
+    \item Mixed data:
+    \begin{itemize}
+        \item Conditioning or parallel coordinates plots can be useful
+        \item Use colors
+    \end{itemize}
+    \item Dimension reduction
+\end{itemize}
+
+\section{Visualization of Categorical Data \& Outlier Detection}
+
+\subsection{Visualization of Categorical Data}
+
+Visualization of Categorical Data
+\begin{itemize}
+    \item Mosaic plot
+    \item Mosaic plot with shading
+    \item Mosaic plot per group
+    \item Chi-squared test of independence
+\end{itemize}
+
+\subsection{Multivariate Outliers}
+
+Mahalanoubis distance and chi-squared distribution:
+\begin{itemize}
+    \item If the data is $q$-variate multivariate normally distributed, then the squared Mahalanobis distance follows a chi-squared distribution with $q$ degrees of freedom:
+    \[D_M^2(X)\sim\chi^2(q) \]
+    \item Check with a QQ-plot: compare data to theoretical quantiles of a chi-squared distribution $\chi^2(q)$
+\end{itemize}
+
+Automatic outlier detection: \texttt{PCOut}
+\begin{itemize}
+    \item PCOut is a method that automatically finds outliers
+    \item Properties:
+    \begin{itemize}
+        \item Based on robust principal components
+        \item Fast method, good for high dimensions
+        \item Conservative method: favors false positives over false negatives (i.e., rather declares a non-outlying point as outlier than missing to find a true outlier)
+    \end{itemize}
+    \item Careful with automatic outlier detection:
+    \begin{itemize}
+        \item Often finds either too many or too few outliers depending on parameter settings
+        \item Can be good for screening of large amount of data
+        \item Often it is better to look at a QQ-plot
+    \end{itemize}
+\end{itemize}
+
+\section{Principal Component Analysis (PCA)}
+
+\subsection{Introduction}
+
+Illustration of PCA
+\begin{itemize}
+    \item The first principal component is the direction with maximum variance. It is also the direction that minimizes the sum of squared residuals (orthogonal to the line)
+\end{itemize}
+
+Definition of PCA: orthogonal directions with largest variance
+\begin{itemize}
+    \item $PC_1$ is the direction of largest variance
+    \item $PC_2$ is
+    \begin{itemize}
+        \item perpendicular to $PC_1$
+        \item again largest variance
+    \end{itemize}
+    \item $PC_3$ is
+    \begin{itemize}
+        \item perpendicular to $PC_1, PC_2$
+        \item again largest variance
+    \end{itemize}
+    \item etc.
+\end{itemize}
+
+\subsection{Things to Know When Applying PCA}
+
+Interpretation of PC's
+\begin{itemize}
+    \item When all variables are positively correlated, the first principal component is often some kind of average of the variables, and the other principal components give important information about the remaining patterns or shapes
+    \item Interpretation can be difficult
+    \item Note that the sign of the PC loadings is arbitrary since $S=ADA^{\intercal}=(-A)D(-A)^{\intercal}$
+\end{itemize}
+
+Scale dependence
+\begin{itemize}
+    \item PCA based on the original (mean centered) variables can have the following disadvantages:
+    \begin{itemize}
+        \item The results from PCA depend on the scale on which the variables are measured (e.g., centimeters vs. inches)
+        \item If there are large differences in the variations of the variables, the variables with the largest variances tend to dominate the first PC's
+    \end{itemize}
+    \item PCA using correlation matrix
+    \begin{itemize}
+        \item Using the correlation matrix is equivalent to using the covariance matrix of the scaled variables
+    \end{itemize}
+\end{itemize}
+
+How many PC's?
+\begin{itemize}
+    \item Rule of thumb 1: Cumulative proportion of explained variance should be at least 0.8 (80\%)
+    \item Rule of thumb 2: Keep only PC's with above-average variance
+    \begin{itemize}
+        \item If correlation matrix (scaled data) was used, this implies: keep only PC's with eigenvalues at least one
+    \end{itemize}
+    \item Rule of thumb 3: Look at scree plot $\lambda_j$ vs. $j$
+    \begin{itemize}
+        \item Keep only PC's before the ``elbow'' (if there is any)
+    \end{itemize}
+    \item Note: the effect of discarding some principal components may vary for different variables
+    \begin{itemize}
+        \item It can be useful to look at squared (sample) correlations $r_{ij}^2$ between variable $X_i$ and PC $Y_j$
+        \item The squared correlation $r_{ij}^2$ between $X_i$ and $Y_j$ can be seen as the proportion of the variance of $X_i$ that is explained by $Y_j$
+    \end{itemize}
+\end{itemize}
+
+Robust PCA
+\begin{itemize}
+    \item PCA is sensitive to outliers, since it is based on the sample covariance matrix $S$ or the sample correlation matrix $R$, which are sensitive to outliers
+    \item Robust versions of PCA can be obtained by using a robust version of $S$ or $R$
+\end{itemize}
+
+R commands
+\begin{itemize}
+    \item \texttt{princomp} uses the spectral decomposition of the covariance or correlation matrix
+    \item \texttt{prcomp} uses the SVD of the data matrix (numerically more stable)
+\end{itemize}
+
+\subsection{Applications of PCA}
+
+Applications of PCA
+\begin{itemize}
+    \item Dimension reduction: summarize the data with a smaller number of variables while lossing as little information as possible
+    \item Use PCA as input for regression analysis
+    \begin{itemize}
+        \item Highly correlated explanatory variables are problematic in regression analysis (collinearity)
+        \item Replace them by the first few principal components which are uncorrelated by definition
+    \end{itemize}
+    \item Find a one-dimensional index that separates units best
+    \begin{itemize}
+        \item The first PC is the one dimensional index that spreads out data the most
+    \end{itemize}
+\end{itemize}
+
+Overview and limitations of PCA
+\begin{itemize}
+    \item PCA does not rely on any distributional assumption
+    \item The directions with largest variance are assumed to be of most interest
+    \item PCA only considers linear combinations of the original variables
+    \item Dimension reduction can only be achieved if the original variables are correlated. Otherwise, PCA does nothing, except for re-ordering them according to their variance
+    \item PCA is not scale invariant
+\end{itemize}
+
+\section{Multidimensional Scaling (MDS)}
+
+MDS approaches considered in this lecture:
+\begin{itemize}
+    \item Classical MDS
+    \begin{itemize}
+        \item Approximately preserves Euclidean distances. Closely related to PCA
+        \item R: \texttt{cmdscale}
+    \end{itemize}
+    \item Non-metric MDS
+    \begin{itemize}
+        \item Approximately preserves ranking of distances
+        \item R: \texttt{isoMDS}
+    \end{itemize}
+    \item ISOMAP
+    \begin{itemize}
+        \item Finds a non-linear manifold and approximately preserves distances on the manifold
+        \item R: \texttt{isomap} in package \texttt{RDRToolbox}
+    \end{itemize}
+    \item t-SNE
+    \begin{itemize}
+        \item Emphasis on preserving small distances. Good for visualization of high-dimensional data
+        \item R: \texttt{Rtsne} in package \texttt{Rtsne}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Classical MDS}
+
+Properties of classical MDS:
+\begin{itemize}
+    \item Classical MDS with Euclidean distances gives the same results as PCA for the original coordinates
+    \item If the $d_{ij}$'s are non-Euclidean distances, we can still try to apply classical MDS:
+    \begin{itemize}
+        \item The formula used to derive $B$ from $D$ does not yield $B=XX^{\intercal}$
+        \item $B$ can be non-positive semidefinite and some of its eigenvalues may be smaller than zero
+        \item If there are only a few negative eigenvalues that are close to zero, then using the first few positive eigenvalues might still give a good representation
+    \end{itemize}
+\end{itemize}
+
+Classical MDS vs. non-metric MDS:
+\begin{itemize}
+    \item Classical MDS
+    \begin{itemize}
+        \item Finds low-dimensional representation that respects distances
+        \item Optimal for Euclidean distances
+        \item No guarantee for other distances/dissimilarities
+        \item Relatively fast
+    \end{itemize}
+    \item Non-metric MDS
+    \begin{itemize}
+        \item Respects only rankings of dissimilarities
+        \item Can be applied more generally: only need ranking information (results do not change when applying any monotonic transformation to the dissimilarities)
+        \item Only preserves ranks of dissimilarities
+        \item Slow
+        \item Can converge to local optima
+    \end{itemize}
+\end{itemize}
+
+\subsection{Distances and Dissimilarities}
+
+Properties of distance measures (metrics):
+\begin{itemize}
+    \item A distance (metric) satisfies:
+    \begin{itemize}
+        \item $d(i,j)\geq 0$
+        \item $d(i,j)=0\Longleftrightarrow i=j$ 
+        \item $d(i,j)=d(j,i)$
+        \item $d(i,j)\leq d(i,h)+d(h,j)$ (triangle inequality)
+    \end{itemize}
+    \item Euclidean distance:
+    \[d(i,j)=\sqrt{(x_{i1}-x_{j1})^2+\cdots+(x_{iq}-x_{jq})^2 } \]
+    \item Manhattan distance:
+    \[d(i,j)=\lvert x_{i1}-x_{j1}\rvert + \lvert x_{iq}-x_{jq}\rvert \]
+    \item Maximum distance:
+    \[d(i,j)=\max_{k}\lvert x_{ik}-x_{jk}\rvert \]
+    \item Minkowski distance:
+    \begin{equation*}
+        d(i,j)=\left((x_{i1}-x_{j1})^p+\cdots+(x_{iq}-x_{jq})^p \right)^{1/p}=
+        \begin{cases}
+            \text{Manhattan distance} & p=1 \\
+            \text{Euclidean distance} & p=2 \\
+            \text{Maximum distance} & p=\infty
+        \end{cases}
+    \end{equation*}
+\end{itemize}
+
+Properties of dissimilarities:
+\begin{itemize}
+    \item Dissimilarities are more general than distances. They only satisfy:
+    \begin{itemize}
+        \item $d(i,j)\geq 0$
+        \item $d(i,j)=0 \Longleftrightarrow i=j$
+        \item $d(i,j)=d(j,i)$
+    \end{itemize}
+    \item Binary/Nominal data:
+    \begin{itemize}
+        \item Simple matching distance (SMD): Proportion of variables in which units disagree
+        \item Jaccard distance (JD): Proportion of variables which units disagree ignoring $(0,0)$'s
+    \end{itemize}
+    \item Ordinal data:
+    \begin{itemize}
+        \item Rank outcome of variables $k=1,\cdots,q$: $r_{ik}$ where $r_{ik}\in\{1,2,\cdots,M_k \}$
+        \item Normalize: $z_{ik}=\dfrac{r_{ik}-1}{M_k-1}$
+        \item Treat $z_{ik}$ as if it were a continuous variable
+    \end{itemize}
+    \item Mixed data: Gower dissimilarities
+\end{itemize}
+
+\subsection{ISOMAP}
+
+Linear vs. nonlinear manifold learning:
+\begin{itemize}
+    \item Most methods (PCA, classical MDS for Euclidean distances) are linear methods. They can be used for finding low-dimensional representations when the data lie on a (approximately) linear lower-dimensional subspace or manifold.
+    \begin{itemize}
+        \item Linear techniques usually focus on keeping distant data points far apart in the low-dimensional space while somewhat neglecting the local neighborhood structure
+        \item What if the data lie on a non-linear (lower-dimensional) manifold? The local neighborhood structure is more important
+    \end{itemize}
+\end{itemize}
+
+Tuning parameters of ISOMAP:
+\begin{itemize}
+    \item Choosing the neighborhood size (either $K$ or $\varepsilon$) can be difficult
+    \begin{itemize}
+        \item If neighborhood is too small: geodesic distances cannot be well approximated or one might obtain isolated patches
+        \item If neighborhood is too large: false connections can occur in the graph (``short circuits'')
+    \end{itemize}
+\end{itemize}
+
+Comments on ISOMAP and manifold learning:
+\begin{itemize}
+    \item ISOMAP does not scale well to large data
+    \item ISOMAP can have difficulties if
+    \begin{itemize}
+        \item True manifolds are not convex, and in particular contain holes
+        \item True manifolds have too much curvature
+        \item The data is too noisy (measurement error)
+    \end{itemize}
+\end{itemize}
+
+\subsection{t-SNE}
+
+t-distributed stochastic neighbor embedding (t-SNE) is a dimension reduction technique that is useful for visualizing high-dimensional data
+\begin{itemize}
+    \item Capture the local structure (close points should stay together)
+    \item Reveal global structures such as clusters at several scales
+\end{itemize}
+
+Comments on t-SNE:
+\begin{itemize}
+    \item In contrast to PCA and classical MDS, t-SNE focuses on short-range distances
+    \item The t-SNE algorithm is not guaranteed to converge to a global optimum
+    \item t-SNE cannot map new data to the low-dimensional space
+    \item t-SNE works with similarities instead of dissimularities
+    \item Caution:
+    \begin{itemize}
+        \item Cluster sizes can be meaningless
+        \item Distances between clusters can be meaningless
+        \item Careful of overinterpretation
+    \end{itemize}
+\end{itemize}
+
+\section{Cluster Analysis}
+
+\subsection{Hierarchical Clustering}
+
+Distances between clusters
+\begin{itemize}
+    \item Single linkage: $d_{AB}=\min_{i\in A, j\in B} d_{ij}$
+    \begin{itemize}
+        \item Suitable for finding stretched-out clusters
+    \end{itemize}
+    \item Complete linkage: $d_{AB}=\max_{i\in A, j\in B} d_{ij}$
+    \begin{itemize}
+        \item Suitable for finding compact but not necessarily well-separated clusters
+    \end{itemize}
+    \item Average linkage: $d_{AB}=\frac{1}{n_An_B}\sum_{i\in A}\sum_{j\in B}d_{ij}$
+    \begin{itemize}
+        \item $n_A$ and $n_B$ denote the number of elements in clusters $A$ and $B$
+    \end{itemize}
+    \item Ward's method: $d_{AB}=WGSS_{AB}-(WGSS_{A}+WGSS_{B})$
+    \begin{itemize}
+        \item Join the two clusters whose merger leads to the smallest increase in within-groups sum of squares (WGSS)
+    \end{itemize}
+\end{itemize}
+
+\subsection{Interpretation and Model Checking}
+
+Interpreting clusters:
+\begin{itemize}
+    \item Option 1: Look at position of cluster centers or cluster representatives
+    \begin{itemize}
+        \item If scaled data is used, it is often better for interpretability to look at the raw data instead of the scaled data
+    \end{itemize}
+    \item Option 2: 
+    \begin{itemize}
+        \item Apply a dimension reduction technique (such as PCA or t-SNE) and plot the reduced dimensional data
+        \item Label/color the points according to the cluster they belong
+    \end{itemize}
+\end{itemize}
+
+Quality of clustering: silhouette plot:
+\begin{itemize}
+    \item The silhouette $S(i)\in[-1, 1]$ is a number which indicates for each observation $i$ how well it fits to its cluster
+    \item $S(i)=\dfrac{b(i)-a(i)}{\max(a(i), b(i))}$
+    \begin{itemize}
+        \item $a(i)=$ average dissimilarity between $i$ and all other points of the cluster to which $i$ belongs
+        \item $b(i)=$ lowest average dissimilarity between $i$ and all points from any other cluster to which $i$ does not belong
+    \end{itemize}
+    \item Interpretation
+    \begin{itemize}
+        \item $S(i)$ large: well clustered
+        \item $S(i)$ small: badly clustered
+        \item $S(i)$ negative: assigned to wrong cluster
+        \item Rule of thumb: Average $S$ over 0.5 is acceptable
+    \end{itemize}
+\end{itemize}
+
+\subsection{Partitioning Methods}
+
+Properties of $k$-means:
+\begin{itemize}
+    \item No guarantee that the algorithm finds the globally optimal within-groups sum of squares
+    \item Different starting assignments will give different solutions
+    \begin{itemize}
+        \item Run several times with random starting values (cluster centers) to avoid local optima
+    \end{itemize}
+\end{itemize}
+
+Partitioning around medoids (PAM):
+\begin{itemize}
+    \item $k$-means: the cluster centers are the means. These can be arbitrary points in space
+    \item $k$-medoids: the cluster centers are observations
+    \begin{itemize}
+        \item Medoid: object of a cluster whose average distance/dissimilarity to all the objects in the cluster is minimal
+        \item Partitioning around medoids (PAM) is the most common method
+    \end{itemize}
+    \item Comparison to $k$-means
+    \begin{itemize}
+        \item More robust against outliers
+        \item Can deal with any distance/dissimilarity measure
+        \item Easy to find representative objects per cluster (good for interpretation)
+        \item PAM's output also depends on starting values
+        \item PAM is computationally more expensive
+    \end{itemize}
+\end{itemize}
+
+\subsection{Model-Based Clustering}
+
+Gaussian mixture models:
+\begin{itemize}
+    \item Assuming different covariance matrices $\Sigma_j$ (volume, shape, orientation) for all clusters can result in many parameters
+    \item Problem: model fit will never get worse if you use more clusters or allow more complex covariance matrices
+    \item Solution: trade-off between model fit and model complexity
+    \begin{itemize}
+        \item Select model with lowest BIC
+        \item Note that the \texttt{mclust} package calculates the negative BIC instead of BIC
+    \end{itemize}
+\end{itemize}
+
+\subsection{Density-Based Clustering}
+\begin{itemize}
+    \item DBSCAN is a density-based clustering technique
+    \begin{itemize}
+        \item Find clusters with arbitrary shape
+        \item Robustness to outliers/noise
+    \end{itemize}
+    \item Informal assumption of density-based clustering: clusters are areas of high density that are separated from another by areas of low density
+\end{itemize}
+
+\subsection{Comparison}
+
+Comparison of methods:
+\begin{itemize}
+    \item Partitioning methods
+    \begin{itemize}
+        \item Fast and scales well to large data
+        \item No underlying model
+        \item Can have problems with non-convex data
+    \end{itemize}
+    \item Agglomerate methods
+    \begin{itemize}
+        \item Obtain solution for all possible number of clusters at once
+        \item Slow, no underlying model
+    \end{itemize}
+    \item GMMs
+    \begin{itemize}
+        \item Based on statistical model for data generating process
+        \item Statistically justified selection of number of clusters
+        \item Slow
+        \item Can have problems with non-convex data
+    \end{itemize}
+    \item DBSCAN
+    \begin{itemize}
+        \item Number of clusters does not need to be specified
+        \item Can find clusters with arbitrary shape
+        \item Robust to outliers
+        \item Tuning parameters may be difficult to determine and algorithm can be sensitive to choice of parameters
+        \item Can have difficulties when the clusters have widely varying densities
+    \end{itemize}
+\end{itemize}
+
+\section{Factor Analysis}
+
+\subsection{Factor Analysis}
+
+Factor model in matrix notation:
+\[\mathbf{x}=\Lambda\mathbf{f}+\mathbf{u} \]
+\begin{itemize}
+    \item $\mathbf{x}$ and $\mathbf{u}\in\mathbb{R}^{q}$
+    \item $\mathbf{f}\in\mathbb{R}^{k}$
+    \item $\Lambda$ is a $q\times k$ matrix containing the loadings $\lambda_{jl}$
+\end{itemize}
+
+Assumptions of factor model:
+\begin{itemize}
+    \item $\mathbb{E}(\mathbf{u})=0$ and $\text{Cov}(\mathbf{u})=\Psi$ is a diagonal matrix (i.e., $\text{Cov}(u_j,u_{j'})=0$ for $j'\neq j$, $u_1,\cdots, u_q$ are uncorrelated)
+    \item $\text{Cov}(f_l,u_j)=0$ ($u_1,\cdots,u_q$ and $f_1,\cdots,f_k$ are uncorrelated)
+    \item $\mathbb{E}(\mathbf{x})=0$. We assume the data is mean-centered. Otherwise, subtract the mean vector.
+    \item $\mathbb{E}(\mathbf{f})=0, \text{Cov}(\mathbf{f})=I$. Latent factors are standardized and uncorrelated with each other.
+\end{itemize}
+
+Variance of the observed variables:
+\[\Sigma=\Lambda\Lambda^{\intercal}+\Psi \]
+\[\sigma_j^2=\text{Var}(x_j)=\sum_{l=1}^{k}\lambda_{jl}^2+\psi_j \]
+\begin{itemize}
+    \item $h_j^2=\sum_{l=1}^{k}\lambda_{jl}^2$ is called the communality. This is the variance that results from the latent factors.
+    \item $\psi_j$ is called the specific or unique variance. This is the variance that does not result from the latent factors.
+\end{itemize}
+
+Scale invariance:
+\begin{itemize}
+    \item The factor model is scale invariant
+\end{itemize}
+
+Two methods for estimation:
+\begin{itemize}
+    \item Principal factor analysis
+    \item Maximum likelihood estimation (assuming normality)
+    \begin{itemize}
+        \item Optimization is done iteratively
+        \item The R function \texttt{factanal} uses this methods
+        \item MLE method has an advantage: one can test whether the number of factors is sufficient
+        \begin{itemize}
+            \item Start with small value of $k$ and increase successively until the test does not reject
+            \item It can happen that the test always rejects the null hypothesis. This is an indication that the model does not fit well (or that the sample size is very large)
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+Heywood cases:
+\begin{itemize}
+    \item It can happen that $\hat{\psi}_j<0$ or $\hat{\psi}_j>1$. Such cases are called Heywood cases.
+\end{itemize}
+
+Orthogonal and oblique rotations:
+\begin{itemize}
+    \item Orthogonal rotation (Varimax): the factors are restricted to be uncorrelated
+    \begin{itemize}
+        \item Pros: the factor loadings represent covariances (or correlation) between factors and observed variables
+    \end{itemize}
+    \item Oblique rotation (Promax): the factors may be correlated
+    \begin{itemize}
+        \item Pros: it may be unrealistic to assume that the factors are uncorrelated. One may obtain better interpretable factors when dropping this assumption
+    \end{itemize}
+\end{itemize}
+
+\subsection{Comparison between FA and PCA}
+
+\section{Classification}
+
+\subsection{LDA \& QDA}
+
+Quadratic discriminant analysis:
+\[X\mid Y=j \sim N(\mu_j,\Sigma_j) \]
+\begin{itemize}
+    \item Decision function:
+    \[\delta_j(x)=\log(p_j)-\frac{1}{2}\log(\lvert\Sigma_j\rvert)-\frac{1}{2}(x-\mu_j)^T\Sigma_j^{-1}(x-\mu_j) \]
+    \item It is called ``quadratic'' since $x$ appears as a quadratic function in $\delta_j(x)$
+\end{itemize}
+
+Linear discrminant analysis:
+\[X\mid Y=j \sim N(\mu_j,\Sigma) \]
+\begin{itemize}
+    \item Decision function:
+    \[\delta_j(x)=\log(p_j)+x^T\Sigma^{-1}\mu_j-\frac{1}{2}\mu_j^T\Sigma^{-1}\mu_j \]
+    \item The function $\delta_j(x)$ is linear in $x$
+    \item In contrast to QDA, the quadratic term $-\frac{1}{2}x^T\Sigma^{-1}x$ has been dropped since it does not depend on $j$
+\end{itemize}
+
+Comparison between LDA and QDA:
+\begin{itemize}
+    \item LDA:
+    \begin{itemize}
+        \item Only few parameters to estimate; accurate estimates
+        \item Less flexible (linear decision boundary)
+    \end{itemize}
+    \item QDA:
+    \begin{itemize}
+        \item Many parameters to estimate; potentially less accurate estimates
+        \item More flexible (quadratic decision boundary)
+    \end{itemize}
+\end{itemize}
+
+Naive Bayes and QDA:
+\begin{itemize}
+    \item Gaussian naive Bayes is a special case of QDA:
+    \begin{itemize}
+        \item Instead of $X\mid Y=j \sim N(\mu_j,\Sigma_j)$ with $\Sigma_j$ being a general covariance matrix, it is assumed that $\Sigma_j$ is diagonal 
+        \[\Sigma_j=\text{diag}(\sigma_{1j}^2,\cdots,\sigma_{pj}^2) \]
+    \end{itemize}
+    \item In general, naive Bayes assumes that conditional on $Y=j$, the $(X_1,\cdots,X_p)$ are independent
+\end{itemize}
+
+\subsection{Fisher's Discriminant Analysis}
+
+\[U=a^TX \]
+\begin{itemize}
+    \item $a$ is called the first linear discriminant
+    \item The goal is to find $a$ such that the ``index'' $U$ separates the classes best
+\end{itemize}
+
+Computation of $a$:
+\begin{itemize}
+    \item The ratio BCV to WCV (i.e., Rayleigh quotient) can be written as 
+    \[\frac{BCV}{WCV}=\frac{a^TBa}{a^TWa} \]
+    \begin{itemize}
+        \item $B=\sum_{j=1}^{k}\frac{n_j}{n}(\bar{x}_j-\bar{x})(\bar{x}_j-\bar{x})^T$: between-group sample covariance matrix
+        \item $W=\frac{1}{n}\sum_{j=1}^{k}\sum_{i:C(i)=j}(x_i-\bar{x}_j)(x_i-\bar{x}_j)^T$: within-group sample covariance matrix
+    \end{itemize}
+    \item One can show that the vector $a$ that maximizes $\frac{a^TBa}{a^TWa}$ is given by the eigenvector of $W^{-1}B$ corresponding to the largest eigenvalue
+    \begin{itemize}
+        \item For two groups, we have $a=W^{-1}(\bar{x}_1-\bar{x}_2)$
+    \end{itemize}
+\end{itemize}
+
+Comments on Fisher's discriminant analysis:
+\begin{itemize}
+    \item Fisher's discriminant analysis is not based on a statistical model (i.e., no assumptions are made)
+    \item Extension: We can use more than one linear discriminant (LD) $a$ if we want to summarize the distinction between the groups in more than one dimension (maximally $\min(p,k-1)$ discriminants)
+    \item For two groups from two multivariate Gaussian distributions with equal covariance matrices, Fisher's discriminant analysis is equivalent to LDA (with equal prior probabilities)
+\end{itemize}
+
+\subsection{Logistic Regression}
+
+Comparison between logistic regression and LDA:
+\begin{itemize}
+    \item LDA:
+    \[\log\left(\frac{P(Y=1\mid X=x)}{P(Y=0\mid X=x)} \right)=
+    \underbrace{\log\left(\frac{p_0}{p_1}\right)-\frac{1}{2}(\mu_0+\mu_1)^T\Sigma^{-1}(\mu_1-\mu_0)}_{\alpha_0}+
+    x^T \underbrace{\Sigma^{-1}(\mu_1-\mu_0)}_{\alpha} \]
+    \item Logistic regression:
+    \[\log\left(\frac{P(Y=1\mid X=x)}{P(Y=0\mid X=x)} \right)=\beta_0+x^T\beta \]
+    \item Parameter estimation in LDA: maximize joint likelihood
+    \[\prod_{i}f(x_i,y_i)=\underbrace{\prod_{i}f(x_i\mid y_i)}_\text{Gaussian}\underbrace{\prod_{i}f(y_i)}_\text{Bernoulli} \]
+    \item Parameter estimation in logistic regression: maximize conditional likelihood
+    \[\prod_i f(x_i,y_i)=\underbrace{\prod_i f(y_i\mid x_i)}_\text{Bernoulli (logistic)}
+    \underbrace{\prod_i f(x_i)}_\text{ignored} \]
+    \item Logistic regression is thus based on less assumptions (i.e., more flexible)
+\end{itemize}
+
+
+\section{Extending Univariate Methods}
+
+\subsection{Hotelling's $T^2$-Test}
+
+One-sample $t$-test
+\begin{itemize}
+    \item Assumption: $X_1,\cdots,X_n \overset{i.i.d.}{\sim} N(\mu,\sigma^2)$, $\sigma$ unknown
+    \item Hypotheses: $H_0:\mu=\mu_0$, $H_A:\mu\neq\mu_0$
+    \item Test statistic:
+    \[T=\frac{\bar{X}_n-\mu_0}{\hat{\sigma}_{\bar{X}_n}}=\sqrt{n}\frac{\bar{X}_n-\mu_0}{s} \]
+    \begin{itemize}
+        \item $\bar{X}_{n}$: sample mean
+        \item $s$: sample standard deviation
+    \end{itemize}
+    \item If $H_0$ is true: $T\sim t_{n-1}$
+    \item Test decision:
+    \begin{itemize}
+        \item Compute $p$-value:
+        \[p=P(\lvert T\rvert\geq\lvert t\rvert) \]
+        \begin{itemize}
+            \item $T\sim t_{n-1}$
+            \item if $p\leq\alpha$, then reject $H_0$
+        \end{itemize}
+        \item Calculate critical value $t_{n-1,1-\alpha/2}$
+        \begin{itemize}
+            \item if $\lvert t\rvert\geq t_{n-1,1-\alpha/2}$, reject $H_0$
+        \end{itemize}
+        \item $\alpha$: significance level. Probability of rejecting $H_0$ even though $H_0$ is true. This is also called type I error rate.
+    \end{itemize}
+\end{itemize}
+
+Hotelling's one-sample $T^2$-test
+\begin{itemize}
+    \item Assumption: $X_1,\cdots,X_n\overset{i.i.d.}{\sim}N_q(\mu,\Sigma)$
+    \item Hypotheses: $H_0:\mu=\mu_0$, $H_A:\mu\neq\mu_0$ ($\mu,\mu_0\in R^q$)
+    \item Test statistic:
+    \[T=n(\bar{X}_n-\mu_0)^{T}S^{-1}(\bar{X}_n-\mu_0) \]
+    \begin{itemize}
+        \item $\bar{X}_n$: sample mean
+        \item $S$: sample covariance matrix
+    \end{itemize}
+    \item Transformed statistic 
+    \[F=\frac{n-q}{(n-1)q}T \]
+    \item If $H_0$ is true: $F\sim F_{q,n-q}$
+    \item Test decision:
+    \begin{itemize}
+        \item Compute $p$-value:
+        \[p=P(F>f) \]
+        \begin{itemize}
+            \item $F\sim F_{q, n-q}$
+            \item if $p\leq \alpha$, reject $H_0$
+        \end{itemize}
+        \item Calculate critical value $F_{q,n-q,1-\alpha}$
+        \begin{itemize}
+            \item if $f\geq F_{q,n-q,1-\alpha}$, reject $H_0$
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+Two-sample $t$-test:
+\begin{itemize}
+    \item Assumption: $X_1,\cdots,X_n\overset{i.i.d.}{\sim}N(\mu_X,\sigma^2)$, $Y_1,\cdots,Y_m\overset{i.i.d.}{\sim}N(\mu_Y,\sigma^2)$, $\sigma$ is unknown but equal in both groups
+    \item Hypotheses: $H_0:\mu_X=\mu_Y$, $H_A:\mu_X\neq\mu_Y$
+    \item Test statistic:
+    \[T=\frac{\bar{X}_n-\bar{Y}_m }{\hat{\sigma}_{\bar{X}_n-\bar{Y}_m}}=\sqrt{\frac{nm}{n+m}}\frac{\bar{X}_n-\bar{Y}_m}{s_p} \]
+    \begin{itemize}
+        \item $s_p^2$ is the pooled variance, $s_p^2=\dfrac{(n-1)s_X^2+(m-1)s_Y^2}{n+m-2}$
+    \end{itemize}
+    \item If $H_0$ is true: $T\sim t_{n+m-2}$
+    \item Test decision:
+    \begin{itemize}
+        \item Compute $p$-value
+        \[p=P(\lvert T\rvert\geq\lvert t\rvert) \]
+        \begin{itemize}
+            \item $T\sim t_{n+m-2}$
+            \item if $p\leq\alpha$, then reject $H_0$
+        \end{itemize}
+        \item Calculate critical value $t_{n+m-2,1-\alpha/2}$
+        \begin{itemize}
+            \item if $\lvert t\rvert\geq t_{n+m-2,1-\alpha/2}$, reject $H_0$
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+Hotelling's two-sample $T^2$-test:
+\begin{itemize}
+    \item Assumption: $X_1,\cdots,X_n\overset{i.i.d.}{\sim}N_q(\mu_X,\Sigma)$, $Y_1,\cdots,Y_m\overset{i.i.d.}{\sim}N_q(\mu_Y,\Sigma)$, $\Sigma$ is unknown but equal in both groups
+    \item Hypotheses: $H_0:\mu_X=\mu_Y$, $H_A:\mu_X\neq\mu_Y$ ($\mu_X,\mu_Y\in R^q$)
+    \item Test statistic:
+    \[T=\frac{nm}{n+m}(\bar{X}_n-\bar{Y}_m)^{T}S^{-1}(\bar{X}_n-\bar{Y}_m) \]
+    \begin{itemize}
+        \item $\bar{X}_n$: sample mean
+        \item $S$: pooled covariance matrix
+    \end{itemize}
+    \item Transformed statistic 
+    \[F=\frac{n+m-q-1}{(n+m-2)q}T \]
+    \item If $H_0$ is true: $F\sim F_{q,n+m-q-1}$
+    \item Test decision:
+    \begin{itemize}
+        \item Compute $p$-value:
+        \[p=P(F>f) \]
+        \begin{itemize}
+            \item $F\sim F_{q, n+m-q-1}$
+            \item if $p\leq \alpha$, reject $H_0$
+        \end{itemize}
+        \item Calculate critical value $F_{q,n+m-q-1,1-\alpha}$
+        \begin{itemize}
+            \item if $f\geq F_{q,n+m-q-1,1-\alpha}$, reject $H_0$
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Confidence Regions}
+
+Confidence interval based on one-sample $t$-test:
+\begin{itemize}
+    \item $1-\alpha$ confidence interval $I$ for $\mu$: all $\mu_0$ for which $H_0:\mu=\mu_0$ is not rejected at level $\alpha$
+    \[\Big\lvert\sqrt{n}\frac{\bar{X}_n-\mu_0}{s} \Big\rvert<t_{n-1,1-\alpha/2} \]
+    \[I=\bar{X}_n\pm\frac{s}{\sqrt{n}}t_{n-1,1-\alpha/2} \]
+    \item Interpretation: if we observed many times $n$ data points from the same model, the random interval $I$ would contain the true parameter $\mu$ in $1-\alpha$ percent of all cases
+\end{itemize}
+
+Confidence interval based on one-sample $T^2$-test:
+\begin{itemize}
+    \item $1-\alpha$ confidence interval $I$ for $\mu$: all $\mu_0$ for which $H_0:\mu=\mu_0$ is not rejected at level $\alpha$ ($\mu,\mu_0\in R^q$)
+    \[\frac{(n-q)n}{(n-1)q}(\bar{X}_n-\mu_0)^TS^{-1}(\bar{X}_n-\mu_0)< F_{q,n-q,1-\alpha} \]
+    \[(\bar{X}_n-\mu_0)^TS^{-1}(\bar{X}_n-\mu_0)<\frac{(n-1)q}{(n-q)n}F_{q,n-q,1-\alpha} \]
+    \item This corresponds to all $\mu_0$ in the ellipsoid with center $\bar{X}_n$, shape $S$, and size $\frac{(n-1)q}{(n-q)n}F_{q,n-q,1-\alpha}$
+\end{itemize}
+
+\subsection{Multivariate Linear Regression}
+
+Matrix notation:
+\[\underset{n\times k}{\mathbf{Y}}=\underset{n\times(p+1)}{\mathbf{X}}\underset{(p+1)\times k}{\mathbf{B}}+\underset{n\times k}{\boldsymbol{\epsilon}} \]
+\begin{itemize}
+    \item Estimation:
+    \[RSS(\mathbf{B})=(\mathbf{Y}-\mathbf{X}\mathbf{B})^{\intercal}\boldsymbol{\Sigma}^{-1}(\mathbf{Y}-\mathbf{X}\mathbf{B}) \]
+    \item Solution:
+    \[\hat{\mathbf{B}}=(\mathbf{X}^{\intercal}\mathbf{X})^{-1}\mathbf{X}^{\intercal}\mathbf{Y} \]
+    \item Surprising result: estimates for both coefficients and standard deviations are the same if doing $k$ univariate multiple regressions or one multivariate regression
+\end{itemize}
+
+Comments on MANOVA and multivariate linear regression:
+\begin{itemize}
+    \item Allows for calculating:
+    \begin{itemize}
+        \item Confidence regions for several parameters for different responses
+        \item Joint tests for parameters of different responses
+        \item Not well supported in statistical software (including R)
+    \end{itemize}
+    \item Can be useful if you want to test if some predictors have an influence on any response
+\end{itemize}
+
+\subsection{Multiple Testing}
+
+\end{document}
