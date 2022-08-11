@@ -1,0 +1,229 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+%\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{setspace}
+% \usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[top=2.0cm, left=2.0cm, right=2.0cm, bottom=3.0cm]{geometry}
+
+\renewcommand{\familydefault}{\sfdefault}
+\newcommand{\notimplies}{\;\not\!\!\!\implies}
+
+\title{%
+    Bayesian Statistics
+}
+\author{Wenjie Tu}
+\date{Fall Semester 2021}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+%\onehalfspacing
+\begin{document}
+
+\maketitle
+
+\begin{itemize}
+    \item Base rate paradox
+    \begin{itemize}
+        \item $P(B\mid A_1)\gg P(B\mid A_2) \notimplies P(A_1\mid B)>P(A_2\mid B)$ 
+        \item Often $P(B\mid A_1)$ large and $P(A_1)$ very small
+    \end{itemize}
+    \item Challenges of Bayesian inference
+    \begin{itemize}
+        \item Finding a good model (both prior and likelihood)
+        \item Calculating the posterior
+        \item Assessing the fit of the model
+    \end{itemize}
+    \item Comparison between Bayesian and frequentist
+    \item Bayesian point estimates
+    \begin{itemize}
+        \item A Bayesian point estimate summarizes the posterior distribution in a number. The following estimates for the location are often used:
+        \begin{itemize}
+            \item Posterior mean
+            \item Posterior median
+            \item Posterior mode
+        \end{itemize}
+    \end{itemize}
+    \item Bayesian decision theory
+    \begin{itemize}
+        \item Bayesian decision theory provides a unified approach for Bayesian point estimates
+        \item The posterior risk is the expected loss under the posterior:
+        \[\rho(T(x),\pi)=\mathbb{E}(L(T(X),\theta)\mid x)=\int_{\Theta}L(T(X),\theta)\pi(\theta\mid x)d\theta \]
+        \begin{itemize}
+            \item It is obtained by integrating the loss function over the posterior of the parameter $\theta$
+            \item It depends on the data $x$ but not on the parameter $\theta$
+        \end{itemize}
+    \end{itemize}
+    \item Frequentist decision theory
+    \begin{itemize}
+        \item The frequentist risk:
+        \[R(T,\theta)=\mathbb{E}_{\theta}(L(T(X),\theta))=\int_{X}L(T(x),\theta)f(x\mid\theta)dx \]
+        \begin{itemize}
+            \item It is obtained by integrating the loss function over the data $x$
+            \item It depends on the parameter $\theta$ but on the data
+        \end{itemize}
+        \item How to minimize the frequentist risk?
+        \begin{itemize}
+            \item Minimax
+            \item Minimize weighted risk
+            \item Admissibility
+        \end{itemize}
+    \end{itemize}
+    \item Testing: Frequentist vs. Bayesian statistics
+    \item Decisions based on Bayes factors
+    \item $p$-values vs. posterior probability
+    \begin{itemize}
+        \item In frequentist statistics, the $p$-value is taken as a measure of evidence against the null hypothesis.
+        \item $p$-value is not the same as the posterior probability of the null hypothesis.
+        \item Posterior probabilities can be substantially larger than $p$-values.
+        \item $p$-values can be misleading measures of evidence against the null hypothesis.
+        \item Do not confuse $P(H_0\text{ true}\mid \text{data})$ with $P(\text{data}\mid H_0\text{ true})$
+    \end{itemize}
+    \item Highest posterior density credible set and central credible interval
+    \begin{itemize}
+        \item The equi-tailed credible interval has $\frac{\alpha}{2}$ and $1-\frac{1}{\alpha}$ quantiles of $\pi(\theta\mid x)$ at its endpoints.
+        \begin{itemize}
+            \item Easy to compute from MC and MCMC samples
+            \item Nice invariance properties
+        \end{itemize}
+        \item The highest posterior density interval provides the shortest possible $(1-\alpha)$ credible interval.
+        \begin{itemize}
+            \item For symmetric distributions it coincides with equi-tailed credible interval
+            \item Hard to compute
+            \item Invariance property does not apply
+        \end{itemize}
+    \end{itemize}
+    \item Frequentist asymptotics vs. Bayesian asymptotics
+    \begin{itemize}
+        \item Frequentist asymptotics:
+        \[\widehat{\theta}_n\overset{\text{approx}}{\sim}\mathcal{N}\left(\theta_0, \frac{1}{n}I(\theta_0)^{-1} \right) \]
+        \[2\left(\log L_n(\widehat{\theta}_n)-\log L_n(\theta_0) \right)\overset{d}{\to}\chi_p^2 \]
+        \item Bayesian asymptotics:
+        \[\theta\mid(x_1,\cdots,x_n)\overset{\text{approx}}{\sim}\mathcal{N}\left(\widehat{\theta}_n,\frac{1}{n}I(\widehat{\theta}_n)^{-1} \right) \]
+        \begin{itemize}
+            \item Interpretation: the influence of the prior disappears asymptotically and the posterior is concentrated in a $\sqrt{\frac{1}{n}}$ neighborhood of the MLE.
+        \end{itemize}
+    \end{itemize}
+    \item Likelihood principle
+    \begin{itemize}
+        \item Conditionality principle
+        \begin{itemize}
+            \item If an experiment for inference about a parameter $\theta$ is chosen independently from a collection of different possible experiments, then any experiment not chosen is irrelevant to the inference.
+        \end{itemize}
+        \item Sufficiency principle
+        \begin{itemize}
+            \item If there are two observations $x$ and $y$ such that $T(x)=T(y)$ for a sufficient statistic $T$, then any conclusion about $theta$ should be the same for $x$ and $y$.
+        \end{itemize}
+        \item Likelihood principle
+        \begin{itemize}
+            \item If there are two different experiments for inference about the same parameter $\theta$ and if the outcomes $x$ and $y$ from the two experiments are such that the likelihood functions differ only by a multiplicative constant, then the inference should be the same.
+        \end{itemize}
+        \item Conclusions
+        \begin{itemize}
+            \item Frequentist tests can violated the likelihood principle
+            \item Bayesian tests do not suffer from this drawback
+            \item Point estimation by maximum likelihood does obey the likelihood principle
+        \end{itemize}
+    \end{itemize}
+    \item Conjugate priors \& sufficient statistics \& exponential families?
+    \begin{itemize}
+        \item If the posterior distribution $\pi(\theta\mid x)$ is in the same probability distribution family as the prior probability distribution $\pi(\theta)$, the prior and posterior are called conjugate distributions, and the prior is called a conjugate prior for the likelihood function $f(x\mid\theta)$.
+        \item Exponential family is the only class of distributions which allow for sufficient statistics whose dimension is independent of $n$.
+    \end{itemize}
+    \item Non-informative priors (uniform prior)
+    \begin{itemize}
+        \item Finite volume
+        \item Not invariant under reparametrizations
+    \end{itemize}
+    \item Improper priors
+    \begin{itemize}
+        \item A prior $\pi(\theta)$ is called an improper prior if
+        \[\int_{\Theta}\pi(\theta)d\theta=\infty \]
+        \begin{itemize}
+            \item Depending on the likelihood, $\pi(\theta)f(x\mid\theta)$ can have both finite or infinite total mass if $\pi(\theta)$ has infinite mass
+        \end{itemize}
+        \item Improper priors with proper posteriors can be justified as follows
+        \begin{itemize}
+            \item Approximate an improper prior by a sequence of proper priors $\pi_k$
+            \item Show that the associated sequence of posteriors $\pi_k(\theta\mid x)$ converges to $\pi(\theta\mid x)$
+        \end{itemize}
+    \end{itemize}
+    \item Equivariance of Jeffreys prior
+    \begin{itemize}
+        \item Jeffreys prior:
+        \[\pi(\theta)\propto\det(I(\theta))^{1/2} \]
+        where $I(\theta)$ is the Fisher information matrix
+        \[I(\theta)=-\mathbb{E}_{\theta}\left(\frac{\partial^2}{\partial\theta\partial\theta^T}\log f(X\mid\theta) \right) \]
+        \item Conclusions:
+        \begin{itemize}
+            \item Jeffreys prior is usually a good choice for scalar parameters, but for vector parameters, it can have undesirable features.
+            \item It often leads to improper priors.
+            \item It violates the likelihood principle because the Fisher information contains an integral over $X$.
+        \end{itemize}
+    \end{itemize}
+    \item Reference priors
+    \begin{itemize}
+        \item A reference prior is a prior $\pi$ for which the distance between the prior $\pi$ and the posterior $\pi(\theta\mid x)$ is maximal. If the prior has a small influence on the posterior, the data $x$ has the largest possible impact.
+    \end{itemize}
+    \item Kullback-Leibler divergence
+    \[KL(f,g)=\int f(x)\log\frac{f(x)}{g(x)}dx \]
+    \begin{itemize}
+        \item In general $KL(f,g)\neq KL(g,f)$
+        \item It satisfies $KL(f,g)\geq 0$ and $KL(f,g)=0$ if and only if $f(x)=g(x)$ for almost all $x$
+    \end{itemize}
+    \item Problem with maximization of mutual information $I(X,\theta)$
+    \item Bernardo's approach for nuisance parameters
+    \item Connection between regularization and prior
+    \item Pros and cons of empirical Bayes method
+    \begin{itemize}
+        \item Pros:
+        \begin{itemize}
+            \item Do not need to compute the integral
+            \item Do not need to choose a hyperprior
+        \end{itemize}
+        \item Cons:
+        \begin{itemize}
+            \item The data $x$ is used twice
+            \item In general, $\pi(\theta\mid x,\widehat{\xi}(x))$ underestimates uncertainty in $\pi(\theta\mid x)$
+        \end{itemize}
+    \end{itemize}
+    \item $g$-prior
+    \begin{itemize}
+        \item The $g$-prior is a middle ground between being informative and completely non-informative. The idea is to introduce (possibly weak) prior information about $\beta_{\gamma}$ but to bypass the prior correlation structure of $\beta_{\gamma}$
+        \item Since for the MLE $\hat{\beta}_{\gamma}$, $\text{Var}(\hat{\beta}_{\gamma})=(\mathbf{X}_{\gamma}^{\intercal}\mathbf{X}_{\gamma})^{-1}\hat{\sigma}^2$, the prior puts more mass in areas of the paramtere space where we expect the data to be more informative about $\beta$ on average
+        \item $g>0$ is a hyperparameter which can be interpreted as being inversely proportional to the amount of information available in the prior relative to the data
+        \begin{itemize}
+            \item $g=1$ gives the prior the same weight as the data
+            \item When $g$ is large, the prior is weakly informative. For $g\to\infty, \pi(\beta_{\gamma}\mid\sigma^2)\propto 1$
+        \end{itemize}
+    \end{itemize}
+    \item Model selection and improper priors
+    \item Bayesian model averaging
+    \item How to choose $g$
+    \begin{itemize}
+        \item Bartlett's paradox
+        \item Information paradox
+    \end{itemize}
+    \item Laplace approximation
+    \item Bayes factor and Bayesian information criterion (BIC)
+    \item Independent Monte Carlo
+    \begin{itemize}
+        \item Quantile transformation (inverse transform sampling)
+    \end{itemize}
+    \item Rejection sampling
+    \item Importance sampling
+    \item Sampling importance resampling
+    \item Markov chain Monte Carlo
+    \item Gibbs sampler
+    \item Metropolis-Hastings algorithm
+    \begin{itemize}
+        \item Random walk Metropolis algorithm
+    \end{itemize}
+    \item Adaptive MCMC
+    \item Hamiltonian Monte Carlo
+    \item Sequential Monte Carlo
+    \item Approximate Bayesian computation
+\end{itemize}
+
+\end{document}
