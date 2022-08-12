@@ -206,6 +206,9 @@
         \item Information paradox
     \end{itemize}
     \item Laplace approximation
+    \begin{itemize}
+        \item Laplace approximation refers to approximating the posterior normalizing constant with Laplace's method.
+    \end{itemize}
     \item Bayes factor and Bayesian information criterion (BIC)
     \item Independent Monte Carlo
     \begin{itemize}
@@ -215,13 +218,48 @@
     \item Importance sampling
     \item Sampling importance resampling
     \item Markov chain Monte Carlo
+    \begin{itemize}
+        \item MCMC provides a class of algorithms for systematic random sampling from high-dimensional probability distributions. It works by constructing a Markov chain that eventually converges to the target distribution (stationary or equilibrium)
+        \begin{itemize}
+            \item Irreducible (no matter where you start, the chain is always able to reach to other point in a finite number of iterations with positive probability)
+            \item Aperiodic (no periodic pattern)
+            \item Positive-recurrent (the expected return time to any state is finite)
+        \end{itemize}
+        \item Due to the Markov property, samples are not independent anymore
+        \item Independent Monte Carlo sampling is inefficient or even intractable for high-dimensional probabilistic models
+    \end{itemize}
     \item Gibbs sampler
+    \begin{itemize}
+        \item The Gibbs sampler is a special case of the single-component Metropolis-Hastings algorithm, which uses the full conditional posterior distribution as the proposal distribution. For each time, the Gibbs sampler works with a univariate proposal distribution (all components except one are held fixed at their given values).
+        \item In each step, random values are generated from univariate distributions (easy to compute).
+        \item Require closed form of the full conditional posterior.
+        \item Acceptance rate is equal to 1.
+        \item Gibbs sampler does not require any tuning of proposal distribution.
+        \item Gibbs sampler can be ineffective when the parameter space is complicated or the parameters are highly correlated (slow).
+    \end{itemize}
     \item Metropolis-Hastings algorithm
     \begin{itemize}
+        \item Reversibility (the probability of transitioning from state $A$ to state $B$ is equal to the probability of transitioning from state $B$ to state $A$)
+        \item A distribution $\pi$ is called reversible for the transition kernel $P$ if
+        \[\int_A\pi(x)P(x, B)dx=\int_B\pi(x)P(x,A)dx \qquad\forall A, B \]
+        \[\pi(x)p(x,y)=\pi(y)p(y,x) \]
+        \item Compact form of MH algorithm:
+        \[p(x,y)=q(x,y)a(x,y) \]
+        \[a(x,y)=\min\left(1,\frac{\pi(y)q(y,x)}{\pi(x)q(x,y)} \right) \]
         \item Random walk Metropolis algorithm
+        \[a(x,y)=\min\left(1,\frac{\pi(y)}{\pi(x)} \right) \]
     \end{itemize}
     \item Adaptive MCMC
+    \begin{itemize}
+        \item How to choose $\Sigma$ such that the average acceptance rate after the burn-in phase is 23.4\%
+    \end{itemize}
     \item Hamiltonian Monte Carlo
+    \begin{itemize}
+        \item Gibbs sampler makes only small moves
+        \item RWM algorithm makes either small moves (with higher acceptance rate and autocorrelation) or big moves with lower acceptance rate (inefficient)
+        \item Hamiltonian Monte Carlo allows for making big moves that are still accepted with high probability
+        \item Hamiltonian dynamics: using a time-reversible and volume-preserving numerical integrator to porpose a move to a new point in the state space.
+    \end{itemize}
     \item Sequential Monte Carlo
     \item Approximate Bayesian computation
 \end{itemize}
