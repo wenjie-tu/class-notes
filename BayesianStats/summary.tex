@@ -36,6 +36,12 @@
         \item Assessing the fit of the model
     \end{itemize}
     \item Comparison between Bayesian and frequentist
+    \begin{itemize}
+        \item Assumption (parameters)
+        \item Estimation (MLE, MCMC)
+        \item Testing (NHST, Bayes factors)
+        \item Bayesian learning (few observations, prior belief)
+    \end{itemize}
     \item Bayesian point estimates
     \begin{itemize}
         \item A Bayesian point estimate summarizes the posterior distribution in a number. The following estimates for the location are often used:
@@ -72,7 +78,7 @@
     \end{itemize}
     \item Testing: Frequentist vs. Bayesian statistics
     \item Decisions based on Bayes factors
-    \item $p$-values vs. posterior probability
+    \item $p$-values vs. posterior probability (confidence interval interpretation)
     \begin{itemize}
         \item In frequentist statistics, the $p$-value is taken as a measure of evidence against the null hypothesis.
         \item $p$-value is not the same as the posterior probability of the null hypothesis.
@@ -113,7 +119,7 @@
         \end{itemize}
         \item Sufficiency principle
         \begin{itemize}
-            \item If there are two observations $x$ and $y$ such that $T(x)=T(y)$ for a sufficient statistic $T$, then any conclusion about $theta$ should be the same for $x$ and $y$.
+            \item If there are two observations $x$ and $y$ such that $T(x)=T(y)$ for a sufficient statistic $T$, then any conclusion about $\theta$ should be the same for $x$ and $y$.
         \end{itemize}
         \item Likelihood principle
         \begin{itemize}
@@ -121,7 +127,7 @@
         \end{itemize}
         \item Conclusions
         \begin{itemize}
-            \item Frequentist tests can violated the likelihood principle
+            \item Frequentist tests can violate the likelihood principle
             \item Bayesian tests do not suffer from this drawback
             \item Point estimation by maximum likelihood does obey the likelihood principle
         \end{itemize}
@@ -200,6 +206,10 @@
     \end{itemize}
     \item Model selection and improper priors
     \item Bayesian model averaging
+    \begin{itemize}
+        \item Making predictions under every model
+        \item Averaging all predictions according to the posterior probability of each model
+    \end{itemize}
     \item How to choose $g$
     \begin{itemize}
         \item Bartlett's paradox
@@ -215,7 +225,14 @@
         \item Quantile transformation (inverse transform sampling)
     \end{itemize}
     \item Rejection sampling
+    \begin{itemize}
+        \item Rejection sampling is a Monte Carlo algorithm to sample data from a sophisticated distribution with the help of a proxy distribution.
+    \end{itemize}
     \item Importance sampling
+    \begin{itemize}
+        \item Importance sampling is based on a similar idea as rejection sampling. Instead of rejecting some variables, we weight them with an appropriate weighting function.
+        \item Rejection area vs. acceptance area
+    \end{itemize}
     \item Sampling importance resampling
     \item Markov chain Monte Carlo
     \begin{itemize}
