@@ -1,0 +1,203 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+%\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{setspace}
+% \usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[top=2.0cm, left=2.0cm, right=2.0cm, bottom=3.0cm]{geometry}
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\title{%
+    Bayesian Statistics
+}
+\author{Wenjie Tu}
+\date{Spring Semester 2022}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+%\onehalfspacing
+\begin{document}
+
+\maketitle
+
+\section*{Basics in Bayesian statistics}
+
+\begin{itemize}
+    \item Likelihood: $f(x\mid\theta)$
+    \item Prior: $\pi(\theta)$
+    \item Posterior: $\pi(\theta\mid x)=\dfrac{\pi(\theta)f(x\mid\theta)}{f(x)}\propto\pi(\theta)f(x\mid\theta)$
+    \item Prior predictive density: $f(x)=\int f(x\mid\theta)\pi(\theta)d\theta$
+    \item Posterior predictive density: $f(y\mid x)=\int f(y\mid x,\theta)\pi(\theta\mid x)d\theta$
+\end{itemize}
+
+\section*{Bayesian point estimates}
+
+\begin{itemize}
+    \item Posterior mean:
+    \[\mathbb{E}((\theta-T)^2\mid x)=\mathbb{E}(\theta^2\mid x)-2\mathbb{E}(\theta\mid x)T+T^2 \]
+    This is minimized for $T=T(X)=\mathbb{E}(\theta\mid x)$
+    \item Posterior median:
+    \[\mathbb{E}(\lvert\theta-T\rvert\mid x)=\int_{-\infty}^{T}(T-\theta)\pi(\theta\mid x)d\theta+
+    \int_{T}^{\infty}(\theta-T)\pi(\theta\mid x)d\theta \]
+    Using the Leibniz integral rule it follows that
+    \[\frac{\partial}{\partial T}\mathbb{E}(\lvert\theta-T\rvert\mid x)=
+    \int_{-\infty}^{T}\pi(\theta\mid x)d\theta-\int_{T}^{\infty}\pi(\theta\mid x)d\theta \]
+    This equals zero if $T=T(X)=\text{median} \pi(\theta\mid x)$ 
+    \item Posterior mode:
+    \[\mathbb{E}(1_{[-\varepsilon,\varepsilon]^{c}}(T-\theta)\mid x)=
+    1-\int_{T-\varepsilon}^{T+\varepsilon}\pi(\theta\mid x)d\theta \]
+    For small $\varepsilon$, we have
+    \[\int_{T-\varepsilon}^{T+\varepsilon}\pi(\theta\mid x)d\theta\approx2\varepsilon\pi(\theta\mid x) \]
+    This is maximized, i.e., $\mathbb{E}(1_{[-\varepsilon,\varepsilon]^{c}}(T-\theta)\mid x)$ is minimized, for $T=T(X)=\text{mode}\pi(\theta\mid x)$
+\end{itemize}
+
+\section*{Bayesian decision theory}
+
+\begin{itemize}
+    \item Posterior risk:
+    \[\rho(T(x),\pi)=\mathbb{E}(L(T(X),\theta)\mid x)=\int_{\Theta}L(T(x),\theta)\pi(\theta\mid x)d\theta \]
+    \item Frequentist risk:
+    \[R(T,\theta)=\mathbb{E}_{\theta}(L(T(X),\theta),\theta)=\int_{\mathbf{X}}L(T(x),\theta)f(x\mid\theta)dx \]
+    \item Bayes factor:
+    \[B_{01}(x)=\frac{f(x\mid\theta_0)}{f(x\mid\theta_1)}=\frac{\pi(\theta_0\mid x)\pi(\theta_1)}{\pi(\theta_1\mid x)\pi(\theta_0)}=
+    \frac{\frac{\pi(\theta_0\mid x)}{\pi(\theta_1\mid x)}}{\frac{\pi(\theta_0}{\pi(\theta_1)}}=
+    \frac{\text{Posterior odds}}{\text{Prior odds}}\]
+\end{itemize}
+
+\section*{Bayesian asymptotics}
+
+\begin{itemize}
+    \item Frequentist asymptotocs:
+    \[\widehat{\theta}_n\overset{\text{approx}}{\sim}\mathcal{N}\left(\theta_0,\frac{1}{n}I(\theta_n)^{-1}\right) \]
+    \[2\left(\log L_n(\widehat{\theta}_n)-\log L_n(\theta_n) \right)\overset{\text{d}}{\longrightarrow}\chi_p^2 \]
+    \item Bayesian asymptotics:
+    \[\theta\mid (x_1,\cdots,x_n)\overset{\text{approx}}{\sim}\mathcal{N}\left(\widehat{\theta}_n,\frac{1}{n}I(\widehat{\theta}_n)^{-1} \right) \]
+\end{itemize}
+
+\section*{Likelihood principle}
+
+\begin{itemize}
+    \item Repeat the trial a fixed number $n$ times and observe the random number $X$ of trials where the event occurred:
+    \[P(X=x)=\binom{n}{x}p^x(1-p)^{n-x} \]
+    \begin{itemize}
+        \item Binomial distribution
+        \item Reject $H_0$ if $x>c_1$
+    \end{itemize}
+    \item Repeat the experiment a random number of $N$ times until the event has occurred a fixed number of times $x$:
+    \[P(N=n)=\binom{n-1}{x-1}p^x(1-p)^{n-x} \]
+    \begin{itemize}
+        \item Negative binomial distribution
+        \item Reject $H_0$ if $n<c_2$
+    \end{itemize}
+\end{itemize}
+
+\section*{Priors}
+
+\begin{itemize}
+    \item Conjugate priors:
+    \[\pi_{\xi}(\theta)f(x\mid\theta)\propto\pi_{\xi'}(\theta) \]
+    \item Improper priors:
+    \[\int_{\theta}\pi(\theta)=\infty \]
+    \item Jeffreys prior:
+    \[\pi(\theta)\propto\det(I(\theta))^{1/2} \]
+    \item Reference prior:
+    \begin{align*}
+        I(X,\theta)&=\int_{X}f(x)\int_{\Theta}\pi(\theta\mid x)\log\frac{\pi(\theta\mid x)}{\pi(\theta)}d\theta dx \\
+        &=\int_{X}f(x)\int_{\Theta}\frac{\pi(x,\theta)}{f(x)}\log\frac{\pi(x,\theta)}{\pi(\theta)f(x)}d\theta dx \\
+        &=\int_{X\times\Theta}\pi(x,\theta)\log\frac{\pi(x,\theta)}{\pi(\theta)f(x)} dx d\theta \\
+        &=KL(\pi(x,\theta),\pi(\theta)f(x))
+    \end{align*}
+\end{itemize}
+
+\section*{Hierarchical Bayes models}
+
+\begin{itemize}
+    \item Hierarchical Bayes models:
+    \[\pi(\xi)\pi(\theta\mid\xi)f(x\mid\theta) \]
+    \item Marginal posterior: approach 1
+    \begin{itemize}
+        \item Compute the marginal prior:
+        \[\pi(\theta)=\int\pi(\theta\mid\xi)\pi(\xi)d\xi \]
+        \item Then use Bayes formula:
+        \[\pi(\theta\mid x)\propto\pi(\theta)f(x\mid\theta) \]
+    \end{itemize}
+    \item Marginal posterior: approach 2
+    \begin{itemize}
+        \item Law of total probability (computationally easier):
+        \[\pi(\theta\mid x)=\int\pi(\theta\mid x,\xi)\pi(\xi\mid x)d\xi\propto\int\pi(\theta\mid x,\xi)\pi(\xi)f(x\mid\xi)d\xi \]
+        \begin{itemize}
+            \item $\pi(\xi\mid x)=\int \pi(\theta,\xi\mid x)d\theta=\int\pi(\theta\mid x)\pi(\theta\mid\xi)d\theta$
+            \item $\pi(\xi\mid x)=\dfrac{\pi(\theta,\xi\mid x)}{\pi(\theta\mid x,\xi)}$
+            \item $\int f(x\mid\xi)=\int \pi(x,\theta\mid\xi)d\theta=\int f(x\mid\theta)\pi(\theta\mid\xi)d\theta$
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\section*{Empirical Bayes method}
+
+\begin{itemize}
+    \item Marginal posterior can be computed as
+    \[\pi(\theta\mid x)\propto\int\pi(\theta\mid x,\xi)f(x\mid\xi)\pi(\xi)d\xi \]
+    \item Instead of approximating this integral, the empirical Bayes method uses
+    \[\pi(\theta\mid x)\approx\pi(\theta\mid x,\hat{\xi}(x))=
+    \frac{f(x\mid\theta)\pi(\theta\mid\hat{\xi}(x))}{f(x\mid\hat{\xi}(x))} \]
+    where
+    \[\hat{\xi}(x)=\arg\max_{\xi} f(x\mid\xi)=\arg\max_{\xi}\int f(x\mid\theta)\pi(\theta\mid\xi)d\theta \]
+\end{itemize}
+
+\section*{Bayesian linear regression}
+
+\begin{itemize}
+    \item Model:
+    \[y=\alpha\mathbf{1}+X_{\gamma}\beta_{\gamma}+\varepsilon \]
+    \item $g$-prior of Zellner:
+    \[\beta_{\gamma}\mid\sigma^2\sim\mathcal{N}\left(\beta_{\gamma}^{0}, g\sigma^2(X_{\gamma}^TX_{\gamma}^{-1})\right) \]
+    \begin{itemize}
+        \item $\beta_{\gamma}^0$ is the prior mean. Often $\beta_{\gamma}^0=0$
+    \end{itemize}
+\end{itemize}
+
+\section*{Laplace approximation}
+
+\begin{itemize}
+    \item Laplace approximations are used to approximate integrals of the form
+    \[\int h(\theta)q(\theta)d\theta \]
+    where
+    \begin{itemize}
+        \item $q$ is a possibly unnormalized smooth density which is concentrated around its mode $\theta_0=\arg\max\log q(\theta)$
+        \item $h$ is an arbitrary smooth function
+    \end{itemize}
+    \item Expanding $\log q(\theta)$ into a second-order Taylor series at $\theta_0$:
+    \[\log q(\theta)\approx\log q(\theta_0)-\frac{1}{2}(\theta-\theta_0)^TJ(\theta_0)(\theta-\theta_0) \]
+    \[q(\theta)\approx q(\theta_0)\exp\left(-\frac{1}{2}(\theta-\theta_0)^TJ(\theta_0)(\theta-\theta_0) \right) \]
+    where $J(\theta)$ is the negative Hessian:
+    \[J(\theta)_{ij}=-\frac{\partial^2}{\partial\theta_i\partial\theta_j}\log q(\theta) \]
+    \item Expanding $h(\theta)$ into a first-order Taylor series at $\theta_0$:
+    \[h(\theta)\approx h(\theta_0)+\frac{\partial h}{\partial\theta}(\theta_0)^T(\theta-\theta_0) \]
+    \item Laplace approximation is given by
+    \begin{align*}
+        \int h(\theta)q(\theta)d\theta&\approx
+        \int \left(h(\theta_0)+\frac{\partial h}{\partial\theta}(\theta_0)^T(\theta-\theta_0)\right)
+        q(\theta_0)\exp\left(-\frac{1}{2}(\theta-\theta_0)^TJ(\theta_0)(\theta-\theta_0) \right)d\theta \\
+        &=h(\theta_0)q(\theta_0)\int\exp\left(-\frac{1}{2}(\theta-\theta_0)^TJ(\theta_0)(\theta-\theta_0) \right)d\theta \\
+        &=\int h(\theta)q(\theta)d\theta\approx h(\theta_0)q(\theta_0)(\det J(\theta_0))^{-1/2}(2\pi)^{p/2}
+    \end{align*}
+    \begin{itemize}
+        \item $\theta_0=\arg\max \log q(\theta)$
+        \item $J(\theta)$ is the negative Hessian
+        \[J(\theta)_{ij}=-\frac{\partial^2}{\partial\theta_i\partial\theta_j}\log q(\theta) \]
+    \end{itemize}
+\end{itemize}
+
+\section*{Importance sampling}
+
+\begin{itemize}
+    \item Monte Carlo sampling:
+    \[\mathbb{E}(f(x))=\int f(x)p(x)dx\approx\frac{1}{n}\sum_i f(x_i) \]
+    \item Importance sampling:
+    \[\mathbb{E}(f(x))=\int f(x)p(x)dx=\int f(x)\frac{p(x)}{q(x)}q(x)dx\approx\frac{1}{n}\sum_if(x_i)\frac{p(x_i)}{q(x_i)} \]
+\end{itemize}
+
+\end{document}
