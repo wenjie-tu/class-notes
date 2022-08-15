@@ -1,0 +1,122 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+%\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{setspace}
+% \usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[top=2.0cm, left=2.0cm, right=2.0cm, bottom=3.0cm]{geometry}
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\title{%
+    Applied Multivariate Statistics
+}
+\author{Wenjie Tu}
+\date{Spring Semester 2022}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+%\onehalfspacing
+\begin{document}
+
+%\maketitle
+
+\section{Introduction \& Visualization}
+
+\begin{itemize}
+    \item Covariance and correlation are both measures of \textbf{linear} dependence.
+    \item Correlation is scale invariant (invariant to changes in units) while covariance is not.
+    \item The multivariate mean is given by the component-wise means of the marginal distributions, while multivariate mode and median are not.
+    \item A multivariate outlier is not necessarily also an outlier in the marginal distribution.
+    \item A data point that is not an outlier in a two-dimensional subspace can be an outlier in higher dimensions.
+    \item Star plot is useful if the number of observations is not too large ($n<50$) and the number of variables is not too large ($q<10$).
+    \item Parallel coordinates plot can be easily overcrowded and sensitive to the order of the variables. It is useful when combined with color.
+    \item Conditioning plot can be used to investigate how the relationship between $X$ and $Y$ changes for different values of $Z$. It is useful for datasets with a large number of observations, but one can only consider 3 (or 40) variables at a time.
+\end{itemize}
+
+\section{Visualization of Categorical Data \& Outlier Detection}
+
+\begin{itemize}
+    \item If the data is not multivariate normal, points with large Mahalanobis distance are still potential outliers.
+\end{itemize}
+
+\section{Principal Component Analysis}
+
+\begin{itemize}
+    \item Note that the sign of the PC loadings is arbitrary since $S=ADA^T=(-A)D(-A)^T$.
+    \item Using the correlation matrix is equivalent to using the covariance matrix of the scaled variables.
+    \item PCA is sensitive to outliers, since it is based on the sample covariance matrix $S$ or the sample correlation matrix $R$, which are sensitive to outliers.
+    \item \texttt{princomp} uses the spectral decomposition of the covariance or correlation matrix.
+    \item \texttt{prcomp} uses the SVD of the data matrix (numerically more stable).
+    \item PCA does not reply on any distributional assumptions.
+    \item PCA only considers linear combinations of the original variables.
+    \item Dimension reduction can only be achieved if the original variables are correlated. Otherwise, PCA does nothing, except for re-ordering them according to their variance.
+    \item PCA is not scale invariant.
+\end{itemize}
+
+\section{Multidimensional Scaling}
+
+\begin{itemize}
+    \item Classical MDS with Euclidean distances gives the same results as PCA for the original coordinates.
+    \item Applying non-metric MDS in practice: solution is not unique (``even less'' than in classical MDS).
+    \item Non-metric MDS: results do not change when applying any monotonic transformation to the dissimilarities.
+    \item ISOMAP does not scale well to large data.
+    \item ISOMAP can have difficulties if true manifolds are not convex (e.g., holes), or true manifolds have too much curvature, or the data is too noisy (e.g., measurement error).
+    \item t-SNE can capture the local structure (close points should stay together) and reveal global structures such as clusters at several scales.
+    \item In contrast to PCA and classical MDS, t-SNE focuses on short-range distances.
+    \item The perplexity parameter for the t-SNE algorithm can be interpreted as a smooth measure of the ``effective number of neighbors''. Based on the perplexity parameter, the $\sigma_i^2$'s are chosen such that the effective number of neighbors is approximately constant (controls trade-off between local and global structure).
+    \item The t-SNE algorithm is not guaranteed to converge to a global optimum.
+    \item t-SNE cannot map new data to the low-dimensional space.
+    \item Caution for t-SNE: clusters sizes can be meaningless; distances between clusters can be meaningless.
+    \item t-SNE works with similarities instead of dissimilarities.
+\end{itemize}
+
+\section{Cluster Analysis}
+
+\begin{itemize}
+    \item Simple linkage method and complete linkage method are invariant under monotone transformation.
+    \item Average linkage method is not invariant under monotone transformation.
+    \item Ward's method tends to produce equal-size, convex, and compact clusters.
+    \item Silhouette plot: $S(i)$ large $\to$ well clustered; $S(i)$ small $\to$ badly clustered; $S(i)$ negative $\to$ assigned to wrong cluster.
+    \item In contrast to $k$-means, PAM (partitioning around medoids) is more robust against outliers and can deal with any distance/dissimilarity measure. PAM's output also depends on starting values and PAM is more computationally expensive.
+    \item The results from hierarchical clustering, $k$-means and PAM depend on the scales of the variables.
+    \item DBSCAN is a density based clustering technique and it finds clusters with arbitrary shape and is robust to outliers/noise.
+    \item DBSCAN: the assignment of border points to clusters can be non-unique since a border point can have more than one associated core point.
+    \item DBSCAN works with any distance function not just Euclidean distances; it can be used as an outlier detection tool.
+    \item Most standard clustering methods have problems for high dimensional data due to the curse of dimensionality.
+\end{itemize}
+
+\section{Factor Analysis}
+
+\begin{itemize}
+    \item The factor model is scale invariant.
+    \item Two main methods for estimation: principal factor analysis; maximum likelihood estimation (assuming normality).
+    \item The R function \texttt{factanal} uses MLE; MLE method has an advantage: one can test whether the number of factors is sufficient.
+    \item It can happen that the test always rejects the null hypothesis. This is an indication that the model does not fit well (or that the sample size is very large).
+    \item Non-uniqueness of factor loadings in factor model estimation.
+    \item Advantage of orthogonal rotations: the factor loadings represent covariances (or correlations) between factors and observed variables if one uses standardized variables ($\Lambda=\text{Cov}(X,f)$).
+    \item Using different numbers of factors changes the loadings completely.
+    \item Both FA and PCA do not work if the observed variables are almost uncorrelated (PCA returns components that are similar to the original variables; FA has nothing to explain, i.e., $\psi_j$ close to 1 for all $i$).
+    \item Both FA and PCA give similar results if the specific variances $\Psi$ are small.
+\end{itemize}
+
+\section{Classification}
+
+\begin{itemize}
+    \item Gaussian naive Bayes is a special case of QDA (instead of $X\mid Y=j\sim N(\mu_j,\Sigma_j)$ with $\Sigma_j$ being a general covariance matrix, it is assumed that $\Sigma_j$ is diagonal).
+    \item Fisher's discriminant analysis is not based on a statistical model.
+    \item One can use more than one linear discriminant (LD) $a$ if one wants to summarize the distinction between the groups in more than one dimension (maximally $\min(p,k-1)$ discriminants).
+    \item For two groups from two multivariate Gaussian distributions with equal covariance matrices, Fisher's discriminant analysis is equivalent to LDA (with equal prior probabilities).
+    \item In contrast to LDA, logistic regression is based on less assumptions and hence more flexible.
+\end{itemize}
+
+
+\section{Extending Univariate Methods}
+
+\begin{itemize}
+    \item Estimates for coefficients and standard deviations from a multivariate regression are the same as from doing $k$ univariate multiple regressions.
+    \item MANOVA and multivariate linear regression allow for calculating confidence regions for several parameters for different responses, and allow for joint tests for parameters of different responses (but not well-supported in statistical software). They can be useful if you want to test whether some predictors have an influence on any response.
+\end{itemize}
+
+\end{document}

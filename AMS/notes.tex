@@ -1,0 +1,570 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+%\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{setspace}
+% \usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[top=2.0cm, left=2.0cm, right=2.0cm, bottom=3.0cm]{geometry}
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\title{%
+    Applied Multivariate Statistics
+}
+\author{Wenjie Tu}
+\date{Spring Semester 2022}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+%\onehalfspacing
+\begin{document}
+
+%\maketitle
+
+\section{Introduction \& Visualization}
+
+\subsection{Introduction}
+
+Multivariate data
+\begin{itemize}
+    \item How are the different variables related? Does a large value of one variable tend to occur with large values for the other variables? \textbf{correlation}
+    \item Can we describe the variation of the variables by a smaller set of variables? \textbf{principal component analysis, factor analysis}
+    \item Can we project the data into a lower dimensional space while preserving the original distances between data points as well as possible? \textbf{multidimensional scaling}
+    \item Can we identify groups of units with similar characteristics? \textbf{clustering}
+\end{itemize}
+
+\subsection{Summary Statistics and Visualization}
+
+Summary statistics in 1-dimensional data
+\begin{itemize}
+    \item Measure of location: ``center'' of the distribution (e.g., mean, median , mode)
+    \item Measure of variation: ``width'' of the distribution (e.g., standard deviation, interquartile-range, median absolute deviation)
+\end{itemize}
+
+Summary statistics for multivariate data
+\begin{itemize}
+    \item Measure of location
+    \item Measure of variation
+    \item Measure of (linear) dependence
+    \begin{itemize}
+        \item Covariance and correlation
+    \end{itemize}
+\end{itemize}
+
+Test for zero correlation: Fisher's z-test
+\begin{itemize}
+    \item Assume: $X, Y$ (bivariate) normally distributed with true correlation $\rho$
+    \item Sample of size $n$: $(x_1,y_1),\cdots,(x_n,y_n)$
+    \item Compute sample correlation $r$
+    \item Compute $z=\frac{1}{2}\log\left(\frac{1+r}{1-r} \right)$
+    \item Compute $\xi=\frac{1}{2}\log\left(\frac{1+\rho}{1-\rho} \right)$
+    \item For large $n$: $\sqrt{n-3}(z-\xi)\sim N(0, 1)$
+    \item Use \texttt{cor.test()} in R to test and get confidence intervals
+\end{itemize}
+
+\subsection{Visualization of Multivariate Data}
+
+How to visualize more than three variables?
+\begin{itemize}
+    \item Continuous data
+    \begin{itemize}
+        \item Scatterplot matrix
+        \item Glyph plots (e.g. bubble plot), star plot, Chernoff faces
+        \item Parallel coordinates plot (?)
+        \item Conditioning plot (?)
+    \end{itemize}
+    \item Categorical data: mosaic plots
+    \item Mixed data: difficult
+    \begin{itemize}
+        \item Conditioning or parallel coordinates plots can be useful
+        \item Use colors
+    \end{itemize}
+    \item Dimension reduction
+\end{itemize}
+
+\section{Visualization of Categorical Data \& Outlier Detection}
+
+\subsection{Visualization of Categorical Data}
+
+Chi-squared test of independence
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{cccc}
+    \hline
+           & $A=1$    & $A=2$    & Total        \\
+           \hline
+    $B=1$  & $n_{11}$ & $n_{12}$ & $n_{1\cdot}$ \\
+    $B=2$  & $n_{21}$ & $n_{22}$ & $n_{2\cdot}$ \\
+    \hline 
+    Total  & $n_{\cdot 1}$ & $n_{\cdot 2}$ & $n$ \\
+    \hline
+    \end{tabular}
+\end{table}
+\begin{itemize}
+    \item $n_{ij}$'s are observed values
+    \item $H_0$: A and B are independent. Under $H_0$:
+    \[P(A=i\cap B=j)=P(A=i)\cdot P(B=j)\approx\hat{P}(A=i)\cdot\hat{P}(B=j)=\frac{n_{\cdot i}}{n}\cdot\frac{n_{j\cdot}}{n}=\hat{\pi}_{ij} \]
+    \item Expected values in cells if $H_0$ is true: $E_{ij}=n\cdot\hat{\pi}_{ij}$
+    \item Pearson chi-squared statistic:
+    \[X^2=\sum_{i=1}^{I}\sum_{j=1}^{J}\frac{(n_{ij}-E_{ij})^2}{E_{ij}}=\sum_{i=1}^{I}\sum_{j=1}^{J}R_{ij}^2 \]
+    \begin{itemize}
+        \item Pearson residual (contribution of each cell to ``misfit''):
+        \[R_{ij}=\frac{n_{ij}-E_{ij}}{\sqrt{E_{ij}}} \]
+    \end{itemize}
+    \item Under $H_0$, $X^2$ has asymptotically a chi-squared distribution with $(I-1)(J-1)$ degrees of freedom (if $n$ is large and there are no zero expected cell counts)
+\end{itemize} 
+
+Mosaic plot with shading:
+\begin{itemize}
+    \item A cell is colored light blue or light red if $|R_{ij}|\geq 2$
+    \item A cell is colored dark blue or dark red if $|R_{ij}|\geq 4$
+    \item This approximately corresponds to $p$-values being below 0.05 (light colors) and 0.0001 (dark colors) for the null-hypothesis $E(R_{ij})=0$ assuming $R_{ij}\sim N(0,1)$ (but in fact $\text{Var}(R_{ij})<1$)
+\end{itemize}
+
+\subsection{Multivariate Outliers}
+
+Multivariate outliers: Outliers can be easily detected for one-dimensional data. But for multivariate data, this is more difficult.
+
+Normal distribution in one dimension:
+\begin{equation*}
+    \phi_{\mu,\sigma^2}(x)=\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{1}{2}\frac{(x-\mu)^2}{\sigma^2} \right)
+\end{equation*}
+\begin{itemize}
+    \item $\frac{(x-\mu)^2}{\sigma^2}$: Squared Mahalanobis distance (squared distance from mean in standard deviations)
+\end{itemize}
+
+Multivariate normal distribution:
+\begin{equation*}
+    \phi_{\mu,\Sigma}(x)=\frac{1}{(2\pi)^{q/2}|\Sigma|^{1/2}}\exp\left(-\frac{1}{2}(x-\mu)^{\intercal}\Sigma^{-1}(x-\mu) \right)
+\end{equation*}
+\begin{itemize}
+    \item Mahalanobis distance:
+    \[D_M(x)=\sqrt{(x-\mu)^{\intercal}\Sigma^{-1}(x-\mu)} \]
+    \item Interpretation: Distance of $x$ from mean $\mu$ in standard deviations in direction of $x$
+    \item In one dimension,
+    \[D_M(x)=\frac{x-\mu}{\sigma} \]
+    is also called $z$-score
+    \item In practice, use sample mean $\hat{\mu}$ and covariance matrix $S$
+    \[\widehat{D_M}(x)=\sqrt{(x-\hat{\mu})^{\intercal}S^{-1}(x-\hat{\mu})} \]
+\end{itemize}
+
+Mahalanobis distance and chi-squared distribution
+\begin{itemize}
+    \item If the data is $q$-variate multivariate normally distributed, then the squared Mahalanobis distance follows a chi-squared distribution with $q$ degrees of freedom:
+    \[D_M^2(X)\sim\chi^2(q) \]
+    \begin{itemize}
+        \item By definition, the sum of the squares of $q$ independent standard normal random variables has a chi-squared distribution with $q$ degrees of freedom
+    \end{itemize}
+    \item Are there samples with (estimated) Mahalanobis distance that do not fit to a chi-squared distribution?
+    \begin{itemize}
+        \item Check with a QQ-plot: compare data to theoretical quantitles of a chi-square distribution $\chi^2(q)$
+    \end{itemize}
+\end{itemize}
+
+Practical points:
+\begin{itemize}
+    \item Use robust estimates for $\mu$ and $\Sigma$
+    \begin{itemize}
+        \item Outliers ``stick out'' more
+        \item Avoids so-called masking effect: some (extremely) outlying observations can prevent the detection of other outliers
+    \end{itemize}
+    \item If the data is no multivariate normal, points with large Mahalanobis distance are still potential outliers
+\end{itemize}
+
+Automatic outlier detection: \texttt{PCOut}
+\begin{itemize}
+    \item \texttt{PCOut} is a method that automatically finds outliers
+    \item Properties
+    \begin{itemize}
+        \item Based on robust principal components
+        \item Fast method, good for high dimensions
+        \item Conservative method: favors false positives over false negatives (i.e., rather declares a non-outlying point as outlier than missing to find a true outlier)
+    \end{itemize}
+\end{itemize}
+
+Multivariate outlier detection
+\begin{itemize}
+    \item Clustering algorithms can be also used to detect outliers
+    \item There are many more methods for (automatically) finding multivariate outliers
+    \item Careful with automatic outlier detection:
+    \begin{itemize}
+        \item Often finds either too many or too few outliers depending on parameter settings
+        \item Can be good for screening of large amounts of data
+        \item Often it is better to look at a QQ-plot
+    \end{itemize}
+\end{itemize}
+
+\section{Principal Component Analysis (PCA)}
+
+\subsection{Introduction}
+
+Goals of PCA
+\begin{itemize}
+    \item The number of variables $q$ is large
+    \item Too many variables can cause problems for graphical techniques and models/algorithms:
+    \begin{itemize}
+        \item Visualizing a large number of variables is infeasible
+        \item Computational bottleneck: processing a very large number of variables can be computationally infeasible for some techniques
+        \item Collinearity (highly correlated variables) or more variables than observations can cause problems in regression type models
+    \end{itemize}
+    \item Main goal of PCA: reduce the dimensionality while accounting for as much as possible of the variation
+\end{itemize}
+
+Illustration of PCA in 2D
+\begin{itemize}
+    \item 1st principal component is the direction with maximum variance. It is also the direction that minimizes the sum of squared residuals (orthogonal to the line)
+\end{itemize}
+
+Illustration of PCA in 3D
+\begin{itemize}
+    \item 1st and 2nd principal components form a plane such that the projection on the plane yields maximum variance. Equivalently, they form a plane such that the sum of squared residuals (orthogonal to the plane) is minimal
+\end{itemize}
+
+\subsection{Definition of PCA}
+
+The idea of PCA is to summarize $q$ variables $\mathbf{X}=(X_1,\cdots,X_q)^{\intercal}$ using linear combinations:
+\begin{equation*}
+    \mathbf{Y}=a^{\intercal}\mathbf{X}=a_1X_1+\cdots+a_jX_j+\cdots+a_qX_q
+\end{equation*}
+such that the variance of $\mathbf{Y}$ is maximal
+
+Assumptions:
+\begin{itemize}
+    \item We call a linear combination normalized if
+    \[\sum_{j=1}^{q}a_j^2=1 \]
+    \item For PCA, we assume that the mean of X is zero:
+    \[E(X_1)=\cdots=E(X_q)=0 \]
+    \item The first principal component ($PC_1$) is the normalized linear combination
+    \[Y_1=a_1^{\intercal}\mathbf{X}=a_{11}X_1+\cdots+a_{j1}X_j+\cdots+a_{q1}X_q \]
+    that has the largest variance
+    \item The $k$th principal component ($PC_k$) is the normalized linear combination
+    \[Y_k=a_k^{\intercal}\mathbf{X}=a_{1k}X_1+\cdots+a_{jk}X_j+\cdots+a_{qk}X_q \]
+    that has the largest variance subject to the constraint that its correlations with $PC_1,\cdots,PC_{k-1}$ equal zero ($a_k^{\intercal}a_j=0,j\neq k$)
+\end{itemize}
+
+\begin{equation*}
+    \mathbf{X}=
+    \begin{pmatrix}
+    X_1 & \cdots & X_q
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+    x_{11} & \cdots & x_{1j} & \cdots & x_{1q} \\
+    \vdots & \ddots & \cdots & \ddots & \vdots \\
+    x_{n1} & \cdots & x_{nj} & \cdots & x_{nq}
+    \end{pmatrix}
+\end{equation*}
+
+\begin{equation*}
+    \underbrace{
+    \begin{pmatrix}
+    y_{1k} \\ \vdots \\ y_{nk}
+    \end{pmatrix}
+    }_{Y_k}
+    =
+    a_{1k}
+    \underbrace{
+    \begin{pmatrix}
+    x_{11} \\ \vdots \\ x_{n1} 
+    \end{pmatrix}
+    }_{X_1}
+    + \cdots + 
+    a_{jk}
+    \underbrace{
+    \begin{pmatrix}
+    x_{1j} \\ \vdots \\ x_{nj} 
+    \end{pmatrix}
+    }_{X_j}
+    + \cdots + 
+    a_{qk}
+    \underbrace{
+    \begin{pmatrix}
+    x_{1q} \\ \vdots \\ x_{n1} 
+    \end{pmatrix}
+    }_{X_q}
+\end{equation*}
+
+\begin{equation*}
+    Y_k=a_k^{\intercal}\mathbf{X}
+\end{equation*}
+
+\begin{equation*}
+    \underbrace{
+    \begin{pmatrix}
+    y_{11} & \cdots & y_{1q} \\
+    \vdots & \ddots & \vdots \\
+    y_{n1} & \cdots & y_{nq}
+    \end{pmatrix}
+    }_{\mathbf{Y}}
+    =
+    \underbrace{
+    \begin{pmatrix}
+    x_{11} & \cdots & x_{1q} \\
+    \vdots & \ddots & \vdots \\
+    x_{n1} & \cdots & x_{nq}
+    \end{pmatrix}
+    }_{\mathbf{X}}
+    \underbrace{
+    \begin{pmatrix}
+    a_{11} & \cdots & a_{1q} \\
+    \vdots & \ddots & \vdots \\
+    a_{q1} & \cdots & a_{qq}
+    \end{pmatrix}
+    }_{A}
+\end{equation*}
+
+\begin{itemize}
+    \item The vectors $a_k$ are called loadings
+    \begin{equation*}
+        a_k=
+        \begin{pmatrix}
+        a_{1k} & a_{2k} & \cdots & a_{qk}
+        \end{pmatrix}^{\intercal}
+    \end{equation*}
+    \item The values $y_{ik}$ are called scores
+    \begin{equation*}
+        y_k=
+        \begin{pmatrix}
+        y_{1k} & \cdots & y_{ik} & \cdots & a_{qk}
+        \end{pmatrix}^{\intercal}
+    \end{equation*}
+\end{itemize}
+
+\subsection{Computation of PCA}
+
+The spectral decomposition of the (sample) covariance matrix $S$:
+\[S=ADA^{\intercal} \]
+\begin{itemize}
+    \item $A$ and $D$ are $q\times q$ matrices
+    \item $D$ is diagonal
+    \begin{equation*}
+        D=diag(\lambda_1,\cdots,\lambda_q)=
+        \begin{pmatrix}
+        \lambda_1 & \cdots & 0 \\
+        \vdots & \ddots & \vdots \\
+        0 & \cdots & \lambda_q
+        \end{pmatrix}
+    \end{equation*}
+    \begin{itemize}
+        \item The diagonal entries $\lambda_k$ are called eigenvalues
+    \end{itemize}
+    \item $A$ is orthogonal ($A^{\intercal}A=AA^{\intercal}=I$)
+    \begin{equation*}
+        A=
+        \begin{pmatrix}
+        a_1 & \cdots & a_k & \cdots & a_q
+        \end{pmatrix}=
+        \begin{pmatrix}
+        a_{11} & \cdots & a_{1q} \\
+        \vdots & \ddots & \vdots \\
+        a_{q1} & \cdots & a_{qq}
+    \end{pmatrix}
+    \end{equation*}
+\end{itemize}
+
+Computation of PCA using spectral decomposition
+\begin{itemize}
+    \item Calculate the spectral decomposition of the sample covariance matrix $S$ ($q\times q$ matrix) to obtain
+    \begin{itemize}
+        \item eigenvalues $\lambda_1,\lambda_2,\cdots,\lambda_q$
+        \item eigenvectors $a_1,a_2,\cdots, a_q$
+    \end{itemize}
+    \item Sort the eigenvalues and accordingly the eigenvectors $a_k$ of $A$ such that
+    \[\lambda_1\geq\lambda_2\geq\cdots\geq\lambda_q \]
+    \item The $k$-th (sample) principal component of $PC_k$ is given by 
+    \[y_k=\mathbf{X}a_k \]
+    where $a_k$ is the $k$-th eigenvector ($k$-th column of $A$)
+    \item Properties
+    \begin{itemize}
+        \item The sample variance of $PC_k(y_k)$ equals $\lambda_k$, the $k$-th largest eigenvalue of $S$
+        \item The total (sample) variance of all $q$ variables equals
+        \[\sum_{j=1}^{q}S_{jj}=\sum_{j=1}^{q}\lambda_j \]
+        \item The first $k$ principal components $PC_1,\cdots,PC_k$ explain
+        \[\frac{\sum_{j=1}^{k}\lambda_j}{\sum_{j=1}^{q}\lambda_j} \]
+        percent of the total variance
+        \item The sample correlations between different $y_k$'s are zero
+        \item All PC's $y_k$ have sample mean zero
+    \end{itemize}
+\end{itemize}
+
+\subsection{Things to Know When Applying PCA}
+
+Interpretation of PC's
+\begin{itemize}
+    \item Interpretation can be difficult
+    \item Note that the sign of the PC loadings is arbitrary since $S=ADA^{\intercal}=(-A)D(-A)^{\intercal}$
+\end{itemize}
+
+Scale dependence
+\begin{itemize}
+    \item PCA based on the original (mean centered) variables can have the following disadvantages:
+    \begin{itemize}
+        \item The results from PCA depend on the scale on which the variables are measured
+        \item If there are large differences in the variations of the variables, the variables with the largest variances tend to dominate the first PC's
+    \end{itemize}
+\end{itemize}
+
+PCA using correlation matrix
+\begin{itemize}
+    \item PCA can also be done using the correlation matrix $C$ instead of the covariance matrix $S$
+    \item Using the correlation matrix is equivalent to using the covariance matrix of the scaled variables
+\end{itemize}
+
+How many PC's?
+\begin{itemize}
+    \item Rule of thumb 1: Cumulative proportion of explained variance $\frac{\sum_{j=1}^{k}\lambda_j}{\sum_{j=1}^{q}\lambda_j}$ should be at least 0.8 (80\%)
+    \item Rule of thumb 2: Keep only PC's with above-average variance $\lambda_k\geq\frac{1}{q}\sum_{j=1}^{q}\lambda_j$
+    \begin{itemize}
+        \item If correlation matrix was used, this implies: keep only PC's with eigenvalues at least one
+    \end{itemize}
+    \item Rule of thumb 3: Look at scree plot $\lambda_j$ vs. $j$; keep only PC's before the ``elbow'' (if there is any ...)
+\end{itemize}
+
+Note: the effect of discarding some principal components may vary for different variables
+\begin{itemize}
+    \item It can be useful to look at squared (sample) correlations $r_{ij}^2$ between variable $X_i$ and PC $Y_j$
+    \item The squared correlation $r_{ij}^2$ between $X_i$ and $Y_j$ can be seen as the proportion of the variance of $X_i$ that is explained by $Y_j$
+\end{itemize}
+
+Robust PCA
+\begin{itemize}
+    \item PCA is sensitive to outliers, since it is based on the sample covariance matrix $S$ or the sample correlation matrix $R$, which are sensitive to outliers
+\end{itemize}
+
+R commands
+\begin{itemize}
+    \item \texttt{princomp} uses the spectral decomposition of the covariance or correlation matrix
+    \item \texttt{prcomp} uses the SVD of the data matrix (numerically more stable)
+\end{itemize}
+
+Overview and limitations of PCA
+\begin{itemize}
+    \item PCA does not rely on any distributional assumptions
+    \item The directions with largest variance are assumed to be of most interest
+    \item PCA only considers linear combinations of the original variables
+    \item Dimension reduction can only be achieved if the original variables are correlated. Otherwise, PCA does nothing, except for re-ordering them according to their variance
+    \item PCA is not scale invariant
+\end{itemize}
+
+\section{Multidimensional Scaling (MDS)}
+
+\subsection{Introduction}
+
+Goal of multidimensional scaling (MDS):
+\begin{itemize}
+    \item Goal of MDS: represent $q$-dimensional data in a low-dimensional space while preserving distances/dissimilarities between points
+    \begin{itemize}
+        \item Input for MDS: distance matrix $D$. The data matrix $X$ is not needed
+    \end{itemize}
+\end{itemize}
+
+MDS approaches considered:
+\begin{itemize}
+    \item Classical MDS
+    \begin{itemize}
+        \item Approx. preserves Euclidean distances. Closely related to PCA
+        \item R: \texttt{cmdscale}
+    \end{itemize}
+    \item Non-metric MDS
+    \begin{itemize}
+        \item Approx. preserves ranking of distances
+        \item R: \texttt{isoMDS}
+    \end{itemize}
+    \item ISOMAP
+    \begin{itemize}
+        \item Finds a non-linear manifold and approx. preserves distances on the manifold
+        \item R: \texttt{Isomap} in package \texttt{RDRToolbox}
+    \end{itemize}
+    \item t-SNE
+    \begin{itemize}
+        \item Emphasis on preserving small distances. Good for visualization of high-dimensional data
+        \item R: \texttt{Rtsne} in package \texttt{Rtsne}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Classical MDS}
+
+Consider the matrix $B=XX^{\intercal}$
+\[b_{ij}=\sum_{k=1}^{q}x_{ik}x_{ik} \]
+\[\bar{x}_k=0\implies\sum_{i=1}^{n}x_{ik}=0\implies\sum_{i\text{ or }j}b_{ij}=0 \]
+\begin{align*}
+    d_{ij}^2&=\sum_{k=1}^{q}(x_{ik}-x_{jk})^2 \\
+    &=\sum_{k=1}^{q}(x_{ik}^2-2x_{ik}x_{jk}+x_{jk}^2) \\
+    &=\sum_{k=1}^{q}x_{ik}^2-2\sum_{k=1}^{q}x_{ik}x_{jk}+\sum_{k=1}^{q}x_{jk}^2 \\
+    &=b_{ii}-2b_{ij}+b_{jj}
+\end{align*}
+\begin{align*}
+    \sum_{i=1}^{n}d_{ij}^2&=\sum_{i=1}^{n}(b_{ii}-2b_{ij}+b_{jj}) \\
+    &=\underbrace{\sum_{i=1}^{n}b_{ii}}_{T}-2\underbrace{\sum_{i=1}^{n}b_{ij}}_{0}+\sum_{i=1}^{n}b_{jj} \\
+    &=T+n\cdot b_{jj}
+\end{align*}
+\[b_{jj}=\frac{1}{n}\sum_{i=1}^{n}d_{ij}^2-\frac{T}{n}=d_{\cdot j}^2-\frac{T}{n} \]
+Similarly:
+\[b_{ii}=\frac{1}{n}\sum_{j=1}^{n}d_{ij}^2-\frac{T}{n}=d_{i\cdot}^2-\frac{T}{n} \]
+\begin{align*}
+    \sum_{i=1}^{n}\sum_{j=1}^{n}d_{ij}^2
+    &=\sum_{i=1}^{n}(T+n\cdot b_{ii}) \\
+    &=n\cdot T + n\sum_{i=1}^{n}b_{ii} \\
+    &=2n\cdot T
+\end{align*}
+\[d_{\cdot\cdot}^2=\frac{1}{n^2}\sum_{i=1}^{n}\sum_{j=1}^{n}d_{ij}^2=\frac{2T}{n} \]
+\begin{align*}
+    b_{ij}&=-\frac{1}{2}(d_{ij}^2-b_{ii}-b_{jj} ) \\
+    &=-\frac{1}{2}\left(d_{ij}^2-\left(d_{i\cdot}^2-\frac{T}{n}\right)-\left(d_{\cdot j}^2-\frac{T}{n}\right) \right) \\
+    &=-\frac{1}{2}\left(d_{ij}^2-d_{i\cdot}^2-d_{\cdot j}^2+\frac{2T}{n} \right) \\
+    &=-\frac{1}{2}(d_{ij}^2-d_{i\cdot}^2-d_{\cdot j}^2+d_{\cdot\cdot}^2)
+\end{align*}
+
+This means that we do not need the data matrix $X$, only distances, to obtain the matrix $B$.
+
+Derivation of classical MDS
+\begin{itemize}
+    \item How do we obtain the coordinates $X$ if we do not know them?
+    \begin{itemize}
+        \item From the distances $d_{ij}$, we calculate the matrix $B$
+        \item Then w use the fact that 
+        \[B=XX^{\intercal} \]
+        and calculate a ``square root'' of $B$
+    \end{itemize}
+    \item $B$ is a symmetric and positive semidefinite $n\times n$ matrix. We can thus calculate the spectral decomposition
+    \[B=V\Lambda V^{\intercal} \]
+    \begin{itemize}
+        \item $\Lambda$ is diagonal: $\Lambda=\text{diag}(\lambda_1,\cdots,\lambda_n)$
+        sort them such that $\lambda_1\geq\lambda_2\geq\cdots\geq\lambda_n\geq0$
+        \item $V$ has normalized eigenvectors as columns
+    \end{itemize}
+    \item Some eigenvalues (the last $n-q$) will be zero. Drop them and write
+    \[B=V_1\Lambda_1V_1^{\intercal}=V_1\Lambda_1^{1/2}\left(V_1\Lambda_1^{1/2}\right)^{\intercal} \]
+    \begin{itemize}
+        \item $\Lambda_1=\text{diag}(\lambda_1,\cdots,\lambda_q)$
+        \item $V_1$ has eigenvectors that correspond to the non-zero eigenvalues
+    \end{itemize}
+    \item We can now write
+    \[B=XX^{\intercal},\qquad \text{where}\qquad X=V_1\Lambda_1^{1/2} \]
+    \item Low dimensional representation: Instead of keeping all non-zero eigenvalues, we only keep the $\tilde{q}$ largest eigenvalues and corresponding eigenvectors
+    \[\widetilde{X}=\widetilde{V}_1\widetilde{\Lambda}_1^{1/2} \]
+    \item How to choose the dimension $\tilde{q}$
+    \begin{itemize}
+        \item Rule of thumb:
+        \[P_{\tilde{q}}=\frac{\sum_{j=1}^{\tilde{q}}\lambda_j}{\sum_{j=1}^{q}\lambda_j} \]
+        should be at least (about) 0.8
+        \item Alternatively: look at scree plot $\lambda_j$ vs. $j$
+    \end{itemize}
+\end{itemize}
+
+\section{Classification}
+
+\subsection{Introduction}
+
+Goal of classification:
+\begin{itemize}
+    \item Response variable $Y$: $Y$ is categorical and $Y\in\{1,\cdots,k\}$
+    \item Predictor variables $X$: $X=(X_1,\cdots,X_p)^{\intercal}$
+\end{itemize}
+
+\subsection{LDA \& QDA}
+
+
+
+\end{document}
