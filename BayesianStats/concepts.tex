@@ -196,6 +196,7 @@
     \end{itemize}
     \item $g$-prior
     \begin{itemize}
+        \item $g$-prior is an objective prior for regression coefficients of a multiple regression
         \item The $g$-prior is a middle ground between being informative and completely non-informative. The idea is to introduce (possibly weak) prior information about $\beta_{\gamma}$ but to bypass the prior correlation structure of $\beta_{\gamma}$
         \item Since for the MLE $\hat{\beta}_{\gamma}$, $\text{Var}(\hat{\beta}_{\gamma})=(\mathbf{X}_{\gamma}^{\intercal}\mathbf{X}_{\gamma})^{-1}\hat{\sigma}^2$, the prior puts more mass in areas of the paramtere space where we expect the data to be more informative about $\beta$ on average
         \item $g>0$ is a hyperparameter which can be interpreted as being inversely proportional to the amount of information available in the prior relative to the data
@@ -222,7 +223,11 @@
     \item Bayes factor and Bayesian information criterion (BIC)
     \item Independent Monte Carlo
     \begin{itemize}
-        \item Quantile transformation (inverse transform sampling)
+        \item Independent Monte Carlo:
+        \[\mu_h=\mathbb{E}_{\pi}(h(X))=\int h(x)\pi(x)dx=\frac{1}{N}\sum_{t=1}^{N}h(X^t) \]
+        \item Quantile transformation (inverse transform sampling):
+        \[F_X(x)=\text{Pr}(X\leq x)=Pr(T(U)<x)=Pr(U\leq T^{-1}(x))=T^{-1}(x) \]
+        \[T(u)=F_X^{-1}(u) \]
     \end{itemize}
     \item Rejection sampling
     \begin{itemize}
@@ -232,10 +237,18 @@
     \begin{itemize}
         \item Importance sampling is based on a similar idea as rejection sampling. Instead of rejecting some variables, we weight them with an appropriate weighting function.
         \item Rejection area vs. acceptance area
+        \[\mathbb{E}(f(x))=\int f(x)p(x)dx=\int f(x)\frac{p(x)}{q(x)}q(x)dx\approx\frac{1}{N}\sum_{i=1}^{N}f(x_i)\frac{p(x_i)}{q(x_i)} \]
     \end{itemize}
     \item Sampling importance resampling
     \item Markov chain Monte Carlo
     \begin{itemize}
+        \item Sometimes it is difficult to draw i.i.d. samples from a complicated distribution $\pi$, especially in high dimensions.
+        \begin{itemize}
+            \item Rejection sampling fails because it always rejects
+            \item Importance sampling fails because the variance of weights is too large
+        \end{itemize}
+        \item Instead of generating independent samples $X^t\sim\pi$, we generate dependent samples $X^t$ such that for large $t$, $X^t$ has (approximately) the correct distribution $\pi$
+        \item MCMC generates a sequence of random variables ($X^t$) which are dependent and such that the distribution of $X^t$ converges weakly to the target distribution as $t\to\infty$
         \item MCMC provides a class of algorithms for systematic random sampling from high-dimensional probability distributions. It works by constructing a Markov chain that eventually converges to the target distribution (stationary or equilibrium)
         \begin{itemize}
             \item Irreducible (no matter where you start, the chain is always able to reach to other point in a finite number of iterations with positive probability)
@@ -278,6 +291,10 @@
         \item Hamiltonian dynamics: using a time-reversible and volume-preserving numerical integrator to porpose a move to a new point in the state space.
     \end{itemize}
     \item Sequential Monte Carlo
+    \begin{itemize}
+        \item Instead of sampling from one target $\pi$, one samples from a sequence of related targets
+        \item This is done by applying importance sampling in a sequential manner
+    \end{itemize}
     \item Approximate Bayesian computation
 \end{itemize}
 

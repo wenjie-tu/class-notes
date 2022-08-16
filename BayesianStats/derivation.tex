@@ -200,4 +200,20 @@
     \[\mathbb{E}(f(x))=\int f(x)p(x)dx=\int f(x)\frac{p(x)}{q(x)}q(x)dx\approx\frac{1}{n}\sum_if(x_i)\frac{p(x_i)}{q(x_i)} \]
 \end{itemize}
 
+\section*{Hamiltonian Monte Carlo}
+
+\begin{itemize}
+    \item Hamiltonian $H(x,u)$:
+    \[H(x,u)=-\log\pi(x)+\sum_{i=1}^{p}\frac{u_i^2}{2m_i} \]
+    \[\tilde{\pi}(x,u)\propto\exp\left(-H(x,u)\right) \]
+    \item Physical interpretation:
+    \begin{itemize}
+        \item $x$ is the position
+        \item $u$ is the momentum
+        \item $-\log\pi(x)$ is the potential energy
+        \item $\sum_{i=1}^{p}\frac{u_i^2}{2m_i}$ is the kinetic energy
+        \item $H(x,u)$ is the total energy in the system
+    \end{itemize}
+\end{itemize}
+
 \end{document}
