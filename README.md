@@ -9,6 +9,7 @@ This repository is made for my class notes and problem-sets solutions.
 | AdMicro2                  | [Advanced Microeconomics 2](AdMicro2/README.md)              |
 | ANOVA                     | [Applied Analysis of Variance and Experimental Design](ANOVA/README.md) |
 | ASR                       | [Applied Statistical Regression](ASR/README.md)              |
+| BayesianStats             | [Bayesian Statistics](BayesianStats/README.md)               |
 | BC                        | [Business Cycles: Empirics and Theory](BC/README.md)         |
 | CompStats                 | [Computational Statistics](CompStats/README.md)              |
 | EM                        | [Empirical Methods](EM/README.md)                            |
